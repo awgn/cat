@@ -26,7 +26,7 @@ namespace catty
         using type =
             typeclass
             <
-                OVERLOADED_FUNCTION(fmap, F_<a_,b_>, std::shared_ptr<a_> const &, std::shared_ptr<b_> )
+                SYMBOL(fmap, decltype(fmap(_f, std::shared_ptr<_A>{})))
             >;
     };
 

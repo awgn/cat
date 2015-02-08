@@ -28,7 +28,6 @@ namespace catty
         using type =
             typeclass
             <
-                OVERLOADED_FUNCTION(fmap, F_<a_,b_>, std::unordered_map<k_, a_> const &, std::unordered_map<k_, b_> )
             >;
     };
 

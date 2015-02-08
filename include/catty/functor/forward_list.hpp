@@ -16,12 +16,9 @@ namespace catty
         std::forward_list<decltype(fun(std::declval<A>()))> out;
 
         for(auto const & x : xs)
-        {
             out.push_front(fun(x));
-        }
 
         out.reverse();
-
         return out;
     }
 
@@ -31,7 +28,7 @@ namespace catty
         using type =
             typeclass
             <
-                OVERLOADED_FUNCTION(fmap, F_<a_,b_>, std::forward_list<a_> const &, std::forward_list<b_> )
+                SYMBOL(fmap, decltype(fmap(_f, std::forward_list<_A>{})))
             >;
     };
 

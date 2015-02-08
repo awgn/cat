@@ -26,7 +26,7 @@ namespace catty
         using type =
             typeclass
             <
-                OVERLOADED_FUNCTION(fmap, F_<a_,b_>, std::experimental::optional<a_> const &, std::experimental::optional<b_> )
+                SYMBOL(fmap, decltype(fmap(_f, std::experimental::optional<_A>{})))
             >;
     };
 

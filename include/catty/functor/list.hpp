@@ -9,15 +9,13 @@ namespace catty
     // list instance:
     //
 
-    template <typename A, typename Fun >
+    template <typename Fun, typename A>
     auto fmap(Fun fun, std::list<A> const &xs)
     {
         std::list< decltype(fun( xs.front() )) > out;
 
         for(auto & x : xs)
-        {
             out.push_back(fun(x));
-        }
 
         return out;
     }
@@ -28,7 +26,7 @@ namespace catty
         using type =
             typeclass
             <
-                OVERLOADED_FUNCTION(fmap, F_<a_,b_>, std::list<a_> const &, std::list<b_> )
+                SYMBOL(fmap, decltype(fmap(_f, std::list<_A>{})))
             >;
     };
 

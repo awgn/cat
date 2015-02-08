@@ -21,9 +21,7 @@ namespace my
     auto fmap(Fun fun, my::functor<A> const &x)
     {
         functor< decltype(fun(x.arg)) > out;
-
         out.arg = fun(x.arg);
-
         return out;
     }
 }
@@ -39,16 +37,7 @@ namespace catty
         using type =
             typeclass
             <
-                // classic declaration:
-                //
-
-                // OVERLOADED_SYMBOL(fmap, my::functor<b_>( F_<a_, b_>, my::functor<a_> const &) )
-
-                // full currified version:
-                //
-
-                OVERLOADED_FUNCTION(fmap, F_<a_, b_>, my::functor<a_> const &, my::functor<b_> )
-
+                SYMBOL(fmap, decltype(fmap(_f, my::functor<_A>{})))
             >;
     };
 }
@@ -62,7 +51,7 @@ Context(functor)
     template <template <typename...> class F, typename T>
     void functor_constraint(F<T> const &)
     {
-        // static_assert(FunctorInstance<F>(), "F: not a functor!");
+        static_assert(FunctorInstance<F>(), "F: not a functor!");
     }
 
     Test(functor_vector)
@@ -150,29 +139,29 @@ Context(functor)
     }
 
 
-    Test(functor_map)
-    {
-        std::map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
+    // Test(functor_map)
+    // {
+    //     std::map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
 
-        auto r = fmap([](const std::string &s) { return s.size(); }, m);
+    //     auto r = fmap([](const std::string &s) { return s.size(); }, m);
 
-        Assert(r, is_equal_to(std::map<int,size_t>{{1,3}, {2,3}, {3,5}}));
-    }
+    //     Assert(r, is_equal_to(std::map<int,size_t>{{1,3}, {2,3}, {3,5}}));
+    // }
 
 
-    Test(functor_unordered_map)
-    {
-        std::unordered_map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
+    // Test(functor_unordered_map)
+    // {
+    //     std::unordered_map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
 
-        auto r = fmap([](const std::string &s) { return s.size(); }, m);
+    //     auto r = fmap([](const std::string &s) { return s.size(); }, m);
 
-        Assert(r, is_equal_to(std::unordered_map<int,size_t>{{1,3}, {2,3}, {3,5}}));
-    }
+    //     Assert(r, is_equal_to(std::unordered_map<int,size_t>{{1,3}, {2,3}, {3,5}}));
+    // }
 
 
     Test(functor_constraint)
     {
-        functor_constraint( std::vector<std::string>{ "one", "two", "three" });
+        functor_constraint( std::vector<std::string>{} );
         functor_constraint( std::list<std::string>  { "one", "two", "three" });
         functor_constraint( std::forward_list<std::string>  { "one", "two", "three" });
         functor_constraint( std::make_shared<std::string>( "one" ));

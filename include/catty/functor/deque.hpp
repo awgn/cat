@@ -10,15 +10,13 @@ namespace catty
     // deque instance:
     //
 
-    template <typename A, typename Fun>
+    template <typename Fun, typename A>
     auto fmap(Fun fun, std::deque<A> const &xs)
     {
-        std::deque< decltype(fun( xs.front() )) > out;
+        std::deque< decltype(fun( xs.front())) > out;
 
         for(auto & x : xs)
-        {
             out.push_back(fun(x));
-        }
 
         return out;
     }
@@ -29,7 +27,7 @@ namespace catty
         using type =
             typeclass
             <
-                OVERLOADED_FUNCTION(fmap, F_<a_,b_>, std::deque<a_> const &, std::deque<b_> )
+                SYMBOL(fmap, decltype(fmap(_f, std::deque<_A>{})))
             >;
     };
 
