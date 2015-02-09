@@ -6,4 +6,4 @@ include_directories(inc)
 include_directories(../include)
 
 add_executable(test-functor src/test-functor.cpp)
-# add_executable(applicative applicative.cpp)
+add_executable(test-applicative src/test-applicative.cpp)
