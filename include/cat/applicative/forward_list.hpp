@@ -7,41 +7,38 @@
 
 namespace cat
 {
+    // forward_list is an applicative instance:
+
+    template <> struct is_applicative<std::forward_list> : std::true_type { };
+
     // forward_list instance:
     //
 
-    template <typename A>
-    auto pure(A const &elem, tag<std::forward_list>)
-    {
-        return std::forward_list<A>{ elem };
-    }
-
     template <typename Fun, typename A>
-    auto apply(std::forward_list<Fun> const &fs, std::forward_list<A> const &xs)
+    struct ApplicativeInstance<std::forward_list, Fun, A> : Applicative<std::forward_list>::Class<Fun, A>
     {
-        std::forward_list< decltype( std::declval<Fun>()( xs.front() )) > out;
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        for(auto &f : fs)
+        auto pure(A const &elem) const -> std::forward_list<A> final
         {
-            for(auto &x : xs)
-            {
-                out.push_front(f(x));
-            }
+            return std::forward_list<A>{ elem };
         }
 
-        out.reverse();
-        return out;
-    }
+        auto apply(std::forward_list<Fun> const &fs, std::forward_list<A> const &xs) const -> std::forward_list<B> final
+        {
+            std::forward_list<B> out;
 
-    template <>
-    struct typeclass_instance2<Applicative, std::forward_list>
-    {
-        using type =
-            typeclass
-            <
-                OVERLOADED_FUNCTION(pure,  a_ const&, std::forward_list<a_> ),
-                OVERLOADED_FUNCTION(apply, std::forward_list<F_<a_,b_>> const &, std::forward_list<a_> const&, std::forward_list<b_> )
-            >;
+            for(auto const &f : fs)
+            {
+                for(auto const &x : xs)
+                {
+                    out.push_front(f(x));
+                }
+            }
+
+            out.reverse();
+            return out;
+        }
     };
 
 } // namespace cat

@@ -7,40 +7,37 @@
 
 namespace cat
 {
+    // list is an applicative instance:
+
+    template <> struct is_applicative<std::list> : std::true_type { };
+
     // list instance:
     //
 
-    template <typename A>
-    auto pure(A const &elem, tag<std::list>)
-    {
-        return std::list<A>{ elem };
-    }
-
     template <typename Fun, typename A>
-    auto apply(std::list<Fun> const &fs, std::list<A> const &xs)
+    struct ApplicativeInstance<std::list, Fun, A> : Applicative<std::list>::Class<Fun, A>
     {
-        std::list< decltype( std::declval<Fun>()( xs.front() )) > out;
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        for(auto &f : fs)
+        auto pure(A const &elem) const -> std::list<A> final
         {
-            for(auto &x : xs)
-            {
-                out.push_back(f(x));
-            }
+            return std::list<A>{ elem };
         }
 
-        return out;
-    }
+        auto apply(std::list<Fun> const &fs, std::list<A> const &xs) const -> std::list<B> final
+        {
+            std::list<B> out;
 
-    template <>
-    struct typeclass_instance2<Applicative, std::list>
-    {
-        using type =
-            typeclass
-            <
-                OVERLOADED_FUNCTION(pure,  a_ const&, std::list<a_> ),
-                OVERLOADED_FUNCTION(apply, std::list<F_<a_,b_>> const &, std::list<a_> const&, std::list<b_> )
-            >;
+            for(auto const &f : fs)
+            {
+                for(auto const &x : xs)
+                {
+                    out.push_back(f(x));
+                }
+            }
+
+            return out;
+        }
     };
 
 } // namespace cat

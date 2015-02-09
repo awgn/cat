@@ -7,36 +7,31 @@
 
 namespace cat
 {
-    // optional instance:
+    // experimental::optional is an applicative instance:
+
+    template <> struct is_applicative<std::experimental::optional> : std::true_type { };
+
+    // experimental::optional instance:
     //
 
-    template <typename A>
-    auto pure(A const &elem, tag<std::experimental::optional>)
-    {
-        return std::experimental::make_optional(elem);
-    }
-
     template <typename Fun, typename A>
-    auto apply(std::experimental::optional<Fun> const &f, std::experimental::optional<A> const &x)
+    struct ApplicativeInstance<std::experimental::optional, Fun, A> : Applicative<std::experimental::optional>::Class<Fun, A>
     {
-        using type = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        if (f && x) {
-            return std::experimental::make_optional<type>((*f)(*x));
+        auto pure(A const &elem) const -> std::experimental::optional<A> final
+        {
+            return std::experimental::make_optional(elem);
         }
 
-        return std::experimental::optional<type>();
-    }
+        auto apply(std::experimental::optional<Fun> const &f, std::experimental::optional<A> const &x) const
+                -> std::experimental::optional<B> final
+        {
+            if (f && x)
+                return std::experimental::make_optional<B>((*f)(*x));
 
-    template <>
-    struct typeclass_instance2<Applicative, std::experimental::optional>
-    {
-        using type =
-            typeclass
-            <
-                OVERLOADED_FUNCTION(pure,  a_ const&, std::experimental::optional<a_> ),
-                OVERLOADED_FUNCTION(apply, std::experimental::optional<F_<a_,b_>> const &, std::experimental::optional<a_> const&, std::experimental::optional<b_> )
-            >;
+            return std::experimental::optional<B>();
+        }
     };
 
 } // namespace cat

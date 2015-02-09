@@ -7,41 +7,39 @@
 
 namespace cat
 {
+    // deque is an applicative instance:
+
+    template <> struct is_applicative<std::deque> : std::true_type { };
+
     // deque instance:
     //
 
-    template <typename A>
-    auto pure(A const &elem, tag<std::deque>)
-    {
-        return std::deque<A>{ elem };
-    }
-
     template <typename Fun, typename A>
-    auto apply(std::deque<Fun> const &fs, std::deque<A> const &xs)
+    struct ApplicativeInstance<std::deque, Fun, A> : Applicative<std::deque>::Class<Fun, A>
     {
-        std::deque< decltype( std::declval<Fun>()( xs.front() )) > out;
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        for(auto &f : fs)
+        auto pure(A const &elem) const -> std::deque<A> final
         {
-            for(auto &x : xs)
-            {
-                out.push_back(f(x));
-            }
+            return std::deque<A>{ elem };
         }
 
-        return out;
-    }
+        auto apply(std::deque<Fun> const &fs, std::deque<A> const &xs) const -> std::deque<B> final
+        {
+            std::deque<B> out;
 
-    template <>
-    struct typeclass_instance2<Applicative, std::deque>
-    {
-        using type =
-            typeclass
-            <
-                OVERLOADED_FUNCTION(pure,  a_ const&, std::deque<a_> ),
-                OVERLOADED_FUNCTION(apply, std::deque<F_<a_,b_>> const &, std::deque<a_> const&, std::deque<b_> )
-            >;
+            for(auto const &f : fs)
+            {
+                for(auto const &x : xs)
+                {
+                    out.push_back(f(x));
+                }
+            }
+
+            return out;
+        }
     };
+
 
 } // namespace cat
 

@@ -41,7 +41,6 @@ namespace cat
         }
     };
 
-    // template <typename Fun, typename A>
 
 } // namespace cat
 
