@@ -3,7 +3,7 @@
 #include <utility>
 
 #include <cat/bits/traits.hpp>
-#include <cat/bits/typelist.hpp>
+#include <cat/bits/utility.hpp>
 
 namespace cat
 {
@@ -37,10 +37,6 @@ namespace cat
     {
         return FunctorInstance<F, Fun, A...>{}.fmap(f, xs);
     }
-
-    //
-    // constraint:
-    //
 
     template <template <typename...> class F>
     constexpr bool is_functor()
