@@ -4,7 +4,7 @@
 
 namespace cat
 {
-    struct id
+    struct Id
     {
         template <typename T>
         auto operator()(T &&x) const
@@ -14,3 +14,4 @@ namespace cat
     };
 
 } // namespace cat
+

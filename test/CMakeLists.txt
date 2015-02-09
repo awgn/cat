@@ -7,3 +7,4 @@ include_directories(../include)
 
 add_executable(test-functor src/test-functor.cpp)
 add_executable(test-applicative src/test-applicative.cpp)
+add_executable(test-monoid src/test-monoid.cpp)

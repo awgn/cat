@@ -27,7 +27,7 @@ namespace cat
     template <template <typename ...> class F, typename A>
     auto pure(A const &value)
     {
-        return ApplicativeInstance<F, id, A>{}.pure(value);
+        return ApplicativeInstance<F, Id, A>{}.pure(value);
     }
 
     template <template <typename ...> class F, typename Fun, typename A>
