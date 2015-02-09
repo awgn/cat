@@ -7,6 +7,10 @@
 
 namespace cat
 {
+    // forward_list is a functor:
+
+    template <> struct is_functor<std::forward_list> : std::true_type { };
+
     // forward_list instance:
 
     template <typename Fun, typename A, typename Alloc>

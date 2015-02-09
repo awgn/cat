@@ -6,6 +6,10 @@
 
 namespace cat
 {
+    // map is a functor:
+
+    template <> struct is_functor<std::map> : std::true_type { };
+
     // map instance:
 
     template <typename Fun, typename K, typename A, typename Compare, typename Alloc>

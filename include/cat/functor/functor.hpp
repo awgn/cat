@@ -39,10 +39,8 @@ namespace cat
     }
 
     template <template <typename...> class F>
-    constexpr bool is_functor()
-    {
-        return true;
-    };
+    struct is_functor : std::false_type
+    { };
 
 
 } // namespace cat
