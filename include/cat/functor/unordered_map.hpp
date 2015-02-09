@@ -17,7 +17,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::unordered_map<K, A, Hash, Comp, Alloc> const &xs) -> std::unordered_map<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>> > final
+        auto fmap(Fun f, std::unordered_map<K, A, Hash, Comp, Alloc> const &xs) const
+                -> std::unordered_map<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>> > final
         {
             std::unordered_map<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>> > out;
 

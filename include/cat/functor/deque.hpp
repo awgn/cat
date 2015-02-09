@@ -18,7 +18,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::deque<A, Alloc> const &xs) -> std::deque<B, rebind_t<Alloc, B> > final
+        auto fmap(Fun f, std::deque<A, Alloc> const &xs) const
+                -> std::deque<B, rebind_t<Alloc, B> > final
         {
             std::deque<B, rebind_t<Alloc, B> > out;
 

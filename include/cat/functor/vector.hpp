@@ -17,7 +17,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::vector<A, Alloc> const &xs) -> std::vector<B, rebind_t<Alloc, B> > final
+        auto fmap(Fun f, std::vector<A, Alloc> const &xs) const
+                -> std::vector<B, rebind_t<Alloc, B> > final
         {
             std::vector<B, rebind_t<Alloc, B> > out;
             out.reserve(xs.size());

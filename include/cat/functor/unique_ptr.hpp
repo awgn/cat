@@ -17,7 +17,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::unique_ptr<A, Deleter> const &xs) -> std::unique_ptr<B> final
+        auto fmap(Fun f, std::unique_ptr<A, Deleter> const &xs) const
+                -> std::unique_ptr<B> final
         {
             using type = decltype(f(*xs));
 

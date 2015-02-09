@@ -17,15 +17,15 @@ namespace cat
         template <typename Fun, typename A, typename ...Args>
         struct Class
         {
-            virtual auto fmap(Fun f, F<A, Args...> const & f_a)
-                -> F<decltype(f(std::declval<A>())),
-                     rebind_t<Args, decltype(f(std::declval<A>()))>...> = 0;
+            virtual auto fmap(Fun f, F<A, Args...> const & f_a) const
+                -> F<decltype(f(std::declval<A>())), rebind_t<Args, decltype(f(std::declval<A>()))>...> = 0;
         };
 
         template <typename Fun, typename K, typename A, typename ...Args>
         struct Class1
         {
-            virtual auto fmap(Fun f, F<K, A, Args...> const & f_a) -> F<K, decltype(f(std::declval<A>()))> = 0;
+            virtual auto fmap(Fun f, F<K, A, Args...> const & f_a) const
+                -> F<K, decltype(f(std::declval<A>()))> = 0;
         };
 
     };

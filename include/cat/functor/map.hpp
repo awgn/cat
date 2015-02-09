@@ -17,7 +17,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::map<K, A, Compare, Alloc> const &xs) -> std::map<K, B, Compare, rebind_t<Alloc, std::pair<const K, B>> > final
+        auto fmap(Fun f, std::map<K, A, Compare, Alloc> const &xs) const
+                -> std::map<K, B, Compare, rebind_t<Alloc, std::pair<const K, B>> > final
         {
             std::map<K, B, Compare, rebind_t<Alloc, std::pair<const K, B>> > out;
 
