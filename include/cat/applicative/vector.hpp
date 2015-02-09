@@ -7,42 +7,41 @@
 
 namespace cat
 {
+    // vector is an applicative instance:
+
+    template <> struct is_applicative<std::vector> : std::true_type { };
+
     // vector instance:
     //
 
-    template <typename A>
-    auto pure(A const &elem, tag<std::vector>)
-    {
-        return std::vector<A>{ elem };
-    }
-
     template <typename Fun, typename A>
-    auto apply(std::vector<Fun> const &fs, std::vector<A> const &xs)
+    struct ApplicativeInstance<std::vector, Fun, A> : Applicative<std::vector>::Class<Fun, A>
     {
-        std::vector< decltype( std::declval<Fun>()( xs.front() )) > out;
-        out.reserve(fs.size() * xs.size());
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        for(auto &f : fs)
+        auto pure(A const &elem) const -> std::vector<A> final
         {
-            for(auto &x : xs)
-            {
-                out.push_back(f(x));
-            }
+            return std::vector<A>{ elem };
         }
 
-        return out;
-    }
+        auto apply(std::vector<Fun> const &fs, std::vector<A> const &xs) const -> std::vector<B> final
+        {
+            std::vector<B> out;
+            out.reserve(fs.size() * xs.size());
 
-    template <>
-    struct typeclass_instance2<Applicative, std::vector>
-    {
-        using type =
-            typeclass
-            <
-                OVERLOADED_FUNCTION(pure,  a_ const&, std::vector<a_> ),
-                OVERLOADED_FUNCTION(apply, std::vector<F_<a_,b_>> const &, std::vector<a_> const&, std::vector<b_> )
-            >;
+            for(auto const &f : fs)
+            {
+                for(auto const &x : xs)
+                {
+                    out.push_back(f(x));
+                }
+            }
+
+            return out;
+        }
     };
+
+    // template <typename Fun, typename A>
 
 } // namespace cat
 
