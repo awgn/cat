@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include <catty/functor/vector.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/vector.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // vector instance:
     //
@@ -44,5 +44,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 

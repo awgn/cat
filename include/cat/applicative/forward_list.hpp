@@ -2,10 +2,10 @@
 
 #include <forward_list>
 
-#include <catty/functor/forward_list.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/forward_list.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // forward_list instance:
     //
@@ -44,5 +44,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 

@@ -2,10 +2,10 @@
 
 #include <list>
 
-#include <catty/functor/list.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/list.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // list instance:
     //
@@ -43,5 +43,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 

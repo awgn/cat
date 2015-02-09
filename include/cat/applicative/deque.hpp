@@ -2,10 +2,10 @@
 
 #include <deque>
 
-#include <catty/functor/deque.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/deque.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // deque instance:
     //
@@ -43,5 +43,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 

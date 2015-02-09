@@ -2,10 +2,10 @@
 
 #include <utility>
 
-#include <catty/typeclass.hpp>
-#include <catty/functor/functor.hpp>
+#include <cat/typeclass.hpp>
+#include <cat/functor/functor.hpp>
 
-namespace catty
+namespace cat
 {
     // class Applicative:
     //
@@ -43,5 +43,5 @@ namespace catty
         return pure(elem, tag<F>{});
     }
 
-} // namespace catty
+} // namespace cat
 

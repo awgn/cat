@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include <catty/functor/shared_ptr.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/shared_ptr.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // shared_ptr instance:
     //
@@ -39,5 +39,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 

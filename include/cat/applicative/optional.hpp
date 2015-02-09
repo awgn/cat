@@ -2,10 +2,10 @@
 
 #include <experimental/optional>
 
-#include <catty/functor/optional.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/optional.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // optional instance:
     //
@@ -39,5 +39,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 

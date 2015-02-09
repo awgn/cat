@@ -1,9 +1,9 @@
-#include <catty/applicative.hpp>
+#include <cat/applicative.hpp>
 
 #include "yats.hpp"
 
 using namespace yats;
-using namespace catty;
+using namespace cat;
 
 
 // user-defined applicative:
@@ -45,7 +45,7 @@ namespace my
 // user-defined instance declaration:
 //
 
-namespace catty
+namespace cat
 {
     template <>
     struct typeclass_instance2<Functor, my::applicative>

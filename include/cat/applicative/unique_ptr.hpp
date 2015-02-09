@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include <catty/functor/unique_ptr.hpp>
-#include <catty/applicative/applicative.hpp>
+#include <cat/functor/unique_ptr.hpp>
+#include <cat/applicative/applicative.hpp>
 
-namespace catty
+namespace cat
 {
     // unique_ptr instance:
     //
@@ -39,5 +39,5 @@ namespace catty
             >;
     };
 
-} // namespace catty
+} // namespace cat
 
