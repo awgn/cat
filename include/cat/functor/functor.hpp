@@ -8,7 +8,7 @@
 namespace cat
 {
     //
-    // Class Functor
+    // class Functor
     //
 
     template <template <typename ...> class F>
@@ -41,7 +41,6 @@ namespace cat
     template <template <typename...> class F>
     struct is_functor : std::false_type
     { };
-
 
 } // namespace cat
 

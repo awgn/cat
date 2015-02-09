@@ -7,10 +7,12 @@
 namespace cat
 {
     // shared_ptr is functor:
+    //
 
     template <> struct is_functor<std::shared_ptr> : std::true_type { };
 
     // shared_ptr instance:
+    //
 
     template <typename Fun, typename A>
     struct FunctorInstance<std::shared_ptr, Fun, A> : Functor<std::shared_ptr>::Class<Fun, A>

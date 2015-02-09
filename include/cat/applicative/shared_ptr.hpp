@@ -8,6 +8,7 @@
 namespace cat
 {
     // shared_ptr is an applicative instance:
+    //
 
     template <> struct is_applicative<std::shared_ptr> : std::true_type { };
 

@@ -8,10 +8,12 @@
 namespace cat
 {
     // deque is a functor:
+    //
 
     template <> struct is_functor<std::deque> : std::true_type { };
 
     // deque instance:
+    //
 
     template <typename Fun, typename A, typename Alloc>
     struct FunctorInstance<std::deque, Fun, A, Alloc> : Functor<std::deque>::Class<Fun, A, Alloc>

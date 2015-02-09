@@ -7,10 +7,12 @@
 namespace cat
 {
     // list is a functor:
+    //
 
     template <> struct is_functor<std::list> : std::true_type { };
 
     // list instance:
+    //
 
     template <typename Fun, typename A, typename Alloc>
     struct FunctorInstance<std::list, Fun, A, Alloc> : Functor<std::list>::Class<Fun, A, Alloc>

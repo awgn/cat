@@ -8,6 +8,7 @@
 namespace cat
 {
     // experimental::optional is an applicative instance:
+    //
 
     template <> struct is_applicative<std::experimental::optional> : std::true_type { };
 

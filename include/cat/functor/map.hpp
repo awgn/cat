@@ -7,10 +7,12 @@
 namespace cat
 {
     // map is a functor:
+    //
 
     template <> struct is_functor<std::map> : std::true_type { };
 
     // map instance:
+    //
 
     template <typename Fun, typename K, typename A, typename Compare, typename Alloc>
     struct FunctorInstance<std::map, Fun, K, A, Compare, Alloc> : Functor<std::map>::Class1<Fun, K, A, Compare, Alloc>

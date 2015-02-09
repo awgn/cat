@@ -7,10 +7,12 @@
 namespace cat
 {
     // vector is a functor:
+    //
 
     template <> struct is_functor<std::vector> : std::true_type { };
 
     // vector instance:
+    //
 
     template <typename Fun, typename A, typename Alloc>
     struct FunctorInstance<std::vector, Fun, A, Alloc> : Functor<std::vector>::Class<Fun, A, Alloc>
@@ -29,8 +31,6 @@ namespace cat
             return out;
         }
     };
-
-
 
 } // namespace cat
 

@@ -8,6 +8,7 @@
 namespace cat
 {
     // vector is an applicative instance:
+    //
 
     template <> struct is_applicative<std::vector> : std::true_type { };
 
@@ -40,7 +41,6 @@ namespace cat
             return out;
         }
     };
-
 
 } // namespace cat
 

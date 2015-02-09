@@ -8,6 +8,7 @@
 namespace cat
 {
     // deque is an applicative instance:
+    //
 
     template <> struct is_applicative<std::deque> : std::true_type { };
 
@@ -39,7 +40,6 @@ namespace cat
             return out;
         }
     };
-
 
 } // namespace cat
 

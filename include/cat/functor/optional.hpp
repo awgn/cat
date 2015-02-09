@@ -7,10 +7,12 @@
 namespace cat
 {
     // optional is a functor:
+    //
 
     template <> struct is_functor<std::experimental::optional> : std::true_type { };
 
     // experimental::optional instance:
+    //
 
     template <typename Fun, typename A>
     struct FunctorInstance<std::experimental::optional, Fun, A> : Functor<std::experimental::optional>::Class<Fun, A>

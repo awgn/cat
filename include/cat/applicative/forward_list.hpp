@@ -8,6 +8,7 @@
 namespace cat
 {
     // forward_list is an applicative instance:
+    //
 
     template <> struct is_applicative<std::forward_list> : std::true_type { };
 

@@ -8,6 +8,7 @@
 namespace cat
 {
     // list is an applicative instance:
+    //
 
     template <> struct is_applicative<std::list> : std::true_type { };
 

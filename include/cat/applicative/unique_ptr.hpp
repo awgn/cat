@@ -8,6 +8,7 @@
 namespace cat
 {
     // unique_ptr is an applicative instance:
+    //
 
     template <> struct is_applicative<std::unique_ptr> : std::true_type { };
 

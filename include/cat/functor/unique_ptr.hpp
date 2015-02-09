@@ -7,6 +7,7 @@
 namespace cat
 {
     // unique_ptr is a functor:
+    //
 
     template <> struct is_functor<std::unique_ptr> : std::true_type { };
 

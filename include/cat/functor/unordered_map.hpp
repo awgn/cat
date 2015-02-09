@@ -7,10 +7,12 @@
 namespace cat
 {
     // unordered_map is a functor:
+    //
 
     template <> struct is_functor<std::unordered_map> : std::true_type { };
 
     // unordered_map instance:
+    //
 
     template <typename Fun, typename K, typename A, typename Hash, typename Comp, typename Alloc>
     struct FunctorInstance<std::unordered_map, Fun, K, A, Hash, Comp, Alloc> : Functor<std::unordered_map>::Class1<Fun, K, A, Hash, Comp, Alloc>
@@ -28,8 +30,6 @@ namespace cat
             return out;
         }
     };
-
-
 
 } // namespace cat
 

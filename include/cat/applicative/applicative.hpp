@@ -6,7 +6,8 @@
 
 namespace cat
 {
-    // Class Applicative:
+    //
+    // class Applicative:
     //
 
     template <template <typename...> class F>
