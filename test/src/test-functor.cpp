@@ -46,11 +46,12 @@ namespace cat
 
 Context(functor)
 {
-    template <template <typename...> class F, typename T>
-    void functor_constraint(F<T> const &)
+    template <template <typename...> class F, typename ...Ts>
+    void functor_constraint(F<Ts...> const &)
     {
-        static_assert(is_functor<F>(), "F: not a functor!");
+        static_assert(is_functor<F>::value, "F: not a functor!");
     }
+
 
     Test(my_functor)
     {
@@ -170,16 +171,16 @@ Context(functor)
 
     Test(functor_constraint)
     {
-        // functor_constraint( std::vector<std::string>{} );
-        // functor_constraint( std::deque<std::string>{} );
+        functor_constraint( std::vector<std::string>{} );
+        functor_constraint( std::deque<std::string>{} );
+        functor_constraint( std::list<std::string>  { "one", "two", "three" });
+        functor_constraint( std::forward_list<std::string>  { "one", "two", "three" });
+        functor_constraint( std::make_shared<std::string>( "one" ));
+        functor_constraint( std::make_unique<std::string>( "one" ));
+        functor_constraint( std::experimental::make_optional<std::string>( "one" ));
 
-        // functor_constraint( std::list<std::string>  { "one", "two", "three" });
-        // functor_constraint( std::forward_list<std::string>  { "one", "two", "three" });
-        // functor_constraint( std::make_shared<std::string>( "one" ));
-        // functor_constraint( std::make_unique<std::string>( "one" ));
-        // functor_constraint( std::experimental::make_optional<std::string>( "one" ));
-
-        // functor_constraint( my::functor<int>{ 42 });
+        functor_constraint( std::map<std::string, int>{} );
+        functor_constraint( std::unordered_map<std::string, int>{} );
     }
 
 }

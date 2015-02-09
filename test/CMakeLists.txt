@@ -5,5 +5,5 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -Wextra -std=c++1y")
 include_directories(inc)
 include_directories(../include)
 
-add_executable(test-functor src/functor.cpp)
+add_executable(test-functor src/test-functor.cpp)
 # add_executable(applicative applicative.cpp)
