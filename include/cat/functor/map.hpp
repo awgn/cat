@@ -56,5 +56,29 @@ namespace cat
         }
     };
 
+    // multimap is a functor:
+    //
+
+    template <> struct is_functor<std::multimap> : std::true_type { };
+
+    // multimap instance:
+    //
+
+    template <typename Fun, typename K, typename A, typename Compare, typename Alloc>
+    struct FunctorInstance<std::multimap, Fun, K, A, Compare, Alloc> : Functor<std::multimap>::Class1<Fun, K, A, Compare, Alloc>
+    {
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+
+        std::multimap<K, B, Compare, rebind_t<Alloc, std::pair<const K, B>>>
+        fmap(Fun f, std::multimap<K, A, Compare, Alloc> const &xs) final
+        {
+            std::multimap<K, B, Compare, rebind_t<Alloc, std::pair<const K, B>> > out;
+
+            for(auto & x : xs)
+                out.insert(std::make_pair(x.first, f(x.second)));
+
+            return out;
+        }
+    };
 } // namespace cat
 

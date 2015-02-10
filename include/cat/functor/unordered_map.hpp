@@ -56,5 +56,29 @@ namespace cat
         }
     };
 
+    // unordered_multimap is a functor:
+    //
+
+    template <> struct is_functor<std::unordered_multimap> : std::true_type { };
+
+    // unordered_multimap instance:
+    //
+
+    template <typename Fun, typename K, typename A, typename Hash, typename Comp, typename Alloc>
+    struct FunctorInstance<std::unordered_multimap, Fun, K, A, Hash, Comp, Alloc> : Functor<std::unordered_multimap>::Class1<Fun, K, A, Hash, Comp, Alloc>
+    {
+        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+
+        std::unordered_multimap<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>>>
+        fmap(Fun f, std::unordered_multimap<K, A, Hash, Comp, Alloc> const &xs) final
+        {
+            std::unordered_multimap<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>> > out;
+
+            for(auto & x : xs)
+                out.insert(std::make_pair(x.first, f(x.second)));
+
+            return out;
+        }
+    };
 } // namespace cat
 
