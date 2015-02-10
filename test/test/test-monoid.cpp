@@ -63,6 +63,19 @@ Context(monoid)
     }
 
 
+    Test(monoid_map)
+    {
+        Assert((mempty<std::map<int,std::string>>().empty()));
+
+        auto m1 = std::map<int, std::string>{ {0, "zero"} };
+        auto m2 = std::map<int, std::string>{ {1, "one"} };
+
+        auto m3 = mappend(m1, m2);
+
+        Assert((m3 == std::map<int, std::string>{ {0, "zero"}, {1, "one"} } ));
+    }
+
+
     Test(monoid_Any)
     {
         Assert( mempty<Any>() == Any{ false });

@@ -26,9 +26,29 @@
 
 #pragma once
 
-#include <cat/monoid/vector.hpp>
-#include <cat/monoid/deque.hpp>
-#include <cat/monoid/list.hpp>
-#include <cat/monoid/map.hpp>
-#include <cat/monoid/forward_list.hpp>
-#include <cat/monoid/other.hpp>
+#include <map>
+#include <algorithm>
+
+#include <cat/monoid/monoid.hpp>
+
+namespace cat
+{
+    template <typename K, typename V>
+    struct is_monoid<std::map<K,V>> : std::true_type { };
+
+    template <typename K, typename V, template <typename ...> class F>
+    struct MonoidInstance<std::map<K,V>, F> : Monoid<std::map<K,V>>::template Class<F>
+    {
+        virtual std::map<K,V> mempty() final
+        {
+            return std::map<K,V>{};
+        }
+
+        virtual std::map<K,V> mappend(std::map<K,V> const &a, std::map<K,V> const &b) final
+        {
+            auto ret = a;
+            ret.insert(std::begin(b), std::end(b));
+            return ret;
+        }
+    };
+};
