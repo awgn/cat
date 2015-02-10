@@ -27,7 +27,6 @@
 #pragma once
 
 #include <forward_list>
-
 #include <cat/functor/functor.hpp>
 
 

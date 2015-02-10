@@ -27,8 +27,6 @@
 #pragma once
 
 #include <vector>
-
-#include <cat/functor/vector.hpp>
 #include <cat/applicative/applicative.hpp>
 
 namespace cat

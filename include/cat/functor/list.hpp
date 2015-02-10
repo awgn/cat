@@ -27,7 +27,6 @@
 #pragma once
 
 #include <list>
-
 #include <cat/functor/functor.hpp>
 
 namespace cat

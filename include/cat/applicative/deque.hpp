@@ -27,8 +27,6 @@
 #pragma once
 
 #include <deque>
-
-#include <cat/functor/deque.hpp>
 #include <cat/applicative/applicative.hpp>
 
 namespace cat

@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include <cat/bits/utility.hpp>
 #include <vector>
+#include <cat/bits/utility.hpp>
 
 namespace cat
 {

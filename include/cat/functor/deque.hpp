@@ -27,7 +27,6 @@
 #pragma once
 
 #include <deque>
-
 #include <cat/functor/functor.hpp>
 
 

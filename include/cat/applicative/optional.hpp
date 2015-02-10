@@ -27,8 +27,6 @@
 #pragma once
 
 #include <experimental/optional>
-
-#include <cat/functor/optional.hpp>
 #include <cat/applicative/applicative.hpp>
 
 namespace cat

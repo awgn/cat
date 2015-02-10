@@ -27,8 +27,6 @@
 #pragma once
 
 #include <tuple>
-#include <utility>
-
 #include <cat/functor/functor.hpp>
 
 namespace cat

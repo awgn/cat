@@ -27,8 +27,6 @@
 #pragma once
 
 #include <memory>
-
-#include <cat/functor/shared_ptr.hpp>
 #include <cat/applicative/applicative.hpp>
 
 namespace cat

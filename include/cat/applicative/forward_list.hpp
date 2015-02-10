@@ -27,8 +27,6 @@
 #pragma once
 
 #include <forward_list>
-
-#include <cat/functor/forward_list.hpp>
 #include <cat/applicative/applicative.hpp>
 
 namespace cat
