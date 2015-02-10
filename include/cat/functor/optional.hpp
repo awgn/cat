@@ -19,8 +19,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::experimental::optional<A> const &xs) const
-                -> std::experimental::optional<B> final
+        std::experimental::optional<B>
+        fmap(Fun f, std::experimental::optional<A> const &xs) final
         {
             using type = decltype(f(*xs));
 

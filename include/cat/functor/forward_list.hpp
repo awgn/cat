@@ -20,8 +20,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::forward_list<A, Alloc> const &xs) const
-                -> std::forward_list<B, rebind_t<Alloc, B> > final
+        std::forward_list<B, rebind_t<Alloc, B>>
+        fmap(Fun f, std::forward_list<A, Alloc> const &xs) final
         {
             std::forward_list<B, rebind_t<Alloc, B> > out;
 

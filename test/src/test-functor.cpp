@@ -31,7 +31,7 @@ namespace cat
     struct FunctorInstance<my::functor, Fun, A> : Functor<my::functor>::Class<Fun, A>
     {
         auto fmap(Fun fun, my::functor<A> const &x)
-            const -> my::functor<decltype(fun(std::declval<A>()))> final
+            -> my::functor<decltype(fun(std::declval<A>()))> final
         {
             my::functor< decltype(fun(x.arg)) > out;
             out.arg = fun(x.arg);
@@ -63,6 +63,7 @@ Context(functor)
 
         Assert (y == my::functor<size_t>{ 5 });
     }
+
 
     Test(functor_vector)
     {

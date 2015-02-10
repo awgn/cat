@@ -19,8 +19,8 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto fmap(Fun f, std::shared_ptr<A> const &xs) const
-                -> std::shared_ptr<B> final
+        std::shared_ptr<B>
+        fmap(Fun f, std::shared_ptr<A> const &xs) final
         {
             using type = decltype(f(*xs));
 
