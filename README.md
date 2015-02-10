@@ -1,2 +1,3 @@
-Cat: a C++14 category type library
-==================================
+Cats: a category theory library in C++14
+=========================================
+
