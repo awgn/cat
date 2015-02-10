@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cat/bits/utility.hpp>
+#include <vector>
 
 namespace cat
 {
@@ -14,12 +15,18 @@ namespace cat
         template <template <typename ...> class F>
         struct Class
         {
-            virtual M mempty() const = 0; // identity
-            virtual M mappend(M const &, M const &) const = 0; // identity
-            virtual M mconcat(F<M> const &) const = 0; // identity
+            virtual M mempty() = 0;
+            virtual M mappend(M const &, M const &) = 0;
+
+            virtual M mconcat(F<M> const &xs)
+            {
+                auto r = mempty();
+                for(auto const & x : xs)
+                    r = mappend(r, x);
+                return r;
+            };
         };
     };
-
 
     template <typename M, template <typename ...> class> struct MonoidInstance;
 
@@ -40,7 +47,6 @@ namespace cat
     {
         return MonoidInstance<M, F>{}.mconcat(f);
     }
-
 
     template <typename M>
     struct is_monoid : std::false_type
