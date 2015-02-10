@@ -102,8 +102,7 @@ Context(applicative)
     {
         auto x = pure<std::vector>(42);
 
-        auto fs = std::vector<std::function<int(int)>> { [](int n) { return n+1; },
-                                                         [](int n) { return n*2; }};
+        auto fs = std::vector<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::vector<int>{1,2};
 
         auto ys = fs * xs;
@@ -117,8 +116,7 @@ Context(applicative)
     {
         auto x = pure<std::deque>(42);
 
-        auto fs = std::deque<std::function<int(int)>> { [](int n) { return n+1; },
-                                                         [](int n) { return n*2; }};
+        auto fs = std::deque<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::deque<int>{1,2};
 
         auto ys = fs * xs;
@@ -132,8 +130,7 @@ Context(applicative)
     {
         auto x = pure<std::list>(42);
 
-        auto fs = std::list<std::function<int(int)>> { [](int n) { return n+1; },
-                                                         [](int n) { return n*2; }};
+        auto fs = std::list<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::list<int>{1,2};
 
         auto ys = fs * xs;
@@ -145,8 +142,7 @@ Context(applicative)
 
     Test(forward_list)
     {
-        auto x = pure<std::forward_list>(42);
-
+        auto x  = pure<std::forward_list>(42);
         auto fs = std::forward_list<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::forward_list<int>{1,2};
 
@@ -193,7 +189,6 @@ Context(applicative)
         auto x  = std::make_unique<int>(41);
         auto x_ = std::unique_ptr<int>{};
 
-
         auto y1 = f  * x;
         auto y2 = f_ * x;
         auto y3 = f  * x_;
@@ -220,7 +215,6 @@ Context(applicative)
 
         auto x  = std::experimental::make_optional<int>(41);
         auto x_ = std::experimental::optional<int>();
-
 
         auto y1 = f  * x;
         auto y2 = f_ * x;
