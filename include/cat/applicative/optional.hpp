@@ -30,7 +30,7 @@ namespace cat
         apply(std::experimental::optional<Fun> const &f, std::experimental::optional<A> const &x) final
         {
             if (f && x)
-                return std::experimental::make_optional<B>((*f)(*x));
+                return std::experimental::make_optional((*f)(*x));
 
             return std::experimental::optional<B>();
         }

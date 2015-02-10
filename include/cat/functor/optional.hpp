@@ -25,7 +25,7 @@ namespace cat
             using type = decltype(f(*xs));
 
             if (xs)
-                return std::experimental::make_optional<type>(f(*xs));
+                return std::experimental::make_optional(f(*xs));
 
             return std::experimental::optional<type>();
         }
