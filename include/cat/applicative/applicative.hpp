@@ -13,11 +13,12 @@ namespace cat
     template <template <typename...> class F>
     struct Applicative
     {
-        template <typename Fun, typename A>
+        template <typename Fun, typename A, typename ...Ts>
         struct Class
         {
-            virtual auto pure(A const &) const -> F<A> = 0; // lift a value.
-            virtual auto apply(F<Fun> const &, F<A> const &) const -> F<decltype(std::declval<Fun>()(std::declval<A>()))> = 0;
+            virtual auto pure(A const &) -> F<A, Ts...> = 0; // lift a value.
+            virtual auto apply(F<Fun> const &, F<A, Ts...> const &) -> F<decltype(std::declval<Fun>()(std::declval<A>()))>
+            { throw nullptr; }
         };
     };
 
@@ -30,12 +31,18 @@ namespace cat
         return ApplicativeInstance<F, Id, A>{}.pure(value);
     }
 
-    template <template <typename ...> class F, typename Fun, typename A>
-    auto apply(F<Fun> const &fs, F<A> const &xs)
+    template <template <typename ...> class F, typename Fun, typename A, typename ...Ts>
+    auto apply(F<Fun> const &fs, F<A, Ts...> const &xs)
     {
-        return ApplicativeInstance<F, Fun, A>{}.apply(fs, xs);
+        return ApplicativeInstance<F, Fun, A, Ts...>{}.apply(fs, xs);
     }
 
+
+    template <template <typename ...> class F, typename Fun, typename A, typename ...Ts>
+    auto operator*(F<Fun> const &fs, F<A, Ts...> const &xs)
+    {
+        return apply(fs, xs);
+    }
 
     template <template <typename ...> class A>
     struct is_applicative : std::false_type

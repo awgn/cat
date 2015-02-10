@@ -15,17 +15,19 @@ namespace cat
     // forward_list instance:
     //
 
-    template <typename Fun, typename A>
-    struct ApplicativeInstance<std::forward_list, Fun, A> : Applicative<std::forward_list>::Class<Fun, A>
+    template <typename Fun, typename A, typename ...Ts>
+    struct ApplicativeInstance<std::forward_list, Fun, A, Ts...> : Applicative<std::forward_list>::Class<Fun, A, Ts...>
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto pure(A const &elem) const -> std::forward_list<A> final
+        std::forward_list<A>
+        pure(A const &elem) final
         {
             return std::forward_list<A>{ elem };
         }
 
-        auto apply(std::forward_list<Fun> const &fs, std::forward_list<A> const &xs) const -> std::forward_list<B> final
+        std::forward_list<B>
+        apply(std::forward_list<Fun> const &fs, std::forward_list<A> const &xs) final
         {
             std::forward_list<B> out;
 

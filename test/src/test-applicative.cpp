@@ -17,30 +17,37 @@ namespace my
         T arg;
     };
 
-    // template <typename A, typename Fun >
-    // auto fmap(Fun fun, my::applicative<A> const &x)
-    // {
-    //     applicative< decltype(fun(x.arg)) > out;
-    //     out.arg = fun(x.arg);
-    //     return out;
-    // }
+    template <typename A, typename Fun >
+    auto fmap(Fun fun, my::applicative<A> const &x)
+    {
+        applicative< decltype(fun(x.arg)) > out;
+        out.arg = fun(x.arg);
+        return out;
+    }
 
-    // template <typename A>
-    // auto pure(A const &elem, tag<my::applicative>)
-    // {
-    //     return my::applicative<A>{ elem };
-    // }
+    template <typename A>
+    auto pure(A const &elem)
+    {
+        return my::applicative<A>{ elem };
+    }
 
 
-    // template <typename Fun, typename A>
-    // auto apply(my::applicative<Fun> const &fs, my::applicative<A> const &xs)
-    // {
-    //     applicative< decltype(fs.arg(xs.arg)) > out;
-    //     out.arg = fs.arg(xs.arg);
-    //     return out;
-    // }
+    template <typename Fun, typename A>
+    auto apply(my::applicative<Fun> const &fs, my::applicative<A> const &xs)
+    {
+        applicative< decltype(fs.arg(xs.arg)) > out;
+        out.arg = fs.arg(xs.arg);
+        return out;
+    }
 
 }
+
+
+namespace cat
+{
+    template <> struct is_applicative<my::applicative> : std::true_type { };
+}
+
 // Tests:
 //
 
@@ -49,29 +56,31 @@ Context(applicative)
     template <template <typename...> class F, typename T>
     void applicative_constraint(F<T> const &)
     {
-        static_assert(ApplicativeInstance<F>(), "F: not a applicative!");
+        static_assert(is_applicative<F>(), "F: not a applicative!");
     }
 
-    // Test(applicative_constraint)
-    // {
-    //     applicative_constraint( std::vector<std::string>{ "one", "two", "three" });
-    //     applicative_constraint( std::list<std::string>  { "one", "two", "three" });
-    //     applicative_constraint( std::deque<std::string>  { "one", "two", "three" });
-    //     applicative_constraint( std::forward_list<std::string>  { "one", "two", "three" });
-    //     applicative_constraint( std::make_shared<std::string>( "one" ));
-    //     applicative_constraint( std::make_unique<std::string>( "one" ));
-    //     applicative_constraint( my::applicative<std::string>  { "one" });
-    // }
+
+    Test(applicative_constraint)
+    {
+        applicative_constraint( std::vector<std::string>{ "one", "two", "three" });
+        applicative_constraint( std::list<std::string>  { "one", "two", "three" });
+        applicative_constraint( std::deque<std::string>  { "one", "two", "three" });
+        applicative_constraint( std::forward_list<std::string>  { "one", "two", "three" });
+        applicative_constraint( std::make_shared<std::string>( "one" ));
+        applicative_constraint( std::make_unique<std::string>( "one" ));
+        applicative_constraint( my::applicative<std::string>  { "one" });
+    }
+
 
     Test(simple)
     {
         auto f = pure<std::vector>(std::function<int(int)>([](int n) { return n+1; }));
         auto x = pure<std::vector>(10);
 
-        auto y = apply(f, x);
-
+        auto y = f * x;
         Assert(x, is_equal_to(std::vector<int>{10}));
     }
+
 
     Test(apply)
     {
@@ -82,7 +91,7 @@ Context(applicative)
 
         auto xs = std::vector<int>{1,2};
 
-        auto ys = apply(fs, xs);
+        auto ys = fs * xs;
 
         Assert(ys, is_equal_to(std::vector<int>{2,3,2,4}));
 
@@ -97,7 +106,7 @@ Context(applicative)
                                                          [](int n) { return n*2; }};
         auto xs = std::vector<int>{1,2};
 
-        auto ys = apply(fs, xs);
+        auto ys = fs * xs;
 
         Assert(x,  is_equal_to(std::vector<int>{42}));
         Assert(ys, is_equal_to(std::vector<int>{2,3,2,4}));
@@ -112,7 +121,7 @@ Context(applicative)
                                                          [](int n) { return n*2; }};
         auto xs = std::deque<int>{1,2};
 
-        auto ys = apply(fs, xs);
+        auto ys = fs * xs;
 
         Assert(x,  is_equal_to(std::deque<int>{42}));
         Assert(ys, is_equal_to(std::deque<int>{2,3,2,4}));
@@ -127,7 +136,7 @@ Context(applicative)
                                                          [](int n) { return n*2; }};
         auto xs = std::list<int>{1,2};
 
-        auto ys = apply(fs, xs);
+        auto ys = fs * xs;
 
         Assert(x,  is_equal_to(std::list<int>{42}));
         Assert(ys, is_equal_to(std::list<int>{2,3,2,4}));
@@ -141,7 +150,7 @@ Context(applicative)
         auto fs = std::forward_list<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::forward_list<int>{1,2};
 
-        auto ys = apply(fs, xs);
+        auto ys = fs * xs;
 
         Assert(x,  is_equal_to(std::forward_list<int>{42}));
         Assert(ys, is_equal_to(std::forward_list<int>{2,3,2,4}));
@@ -159,10 +168,10 @@ Context(applicative)
         auto x_ = std::shared_ptr<int>();
 
 
-        auto y1 = apply(f, x);
-        auto y2 = apply(f_, x);
-        auto y3 = apply(f, x_);
-        auto y4 = apply(f_, x_);
+        auto y1 = f  * x;
+        auto y2 = f_ * x;
+        auto y3 = f  * x_;
+        auto y4 = f_ * x_;
 
         Assert(z.get() != nullptr);
         Assert(y1.get() != nullptr);
@@ -178,19 +187,17 @@ Context(applicative)
 
     Test(unique_ptr)
     {
-        auto z = pure<std::unique_ptr>(42);
-
+        auto z  = pure<std::unique_ptr>(42);
         auto f  = std::make_unique<std::function<int(int)>> ([](int n) { return n+1; });
         auto f_ = std::unique_ptr<std::function<int(int)>>();
-
         auto x  = std::make_unique<int>(41);
-        auto x_ = std::unique_ptr<int>();
+        auto x_ = std::unique_ptr<int>{};
 
 
-        auto y1 = apply(f, x);
-        auto y2 = apply(f_, x);
-        auto y3 = apply(f, x_);
-        auto y4 = apply(f_, x_);
+        auto y1 = f  * x;
+        auto y2 = f_ * x;
+        auto y3 = f  * x_;
+        auto y4 = f_ * x_;
 
         Assert(z.get() != nullptr);
         Assert(y1.get() != nullptr);
@@ -215,10 +222,10 @@ Context(applicative)
         auto x_ = std::experimental::optional<int>();
 
 
-        auto y1 = apply(f, x);
-        auto y2 = apply(f_, x);
-        auto y3 = apply(f, x_);
-        auto y4 = apply(f_, x_);
+        auto y1 = f  * x;
+        auto y2 = f_ * x;
+        auto y3 = f  * x_;
+        auto y4 = f_ * x_;
 
         Assert(static_cast<bool>(z));
         Assert(static_cast<bool>(y1));

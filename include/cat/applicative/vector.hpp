@@ -15,17 +15,19 @@ namespace cat
     // vector instance:
     //
 
-    template <typename Fun, typename A>
-    struct ApplicativeInstance<std::vector, Fun, A> : Applicative<std::vector>::Class<Fun, A>
+    template <typename Fun, typename A, typename ...Ts>
+    struct ApplicativeInstance<std::vector, Fun, A, Ts...> : Applicative<std::vector>::Class<Fun, A, Ts...>
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto pure(A const &elem) const -> std::vector<A> final
+        std::vector<A>
+        pure(A const &elem) final
         {
             return std::vector<A>{ elem };
         }
 
-        auto apply(std::vector<Fun> const &fs, std::vector<A> const &xs) const -> std::vector<B> final
+        std::vector<B>
+        apply(std::vector<Fun> const &fs, std::vector<A, Ts...> const &xs) final
         {
             std::vector<B> out;
             out.reserve(fs.size() * xs.size());

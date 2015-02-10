@@ -15,18 +15,19 @@ namespace cat
     // unique_ptr instance:
     //
 
-    template <typename Fun, typename A>
-    struct ApplicativeInstance<std::unique_ptr, Fun, A> : Applicative<std::unique_ptr>::Class<Fun, A>
+    template <typename Fun, typename A, typename ...Ts>
+    struct ApplicativeInstance<std::unique_ptr, Fun, A, Ts...> : Applicative<std::unique_ptr>::Class<Fun, A, Ts...>
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto pure(A const &elem) const -> std::unique_ptr<A> final
+        std::unique_ptr<A>
+        pure(A const &elem) final
         {
             return std::make_unique<A>(elem);
         }
 
-        auto apply(std::unique_ptr<Fun> const &f, std::unique_ptr<A> const &x) const
-                -> std::unique_ptr<B> final
+        std::unique_ptr<B>
+        apply(std::unique_ptr<Fun> const &f, std::unique_ptr<A, Ts...> const &x) final
         {
             if (f && x)
                 return std::make_unique<B>((*f)(*x));

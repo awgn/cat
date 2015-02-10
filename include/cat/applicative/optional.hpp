@@ -15,18 +15,19 @@ namespace cat
     // experimental::optional instance:
     //
 
-    template <typename Fun, typename A>
-    struct ApplicativeInstance<std::experimental::optional, Fun, A> : Applicative<std::experimental::optional>::Class<Fun, A>
+    template <typename Fun, typename A, typename ...Ts>
+    struct ApplicativeInstance<std::experimental::optional, Fun, A, Ts...> : Applicative<std::experimental::optional>::Class<Fun, A, Ts...>
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto pure(A const &elem) const -> std::experimental::optional<A> final
+        std::experimental::optional<A>
+        pure(A const &elem)
         {
             return std::experimental::make_optional(elem);
         }
 
-        auto apply(std::experimental::optional<Fun> const &f, std::experimental::optional<A> const &x) const
-                -> std::experimental::optional<B> final
+        std::experimental::optional<B>
+        apply(std::experimental::optional<Fun> const &f, std::experimental::optional<A> const &x) final
         {
             if (f && x)
                 return std::experimental::make_optional<B>((*f)(*x));

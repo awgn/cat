@@ -15,17 +15,19 @@ namespace cat
     // deque instance:
     //
 
-    template <typename Fun, typename A>
-    struct ApplicativeInstance<std::deque, Fun, A> : Applicative<std::deque>::Class<Fun, A>
+    template <typename Fun, typename A, typename ...Ts>
+    struct ApplicativeInstance<std::deque, Fun, A, Ts...> : Applicative<std::deque>::Class<Fun, A, Ts...>
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
-        auto pure(A const &elem) const -> std::deque<A> final
+        std::deque<A>
+        pure(A const &elem) final
         {
             return std::deque<A>{ elem };
         }
 
-        auto apply(std::deque<Fun> const &fs, std::deque<A> const &xs) const -> std::deque<B> final
+        std::deque<B>
+        apply(std::deque<Fun> const &fs, std::deque<A, Ts...> const &xs) final
         {
             std::deque<B> out;
 
