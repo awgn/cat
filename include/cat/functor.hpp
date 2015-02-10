@@ -9,4 +9,5 @@
 #include <cat/functor/optional.hpp>
 #include <cat/functor/map.hpp>
 #include <cat/functor/unordered_map.hpp>
+#include <cat/functor/pair.hpp>
 

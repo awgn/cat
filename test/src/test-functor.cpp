@@ -170,6 +170,16 @@ Context(functor)
     }
 
 
+    Test(functor_pair)
+    {
+        auto p = std::make_pair(std::string("one"), std::string("two"));
+
+        auto r = fmap([](const std::string &s) -> size_t { return s.size(); }, p);
+
+        Assert(r, is_equal_to(std::pair<std::string, size_t>{"one", 3}));
+    }
+
+
     Test(functor_constraint)
     {
         functor_constraint( std::vector<std::string>{} );
