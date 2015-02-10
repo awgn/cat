@@ -160,6 +160,16 @@ Context(functor)
     }
 
 
+    Test(functor_multimap)
+    {
+        std::multimap<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
+
+        auto r = fmap([](const std::string &s) { return s.size(); }, m);
+
+        Assert(r, is_equal_to(std::multimap<int,size_t>{{1,3}, {2,3}, {3,5}}));
+    }
+
+
     Test(functor_unordered_map)
     {
         std::unordered_map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
@@ -167,6 +177,15 @@ Context(functor)
         auto r = fmap([](const std::string &s) { return s.size(); }, m);
 
         Assert(r, is_equal_to(std::unordered_map<int,size_t>{{1,3}, {2,3}, {3,5}}));
+    }
+
+    Test(functor_unordered_multimap)
+    {
+        std::unordered_multimap<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
+
+        auto r = fmap([](const std::string &s) { return s.size(); }, m);
+
+        Assert(r, is_equal_to(std::unordered_multimap<int,size_t>{{1,3}, {2,3}, {3,5}}));
     }
 
 
@@ -191,6 +210,8 @@ Context(functor)
         functor_constraint( std::experimental::make_optional<std::string>( "one" ));
         functor_constraint( std::map<std::string, int>{} );
         functor_constraint( std::unordered_map<std::string, int>{} );
+        functor_constraint( std::multimap<std::string, int>{} );
+        functor_constraint( std::unordered_multimap<std::string, int>{} );
     }
 
 }

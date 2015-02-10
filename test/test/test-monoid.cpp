@@ -8,7 +8,7 @@ using namespace cat;
 
 Context(monoid)
 {
-    Test(vector)
+    Test(monoid_vector)
     {
         Assert( mempty<std::vector<int>>() == std::vector<int>{} );
 
@@ -24,7 +24,7 @@ Context(monoid)
     }
 
 
-    Test(list)
+    Test(monoid_list)
     {
         Assert( mempty<std::list<int>>() == std::list<int>{} );
 
@@ -37,7 +37,7 @@ Context(monoid)
     }
 
 
-    Test(forward_list)
+    Test(monoid_forward_list)
     {
         Assert( mempty<std::forward_list<int>>() == std::forward_list<int>{} );
 
@@ -50,7 +50,7 @@ Context(monoid)
     }
 
 
-    Test(deque)
+    Test(monoid_deque)
     {
         Assert( mempty<std::deque<int>>() == std::deque<int>{} );
 
@@ -63,7 +63,7 @@ Context(monoid)
     }
 
 
-    Test(Any)
+    Test(monoid_Any)
     {
         Assert( mempty<Any>() == Any{ false });
         Assert( !mempty<Any>() );
@@ -76,7 +76,7 @@ Context(monoid)
     }
 
 
-    Test(All)
+    Test(monoid_All)
     {
         Assert( mempty<All>() == All{ true });
         Assert( static_cast<bool>(mempty<All>()) );
@@ -90,14 +90,14 @@ Context(monoid)
     }
 
 
-    Test(Sum)
+    Test(monoid_Sum)
     {
         Assert(mempty<Sum<int>>().value == 0);
         Assert((mappend(sum(1), sum(2)).value == 3));
         Assert((mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6));
     }
 
-    Test(Product)
+    Test(monoid_Product)
     {
         Assert(mempty<Product<int>>().value == 1);
         Assert((mappend(product(1), product(2)).value == 2));

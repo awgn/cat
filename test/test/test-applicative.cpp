@@ -72,7 +72,7 @@ Context(applicative)
     }
 
 
-    Test(simple)
+    Test(applicative_simple)
     {
         auto f = pure<std::vector>(std::function<int(int)>([](int n) { return n+1; }));
         auto x = pure<std::vector>(10);
@@ -82,7 +82,7 @@ Context(applicative)
     }
 
 
-    Test(apply)
+    Test(applicative_apply)
     {
         auto fs = std::vector<std::function<int(int)>>
                         { [](int n) { return n+1; },
@@ -98,7 +98,7 @@ Context(applicative)
     }
 
 
-    Test(vector)
+    Test(applicative_vector)
     {
         auto x = pure<std::vector>(42);
 
@@ -112,7 +112,7 @@ Context(applicative)
     }
 
 
-    Test(deque)
+    Test(applicative_deque)
     {
         auto x = pure<std::deque>(42);
 
@@ -126,7 +126,7 @@ Context(applicative)
     }
 
 
-    Test(list)
+    Test(applicative_list)
     {
         auto x = pure<std::list>(42);
 
@@ -140,7 +140,7 @@ Context(applicative)
     }
 
 
-    Test(forward_list)
+    Test(applicative_forward_list)
     {
         auto x  = pure<std::forward_list>(42);
         auto fs = std::forward_list<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
@@ -153,7 +153,7 @@ Context(applicative)
     }
 
 
-    Test(shared_ptr)
+    Test(applicative_shared_ptr)
     {
         auto z = pure<std::shared_ptr>(42);
 
@@ -181,7 +181,7 @@ Context(applicative)
     }
 
 
-    Test(unique_ptr)
+    Test(applicative_unique_ptr)
     {
         auto z  = pure<std::unique_ptr>(42);
         auto f  = std::make_unique<std::function<int(int)>> ([](int n) { return n+1; });
@@ -206,7 +206,7 @@ Context(applicative)
     }
 
 
-    Test(optional)
+    Test(applicative_optional)
     {
         auto z  = pure<std::experimental::optional>(42);
 
