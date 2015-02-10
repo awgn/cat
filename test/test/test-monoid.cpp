@@ -23,6 +23,13 @@ Context(monoid)
 
     }
 
+    Test(monoid_string)
+    {
+        Assert( mempty<std::string>().empty() );
+        Assert ((mappend(mappend(std::string{"1"}, std::string{"2"}), std::string{"3"}) == "123"));
+        Assert (mconcat(std::vector<std::string>{"1", "2","3"}) == "123");
+    }
+
 
     Test(monoid_list)
     {

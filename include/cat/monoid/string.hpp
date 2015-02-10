@@ -26,10 +26,25 @@
 
 #pragma once
 
-#include <cat/monoid/vector.hpp>
-#include <cat/monoid/deque.hpp>
-#include <cat/monoid/list.hpp>
-#include <cat/monoid/map.hpp>
-#include <cat/monoid/forward_list.hpp>
-#include <cat/monoid/other.hpp>
-#include <cat/monoid/string.hpp>
+#include <vector>
+#include <cat/monoid/monoid.hpp>
+
+namespace cat
+{
+    template <>
+    struct is_monoid<std::string> : std::true_type { };
+
+    template <template <typename ...> class F>
+    struct MonoidInstance<std::string, F> : Monoid<std::string>::template Class<F>
+    {
+        virtual std::string mempty() final
+        {
+            return std::string{};
+        }
+
+        virtual std::string mappend(std::string const &a, std::string const &b) final
+        {
+            return a + b;
+        }
+    };
+};
