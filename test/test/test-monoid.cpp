@@ -3,7 +3,6 @@
 
 #include <list>
 
-
 using namespace yats;
 using namespace cat;
 
@@ -91,22 +90,21 @@ Context(monoid)
     }
 
 
-    // Test(optional)
-    // {
-    //     auto x = std::experimental::make_optional<std::string>("one");
-    //     auto y = std::experimental::optional<std::string>();
+    Test(Sum)
+    {
+        Assert(mempty<Sum<int>>().value == 0);
+        Assert((mappend(sum(1), sum(2)).value == 3));
+        Assert((mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6));
+    }
 
-    //     auto r1 = fmap([](const std::string &s) { return s.size(); }, x);
-    //     auto r2 = fmap([](const std::string &s) { return s.size(); }, y);
-
-    //     Assert(static_cast<bool>(r1) == true);
-    //     Assert(static_cast<bool>(r2) == false);
-
-    //     Assert(r1.value(), is_equal_to(3));
-    // }
+    Test(Product)
+    {
+        Assert(mempty<Product<int>>().value == 1);
+        Assert((mappend(product(1), product(2)).value == 2));
+        Assert((mconcat( std::vector<Product<int>>{ product(1), product(2), product(3) }).value == 6));
+    }
 
 }
-
 
 int
 main(int argc, char*  argv[])
