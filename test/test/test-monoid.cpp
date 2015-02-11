@@ -13,20 +13,20 @@ Context(monoid)
         Assert( mempty<std::vector<int>>() == std::vector<int>{} );
 
         auto app = mappend(std::vector<int> {1}, std::vector<int>{2}) ;
-        Assert ((app == std::vector<int>{1, 2}));
+        Assert (app == std::vector<int>{1, 2});
 
         auto l = std::list<std::vector<int>>{ std::vector<int>{}, std::vector<int>{1}, std::vector<int>{2, 3} };
 
         auto x = mconcat(l);
 
-        Assert((x == std::vector<int>{1,2,3}));
+        Assert(x == std::vector<int>{1,2,3});
 
     }
 
     Test(monoid_string)
     {
         Assert( mempty<std::string>().empty() );
-        Assert ((mappend(mappend(std::string{"1"}, std::string{"2"}), std::string{"3"}) == "123"));
+        Assert (mappend(mappend(std::string{"1"}, std::string{"2"}), std::string{"3"}) == "123");
         Assert (mconcat(std::vector<std::string>{"1", "2","3"}) == "123");
     }
 
@@ -36,11 +36,11 @@ Context(monoid)
         Assert( mempty<std::list<int>>() == std::list<int>{} );
 
         auto app = mappend(std::list<int> {1}, std::list<int>{2}) ;
-        Assert ((app == std::list<int>{1, 2}));
+        Assert (app == std::list<int>{1, 2});
 
         auto l = std::list<std::list<int>>{ std::list<int>{}, std::list<int>{1}, std::list<int>{2, 3} };
 
-        Assert ((mconcat(l) == std::list<int>{1,2,3}));
+        Assert (mconcat(l) == std::list<int>{1,2,3});
     }
 
 
@@ -49,11 +49,11 @@ Context(monoid)
         Assert( mempty<std::forward_list<int>>() == std::forward_list<int>{} );
 
         auto app = mappend(std::forward_list<int> {1}, std::forward_list<int>{2}) ;
-        Assert ((app == std::forward_list<int>{1, 2}));
+        Assert (app == std::forward_list<int>{1, 2});
 
         auto l = std::forward_list<std::forward_list<int>>{ std::forward_list<int>{}, std::forward_list<int>{1, 2}, std::forward_list<int>{3, 4, 5} };
 
-        Assert ((mconcat(l) == std::forward_list<int>{1,2,3,4,5}));
+        Assert (mconcat(l) == std::forward_list<int>{1,2,3,4,5});
     }
 
 
@@ -62,24 +62,24 @@ Context(monoid)
         Assert( mempty<std::deque<int>>() == std::deque<int>{} );
 
         auto app = mappend(std::deque<int> {1}, std::deque<int>{2}) ;
-        Assert ((app == std::deque<int>{1, 2}));
+        Assert (app == std::deque<int>{1, 2});
 
         auto l = std::deque<std::deque<int>>{ std::deque<int>{}, std::deque<int>{1}, std::deque<int>{2, 3} };
 
-        Assert ((mconcat(l) == std::deque<int>{1,2,3}));
+        Assert (mconcat(l) == std::deque<int>{1,2,3});
     }
 
 
     Test(monoid_map)
     {
-        Assert((mempty<std::map<int,std::string>>().empty()));
+        Assert(mempty<std::map<int,std::string>>().empty());
 
         auto m1 = std::map<int, std::string>{ {0, "zero"} };
         auto m2 = std::map<int, std::string>{ {1, "one"} };
 
         auto m3 = mappend(m1, m2);
 
-        Assert((m3 == std::map<int, std::string>{ {0, "zero"}, {1, "one"} } ));
+        Assert(m3 == std::map<int, std::string>{ {0, "zero"}, {1, "one"} } );
     }
 
 
@@ -91,8 +91,8 @@ Context(monoid)
         Assert( static_cast<bool>(mappend(Any{false}, Any{true})) );
         Assert( static_cast<bool>(mappend(Any{false}, Any{true})) );
 
-        Assert((  static_cast<bool>(mconcat( std::vector<Any>{ Any{true}, Any{false}, Any{false} })) ));
-        Assert(( !static_cast<bool>(mconcat( std::vector<Any>{ Any{false}, Any{false}, Any{false} })) ));
+        Assert(  static_cast<bool>(mconcat( std::vector<Any>{ Any{true}, Any{false}, Any{false} })) );
+        Assert( !static_cast<bool>(mconcat( std::vector<Any>{ Any{false}, Any{false}, Any{false} })) );
     }
 
 
@@ -105,16 +105,16 @@ Context(monoid)
         Assert( !static_cast<bool>(mappend(All{false}, All{true})) );
         Assert( static_cast<bool>(mappend(All{true}, All{true})) );
 
-        Assert(( !static_cast<bool>(mconcat( std::vector<All>{ All{true}, All{false}, All{false} })) ));
-        Assert((  static_cast<bool>(mconcat( std::vector<All>{ All{true}, All{true}, All{true} })) ));
+        Assert( !static_cast<bool>(mconcat( std::vector<All>{ All{true}, All{false}, All{false} })) );
+        Assert(  static_cast<bool>(mconcat( std::vector<All>{ All{true}, All{true}, All{true} })) );
     }
 
 
     Test(monoid_Sum)
     {
         Assert(mempty<Sum<int>>().value == 0);
-        Assert((mappend(sum(1), sum(2)).value == 3));
-        Assert((mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6));
+        Assert(mappend(sum(1), sum(2)).value == 3);
+        Assert(mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6);
     }
 
 
@@ -125,17 +125,17 @@ Context(monoid)
 
         Assert(mempty<std::experimental::optional<Any>>() == std::experimental::optional<Any>());
 
-        Assert((mappend(std::experimental::make_optional(a), std::experimental::optional<Any>()) == a));
-        Assert((mappend(std::experimental::optional<Any>(),  std::experimental::make_optional(b)) == b));
-        Assert((mappend(std::experimental::make_optional(a), std::experimental::make_optional(b)) == mappend(a,b)));
+        Assert(mappend(std::experimental::make_optional(a), std::experimental::optional<Any>()) == a);
+        Assert(mappend(std::experimental::optional<Any>(),  std::experimental::make_optional(b)) == b);
+        Assert(mappend(std::experimental::make_optional(a), std::experimental::make_optional(b)) == mappend(a,b));
     }
 
 
     Test(monoid_Product)
     {
         Assert(mempty<Product<int>>().value == 1);
-        Assert((mappend(product(1), product(2)).value == 2));
-        Assert((mconcat( std::vector<Product<int>>{ product(1), product(2), product(3) }).value == 6));
+        Assert(mappend(product(1), product(2)).value == 2);
+        Assert(mconcat( std::vector<Product<int>>{ product(1), product(2), product(3) }).value == 6);
     }
 
 }
