@@ -117,6 +117,20 @@ Context(monoid)
         Assert((mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6));
     }
 
+
+    Test(monoid_optional)
+    {
+        auto a = Any{ true };
+        auto b = Any{ false };
+
+        Assert(mempty<std::experimental::optional<Any>>() == std::experimental::optional<Any>());
+
+        Assert((mappend(std::experimental::make_optional(a), std::experimental::optional<Any>()) == a));
+        Assert((mappend(std::experimental::optional<Any>(),  std::experimental::make_optional(b)) == b));
+        Assert((mappend(std::experimental::make_optional(a), std::experimental::make_optional(b)) == mappend(a,b)));
+    }
+
+
     Test(monoid_Product)
     {
         Assert(mempty<Product<int>>().value == 1);

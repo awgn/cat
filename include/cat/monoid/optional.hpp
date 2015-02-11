@@ -26,11 +26,36 @@
 
 #pragma once
 
-#include <cat/monoid/vector.hpp>
-#include <cat/monoid/deque.hpp>
-#include <cat/monoid/list.hpp>
-#include <cat/monoid/map.hpp>
-#include <cat/monoid/forward_list.hpp>
-#include <cat/monoid/string.hpp>
-#include <cat/monoid/optional.hpp>
-#include <cat/monoid/other.hpp>
+#include <experimental/optional>
+#include <cat/monoid/monoid.hpp>
+
+namespace cat
+{
+    template <typename T>
+    struct is_monoid<std::experimental::optional<T>> : std::true_type { };
+
+    template <typename T, template <typename ...> class F>
+    struct MonoidInstance<std::experimental::optional<T>, F>
+        : Monoid<std::experimental::optional<T>>::template Class<F>
+    {
+        static_assert(is_monoid<T>::value, "optional<T>: T must be a monoid");
+
+        virtual std::experimental::optional<T> mempty() final
+        {
+            return std::experimental::optional<T>{};
+        }
+
+        virtual std::experimental::optional<T>
+        mappend(std::experimental::optional<T> const &a,
+                std::experimental::optional<T> const &b) final
+        {
+            if (!a && !b)
+                std::experimental::optional<T>{};
+            if (a  && !b)
+                return a;
+            if (!a && b)
+                return b;
+            return std::experimental::make_optional(cat::mappend(*a, *b));
+        }
+    };
+};
