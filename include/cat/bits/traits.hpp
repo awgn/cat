@@ -87,4 +87,36 @@ namespace cat
     template <typename ...Ts>
     using rebind_t = typename rebind<Ts...>::type;
 
+    //
+    // callable_arity...
+    //
+
+    template <typename T>
+    struct callable_arity : callable_arity<decltype(&T::operator())> { };
+
+    // operator() const
+    template <typename F, typename R, typename ...Ts>
+    struct callable_arity<R(F::*)(Ts...) const>
+    {
+        enum { value = sizeof...(Ts) };
+    };
+    // operator()
+    template <typename F, typename R, typename ...Ts>
+    struct callable_arity<R(F::*)(Ts...)>
+    {
+        enum : size_t { value = sizeof...(Ts) };
+    };
+    // function
+    template <typename R, typename ...Ts>
+    struct callable_arity<R(Ts...)>
+    {
+        enum { value = sizeof...(Ts) };
+    };
+    // function pointer
+    template <typename R, typename ...Ts>
+    struct callable_arity<R(*)(Ts...)>
+    {
+        enum { value = sizeof...(Ts) };
+    };
+
 }
