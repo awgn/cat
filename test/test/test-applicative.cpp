@@ -79,6 +79,7 @@ Context(applicative)
 
         auto y = f * x;
         Assert(x, is_equal_to(std::vector<int>{10}));
+        Assert(y, is_equal_to(std::vector<int>{11}));
     }
 
     Test(applicative_apply)
