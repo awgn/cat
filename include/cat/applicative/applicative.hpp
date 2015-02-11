@@ -63,6 +63,7 @@ namespace cat
         return ApplicativeInstance<F, Fun, A, Ts...>{}.apply(fs, xs);
     }
 
+    //
     // infix adaptors...
     //
 
@@ -85,6 +86,18 @@ namespace cat
 
         infix_adaptor<app> $;
     }
+
+    //
+    // lift...
+    //
+
+    template <template <typename ...> class F, typename Fun, typename A, typename ...Ts>
+    auto liftA(Fun const &f, F<A, Ts...> const &xs)
+    {
+        std::function< decltype(f(std::declval<A>()))(A) > f_(f);
+        return pure<F>(f_) * xs;
+    }
+
 
     template <template <typename ...> class A>
     struct is_applicative : std::false_type
