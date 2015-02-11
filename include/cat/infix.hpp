@@ -36,7 +36,14 @@ namespace cat
     //
 
     template <typename F>
-    struct infix_adaptor { F oper; };
+    struct infix_adaptor
+    {
+        infix_adaptor(F o = F{})
+        : oper(o)
+        {}
+
+        F oper;
+    };
 
     template <typename F>
     inline auto infix(F f)

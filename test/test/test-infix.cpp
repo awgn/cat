@@ -31,8 +31,7 @@ Context(infix)
         Assert ( 1 +s+ 2 == 3 );
         Assert ( 1 -s- 2 == 3 );
 
-        Assert ( 1 <s> 2 == 3 );
-
+        Assert ( (1 <s> 2) == 3 );
         Assert ( (1 &s& 2) == 3 );
         Assert ( (1 ^s^ 2) == 3 );
         Assert ( (1 |s| 2) == 3 );

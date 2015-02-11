@@ -33,11 +33,14 @@ namespace cat
     struct Id
     {
         template <typename T>
-        auto operator()(T &&x) const
+        constexpr auto operator()(T &&x) const
         {
             return std::forward<T>(x);
         }
+
     };
+
+    constexpr Id id = {};
 
 } // namespace cat
 
