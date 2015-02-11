@@ -81,7 +81,6 @@ Context(applicative)
         Assert(x, is_equal_to(std::vector<int>{10}));
     }
 
-
     Test(applicative_apply)
     {
         auto fs = std::vector<std::function<int(int)>>
@@ -90,11 +89,12 @@ Context(applicative)
                         };
 
         auto xs = std::vector<int>{1,2};
-
         auto ys = fs * xs;
 
-        Assert(ys, is_equal_to(std::vector<int>{2,3,2,4}));
+        auto zs = [](int n) { return n+1;} <$> xs;
 
+        Assert(ys, is_equal_to(std::vector<int>{2,3,2,4}));
+        Assert(zs, is_equal_to(std::vector<int>{2,3}));
     }
 
 

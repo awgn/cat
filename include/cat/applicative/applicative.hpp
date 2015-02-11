@@ -28,6 +28,7 @@
 
 #include <utility>
 #include <cat/functor/functor.hpp>
+#include <cat/infix.hpp>
 
 namespace cat
 {
@@ -62,11 +63,27 @@ namespace cat
         return ApplicativeInstance<F, Fun, A, Ts...>{}.apply(fs, xs);
     }
 
+    // infix adaptors...
+    //
 
     template <template <typename ...> class F, typename Fun, typename A, typename ...Ts>
     auto operator*(F<Fun> const &fs, F<A, Ts...> const &xs)
     {
         return apply(fs, xs);
+    }
+
+    namespace
+    {
+        struct app
+        {
+            template <typename L, template <typename ...> class F, typename A>
+            auto operator()(L const &lhs, F<A> const &rhs) const
+            {
+                return apply(F<L>{lhs}, rhs);
+            }
+        };
+
+        infix_adaptor<app> $;
     }
 
     template <template <typename ...> class A>
