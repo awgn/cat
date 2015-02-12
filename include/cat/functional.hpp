@@ -29,6 +29,7 @@
 #include <utility>
 #include <functional>
 
+#include <cat/tuple.hpp>
 #include <cat/bits/traits.hpp>
 
 namespace cat
@@ -50,6 +51,7 @@ namespace cat
 
     constexpr Id id = {};
 
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // make_function
@@ -60,6 +62,80 @@ namespace cat
     {
         return std::function<typename callable_traits<F>::type>(std::forward<F>(f));
     }
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // _callable with partial application
+    //
+
+    template <typename C, size_t N, typename ...Ts>
+    struct _callable
+    {
+        _callable(_callable const &) = default;
+
+        template <typename ...Xs>
+        explicit _callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        : fun_(std::move(fun))
+        , args_(std::move(args))
+        { }
+
+        template <typename ...Xs>
+        auto operator()(Xs && ... xs) const
+        {
+            static_assert(N >= sizeof...(Xs), "Too many argument!");
+            return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
+        }
+
+    private:
+        template <typename ...Xs>
+        auto apply_(std::integral_constant<size_t, 0>, Xs &&...xs) const
+        {
+            return tuple_apply(fun_, std::tuple_cat(args_, std::make_tuple(std::forward<Xs>(xs)...)));
+        }
+
+        template <size_t I, typename ...Xs>
+        auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
+        {
+            return _callable<C, I, Ts..., std::decay_t<Xs>...>
+            (fun_, std::tuple_cat(args_, std::make_tuple(std::forward<Xs>(xs)...)));
+        }
+
+        C fun_;
+        std::tuple<Ts...> args_;
+    };
+
+
+    template <typename C, typename ...Ts>
+    struct _callable<C, 0, Ts...>
+    {
+        _callable(_callable const &) = default;
+
+        template <typename ...Xs>
+        explicit _callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        : fun_(std::move(fun))
+        , args_(std::move(args))
+        { }
+
+        auto operator()() const
+        {
+            return tuple_apply(fun_, args_);
+        }
+
+    private:
+
+        C fun_;
+        std::tuple<Ts...> args_;
+    };
+
+
+    template<typename F>
+    auto callable(F f)
+    {
+        auto fun = make_function(f);
+        return _callable<decltype(fun), callable_traits<F>::arity>(fun);
+    }
+
 
 } // namespace cat
 
