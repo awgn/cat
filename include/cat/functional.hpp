@@ -29,14 +29,14 @@
 #include <utility>
 #include <functional>
 
-#include <cat/tuple.hpp>
-#include <cat/bits/traits.hpp>
+#include <cat/traits.hpp>
+#include <cat/utility/tuple.hpp>
 
 namespace cat
 {
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // Identity callable
+    // identity function
     //
 
     struct Id
@@ -66,7 +66,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // _callable with partial application
+    // _callable with partial application support
     //
 
     template <typename C, size_t N, typename ...Ts>
@@ -97,37 +97,13 @@ namespace cat
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _callable<C, I, Ts..., Xs...>
-            (fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
+            return _callable<C, I, Ts..., Xs...>(
+                        fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         C fun_;
         std::tuple<Ts...> args_;
     };
-
-
-    template <typename C, typename ...Ts>
-    struct _callable<C, 0, Ts...>
-    {
-        _callable(_callable const &) = default;
-
-        template <typename ...Xs>
-        explicit _callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
-        : fun_(std::move(fun))
-        , args_(std::move(args))
-        { }
-
-        auto operator()() const
-        {
-            return tuple_apply(fun_, args_);
-        }
-
-    private:
-
-        C fun_;
-        std::tuple<Ts...> args_;
-    };
-
 
     template<typename F>
     auto callable(F f)
