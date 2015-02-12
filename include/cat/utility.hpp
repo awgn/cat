@@ -28,4 +28,5 @@
 
 #include <cat/utility/infix.hpp>
 #include <cat/utility/curry.hpp>
-#include <cat/utility/functional.hpp>
+#include <cat/utility/type.hpp>
+
