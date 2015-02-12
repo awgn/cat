@@ -27,9 +27,17 @@
 #pragma once
 
 #include <utility>
+#include <functional>
+
+#include <cat/bits/traits.hpp>
 
 namespace cat
 {
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // Identity callable
+    //
+
     struct Id
     {
         template <typename T>
@@ -41,6 +49,17 @@ namespace cat
     };
 
     constexpr Id id = {};
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // make_function
+    //
+
+    template<typename F>
+    auto make_function(F &&f)
+    {
+        return std::function<typename callable_traits<F>::type>(std::forward<F>(f));
+    }
 
 } // namespace cat
 
