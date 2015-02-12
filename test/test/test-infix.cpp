@@ -36,6 +36,24 @@ Context(infix)
         Assert ( (1 ^s^ 2) == 3 );
         Assert ( (1 |s| 2) == 3 );
     }
+
+    int odd(int &a, int &b)
+    {
+        return ++a + ++b;
+    }
+
+    Test(lvalue)
+    {
+        int a = 2, b = 3;
+
+        auto fun = make_infix(odd);
+        auto c = a /fun/ b;
+
+        Assert(a, is_equal_to(3));
+        Assert(b, is_equal_to(4));
+        Assert(c, is_equal_to(7));
+    }
+
 }
 
 

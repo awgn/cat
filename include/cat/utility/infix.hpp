@@ -46,10 +46,11 @@ namespace cat
     };
 
     template <typename F>
-    inline auto infix(F f)
+    inline auto make_infix(F f)
     {
-        return infix_adaptor<F>{f};
+        return infix_adaptor<std::decay_t<F>>{f};
     }
+
 
     template <typename L, typename F>
     struct infix_left
@@ -66,7 +67,7 @@ namespace cat
         template <typename R>
         inline auto operator/(R && rhs)
         {
-            return oper(std::move(left), std::forward<R>(rhs));
+            return oper(left, std::forward<R>(rhs));
         }
 
         template <typename R>
@@ -117,19 +118,19 @@ namespace cat
     template <typename L, typename F>
     inline auto operator*(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
     inline auto operator/(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
     inline auto operator%(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 6:
@@ -137,13 +138,13 @@ namespace cat
     template <typename L, typename F>
     inline auto operator+(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
     inline auto operator-(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 8:
@@ -151,7 +152,7 @@ namespace cat
     template <typename L, typename F>
     inline auto operator<(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 10:
@@ -159,7 +160,7 @@ namespace cat
     template <typename L, typename F>
     inline auto operator&(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 11:
@@ -167,7 +168,7 @@ namespace cat
     template <typename L, typename F>
     inline auto operator^(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 12:
@@ -175,7 +176,7 @@ namespace cat
     template <typename L, typename F>
     inline auto operator|(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<std::decay_t<L>, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper)>{ std::forward<L>(lhs), f.oper };
     }
 
 } // namespace cat
