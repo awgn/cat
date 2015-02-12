@@ -40,10 +40,20 @@ namespace cat
         template <class C> static yes check(typename C::template rebind<int>::other *);
         template <class C> static no  check(...);
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // has_rebind
+    //
+
     public:
         enum { value = sizeof(check<T>(0)) == sizeof(yes) };
     };
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_default_deleter
+    //
 
     template <typename T>
     struct is_default_deleter
@@ -61,6 +71,11 @@ namespace cat
         enum { value = true };
     };
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    //  generic rebind
+    //
 
     template <typename T, typename To, typename = void>
     struct rebind
