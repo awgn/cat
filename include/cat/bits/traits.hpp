@@ -87,36 +87,41 @@ namespace cat
     template <typename ...Ts>
     using rebind_t = typename rebind<Ts...>::type;
 
+
+    //////////////////////////////////////////////////////////////////////////////////
     //
-    // callable_arity...
+    // callable_traits
     //
 
     template <typename T>
-    struct callable_arity : callable_arity<decltype(&T::operator())> { };
+    struct callable_traits : callable_traits<decltype(&T::operator())> { };
 
     // operator() const
     template <typename F, typename R, typename ...Ts>
-    struct callable_arity<R(F::*)(Ts...) const>
+    struct callable_traits<R(F::*)(Ts...) const>
     {
-        enum { value = sizeof...(Ts) };
+        using type = R(Ts...);
+        enum : size_t { arity = sizeof...(Ts) };
     };
     // operator()
     template <typename F, typename R, typename ...Ts>
-    struct callable_arity<R(F::*)(Ts...)>
+    struct callable_traits<R(F::*)(Ts...)>
     {
-        enum : size_t { value = sizeof...(Ts) };
+        using type = R(Ts...);
+        enum : size_t { arity = sizeof...(Ts) };
     };
     // function
     template <typename R, typename ...Ts>
-    struct callable_arity<R(Ts...)>
+    struct callable_traits<R(Ts...)>
     {
-        enum { value = sizeof...(Ts) };
+        using type = R(Ts...);
+        enum : size_t { arity = sizeof...(Ts) };
     };
     // function pointer
     template <typename R, typename ...Ts>
-    struct callable_arity<R(*)(Ts...)>
+    struct callable_traits<R(*)(Ts...)>
     {
-        enum { value = sizeof...(Ts) };
+        using type = R(Ts...);
+        enum : size_t { arity = sizeof...(Ts) };
     };
-
 }
