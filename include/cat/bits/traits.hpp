@@ -31,22 +31,19 @@
 
 namespace cat
 {
-    template <typename T>
-    class has_rebind
-    {
-        typedef char yes;
-        typedef long no;
-
-        template <class C> static yes check(typename C::template rebind<int>::other *);
-        template <class C> static no  check(...);
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // has_rebind
     //
 
+    template <typename T>
+    class has_rebind
+    {
+        template <class C> static void check(typename C::template rebind<int>::other *) noexcept;
+        template <class C> static void check(...) noexcept(false);
     public:
-        enum { value = sizeof(check<T>(0)) == sizeof(yes) };
+
+        enum { value = noexcept(check<T>(0)) };
     };
 
 
@@ -70,7 +67,6 @@ namespace cat
     {
         enum { value = true };
     };
-
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -111,32 +107,29 @@ namespace cat
     template <typename T>
     struct callable_traits : callable_traits<decltype(&T::operator())> { };
 
-    // operator() const
     template <typename F, typename R, typename ...Ts>
     struct callable_traits<R(F::*)(Ts...) const>
     {
         using type = R(Ts...);
         enum : size_t { arity = sizeof...(Ts) };
     };
-    // operator()
     template <typename F, typename R, typename ...Ts>
     struct callable_traits<R(F::*)(Ts...)>
     {
         using type = R(Ts...);
         enum : size_t { arity = sizeof...(Ts) };
     };
-    // function
     template <typename R, typename ...Ts>
     struct callable_traits<R(Ts...)>
     {
         using type = R(Ts...);
         enum : size_t { arity = sizeof...(Ts) };
     };
-    // function pointer
     template <typename R, typename ...Ts>
     struct callable_traits<R(*)(Ts...)>
     {
         using type = R(Ts...);
         enum : size_t { arity = sizeof...(Ts) };
     };
+
 }
