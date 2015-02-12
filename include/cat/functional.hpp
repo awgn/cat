@@ -42,7 +42,7 @@ namespace cat
     struct Id
     {
         template <typename T>
-        constexpr auto operator()(T &&x) const
+        constexpr auto operator()(T &&x) const noexcept
         {
             return std::forward<T>(x);
         }
