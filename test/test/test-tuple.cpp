@@ -104,8 +104,6 @@ Context(tuple)
         Assert(len, is_equal_to(size_t(10)));
     }
 
-
-
     namespace noncopyable
     {
         struct type
@@ -116,10 +114,22 @@ Context(tuple)
         };
     }
 
+
     Test(non_copyable)
     {
         auto t = std::make_tuple(noncopyable::type(), noncopyable::type());
         tuple_foreach([](auto) { }, std::move(t));
+    }
+
+    Test(assign)
+    {
+        std::tuple<int, char, std::string> a {1, 'x', "hello"};
+
+        tuple_assign(a, 1, 'x');
+        Assert(a == std::make_tuple(1, 'x', "hello"));
+
+        tuple_assign_from<1>(a, 'y', "world!");
+        Assert(a == std::make_tuple(1, 'y', "world!"));
     }
 }
 

@@ -37,10 +37,10 @@ namespace cat
 
     namespace details
     {
-        template <size_t O, typename ...Xs, typename ... Ys, size_t ...N>
-        void tuple_assign(std::tuple<Xs...> &lhs, std::tuple<Ys...> const &rhs, std::index_sequence<N...>)
+        template <size_t O, size_t ...N, typename ...Xs, typename ...Ys>
+        void tuple_assign(std::tuple<Xs...> &lhs, std::index_sequence<N...>, Ys && ...ys)
         {
-            std::initializer_list<bool> sink {(std::get<N>(lhs) = std::get<N>(rhs), true)...};
+            std::initializer_list<bool> sink {(std::get<O+N>(lhs) = std::forward<Ys>(ys), true)...};
             (void)sink;
         }
 
@@ -65,14 +65,21 @@ namespace cat
     }
 
     //
-    // tuple_assign: assign a tuple (or a sub-tuple) to a tuple
+    // tuple_assign: assign a pack to a tuple
     //
 
-    template <typename ...Xs, typename ... Ys, size_t Offset = 0>
-    void tuple_assign(std::tuple<Xs...> &lhs, std::tuple<Ys...> const &rhs)
+    template <typename ...Xs, typename ...Ys>
+    void tuple_assign(std::tuple<Xs...> &lhs, Ys && ... ys)
     {
-        return details::tuple_assign<Offset>(lhs, rhs, std::make_index_sequence<sizeof...(Ys)>());
+        return details::tuple_assign<0>(lhs, std::make_index_sequence<sizeof...(Ys)>(), std::forward<Ys>(ys)...);
     }
+
+    template <size_t Offset, typename ...Xs, typename ...Ys>
+    void tuple_assign_from(std::tuple<Xs...> &lhs, Ys && ... ys)
+    {
+        return details::tuple_assign<Offset>(lhs, std::make_index_sequence<sizeof...(Ys)>(), std::forward<Ys>(ys)...);
+    }
+
 
     //
     // tuple_foreach: polymorphic side effects over tuple (like mapM_)
