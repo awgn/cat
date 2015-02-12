@@ -91,14 +91,14 @@ namespace cat
         template <typename ...Xs>
         auto apply_(std::integral_constant<size_t, 0>, Xs &&...xs) const
         {
-            return tuple_apply(fun_, std::tuple_cat(args_, std::make_tuple(std::forward<Xs>(xs)...)));
+            return tuple_apply(fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _callable<C, I, Ts..., std::decay_t<Xs>...>
-            (fun_, std::tuple_cat(args_, std::make_tuple(std::forward<Xs>(xs)...)));
+            return _callable<C, I, Ts..., Xs...>
+            (fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         C fun_;

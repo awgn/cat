@@ -49,53 +49,39 @@ Context(currying_test)
         Assert(f2(true), is_equal_to(42));
     }
 
-
-    Test(full_curry)
+    Test(total_curry)
     {
-        auto add_ = callable(add)(1, 2);
-        Assert(add_, is_equal_to(3));
+        Assert(callable(f0)(42)("hello")('x')(true), is_equal_to(42));
     }
 
 
-    auto factory_add(int n)
+    void increment(int &n)
     {
-        return callable(add)(n);
+        n++;
     }
 
 
-    Test(factory_closure)
+    Test(lvalue)
     {
-        auto add2 = factory_add(2);
-
-        Assert(add2(40), is_equal_to(42));
+        int a = 0;
+        callable(increment)(a);
+        Assert(a, is_equal_to(1));
     }
 
-    struct moveable
+
+    void temporary(int &&n)
     {
-        moveable()
-        : count()
-        {}
+        n++;
+    }
 
-        moveable(const moveable &) = delete;
-        moveable& operator=(const moveable &) = delete;
 
-        moveable(moveable &&other)
-        : count(other.count+1)
-        {
-            other.count = 0;
-        }
+    Test(rvalue)
+    {
+        int a = 0;
 
-        moveable&
-        operator=(moveable &&other)
-        {
-            count = other.count+1;
-            other.count = 0;
-            return *this;
-        }
-
-        int count;
-    };
-
+        callable(temporary)(std::move(a));
+        Assert(a, is_equal_to(1));
+    }
 }
 
 
