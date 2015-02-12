@@ -138,5 +138,4 @@ namespace cat
         enum : size_t { arity = sizeof...(Ts) };
     };
 
-
-}
+} // namespace cat

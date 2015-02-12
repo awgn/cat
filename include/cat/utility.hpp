@@ -26,7 +26,7 @@
 
 #pragma once
 
+#include <cat/utility/type.hpp>
 #include <cat/utility/infix.hpp>
 #include <cat/utility/curry.hpp>
-#include <cat/utility/type.hpp>
 
