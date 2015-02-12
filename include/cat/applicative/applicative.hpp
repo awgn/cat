@@ -27,8 +27,11 @@
 #pragma once
 
 #include <utility>
+
+#include <cat/functional.hpp>
+#include <cat/utility/infix.hpp>
 #include <cat/functor/functor.hpp>
-#include <cat/infix.hpp>
+
 
 namespace cat
 {

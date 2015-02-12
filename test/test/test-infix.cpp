@@ -1,4 +1,4 @@
-#include <cat/infix.hpp>
+#include <cat/utility/infix.hpp>
 
 #include "yats.hpp"
 

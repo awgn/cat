@@ -28,7 +28,6 @@
 
 #include <utility>
 #include <cat/bits/traits.hpp>
-#include <cat/bits/utility.hpp>
 
 namespace cat
 {

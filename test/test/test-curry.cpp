@@ -1,4 +1,4 @@
-#include <cat/curry.hpp>
+#include <cat/utility/curry.hpp>
 
 #include <string>
 #include <iostream>
