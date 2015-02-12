@@ -48,11 +48,9 @@ namespace cat
     {
         auto name = demangle(typeid(Tp).name());
 
-        if (std::is_const<
-            typename std::remove_reference<Tp>::type>::value)
+        if (std::is_const<std::remove_reference_t<Tp>>::value)
             name.append(" const");
-        if (std::is_volatile<
-            typename std::remove_reference<Tp>::type>::value)
+        if (std::is_volatile<std::remove_reference_T<Tp>>::value)
             name.append(" volatile");
 
         if (std::is_reference<Tp>::value)

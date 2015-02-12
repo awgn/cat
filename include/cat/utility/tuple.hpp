@@ -91,7 +91,7 @@ namespace cat
         return details::tuple_foreach(fun,
                                       std::forward<TupleT>(tup),
                                       std::make_index_sequence<
-                                        std::tuple_size<typename std::decay<TupleT>::type>::value>());
+                                        std::tuple_size<std::decay_t<TupleT>>::value>());
     }
 
     //
@@ -104,7 +104,7 @@ namespace cat
         return details::tuple_map(fun,
                                   std::forward<TupleT>(tup),
                                   std::make_index_sequence<
-                                        std::tuple_size<typename std::decay<TupleT>::type>::value>());
+                                        std::tuple_size<std::decay_t<TupleT>>::value>());
     }
 
     //
@@ -117,7 +117,7 @@ namespace cat
         return details::tuple_apply(fun,
                                    std::forward<TupleT>(tup),
                                    std::make_index_sequence<
-                                        std::tuple_size<typename std::decay<TupleT>::type>::value>());
+                                        std::tuple_size<std::decay_t<TupleT>>::value>());
     }
 
 } // namespace cat

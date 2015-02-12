@@ -82,7 +82,7 @@ namespace cat
     // rebind for default deleter...
     //
     template <typename T, typename To>
-    struct rebind<T, To, typename std::enable_if<is_default_deleter<T>::value>::type>
+    struct rebind<T, To, std::enable_if_t<is_default_deleter<T>::value>>
     {
         using type = std::default_delete<To>;
     };
@@ -90,7 +90,7 @@ namespace cat
     // rebind for allocators...
     //
     template <typename T, typename To>
-    struct rebind<T, To, typename std::enable_if<has_rebind<T>::value>::type>
+    struct rebind<T, To, std::enable_if_t<has_rebind<T>::value>>
     {
         using type = typename T::template rebind<To>::other;
     };
