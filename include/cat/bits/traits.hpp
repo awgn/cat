@@ -131,5 +131,12 @@ namespace cat
         using type = R(Ts...);
         enum : size_t { arity = sizeof...(Ts) };
     };
+    template <typename R, typename ...Ts>
+    struct callable_traits<R(&)(Ts...)>
+    {
+        using type = R(Ts...);
+        enum : size_t { arity = sizeof...(Ts) };
+    };
+
 
 }
