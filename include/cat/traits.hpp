@@ -158,12 +158,22 @@ namespace cat
     };
 
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // callable_traits
     //
+
+    template <typename C, typename P, size_t N, typename ...Ts> struct _callable;
 
     template <typename T>
     struct callable_traits : callable_traits<decltype(&T::operator())> { };
 
+    template <typename F, typename P, size_t N, typename ...Ts>
+    struct callable_traits<_callable<F, P, N, Ts...>>
+    {
+        using type = typename callable_traits<P>::type;
+        enum : size_t { arity = sizeof...(Ts) };
+    };
     template <typename F, typename R, typename ...Ts>
     struct callable_traits<R(F::*)(Ts...) const>
     {
