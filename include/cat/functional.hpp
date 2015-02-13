@@ -69,7 +69,7 @@ namespace cat
     // _callable with partial application support
     //
 
-    template <typename C, size_t N, typename ...Ts>
+    template <typename C, typename P, size_t N, typename ...Ts>
     struct _callable
     {
         _callable(_callable const &) = default;
@@ -97,7 +97,7 @@ namespace cat
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _callable<C, I, Ts..., Xs...>(
+            return _callable<C, typename _partial_function<P, sizeof...(Xs)>::type, I, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -105,11 +105,12 @@ namespace cat
         std::tuple<Ts...> args_;
     };
 
+
     template<typename F>
-    auto callable(F f)
+    auto callable(F &&f)
     {
-        auto fun = make_function(f);
-        return _callable<decltype(fun), callable_traits<F>::arity>(fun);
+        auto fun = make_function(std::forward<F>(f));
+        return _callable<decltype(fun), typename callable_traits<F>::type, callable_traits<std::decay_t<F>>::arity>(std::move(fun));
     }
 
 
