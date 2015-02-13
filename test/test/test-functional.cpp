@@ -79,6 +79,17 @@ Context(callable_test)
         callable(temporary)(std::move(a));
         Assert(a, is_equal_to(1));
     }
+
+    Test(apply)
+    {
+        auto f = callable(f0);
+
+        auto f1 = f.apply(0, "hello",'x');
+        auto f2 = f1.apply(true);
+
+        Assert(!std::is_same<decltype(f2), int>::value);
+        Assert(f2(), is_equal_to(42));
+    }
 }
 
 

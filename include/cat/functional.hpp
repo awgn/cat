@@ -66,16 +66,16 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // _callable with partial application support
+    // _Callable with partial application support
     //
 
     template <typename C, typename P, size_t N, typename ...Ts>
-    struct _callable
+    struct _Callable
     {
-        _callable(_callable const &) = default;
+        _Callable(_Callable const &) = default;
 
         template <typename ...Xs>
-        explicit _callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        explicit _Callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
         , args_(std::move(args))
         { }
@@ -84,20 +84,34 @@ namespace cat
         auto operator()(Xs && ... xs) const
         {
             static_assert(N >= sizeof...(Xs), "Too many argument!");
+            return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
+        }
+
+        template <typename ...Xs>
+        auto apply(Xs && ... xs) const
+        {
+            static_assert(N >= sizeof...(Xs), "Too many argument!");
             return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
 
     private:
         template <typename ...Xs>
-        auto apply_(std::integral_constant<size_t, 0>, Xs &&...xs) const
+        auto eval_(std::integral_constant<size_t, 0>, Xs &&...xs) const
         {
             return tuple_apply(fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, typename ...Xs>
+        auto eval_(std::integral_constant<size_t, I>, Xs &&...xs) const
+        {
+            return _Callable<C, typename _partial_function<P, sizeof...(Xs)>::type, I, Ts..., Xs...>(
+                        fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
+        }
+
+        template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _callable<C, typename _partial_function<P, sizeof...(Xs)>::type, I, Ts..., Xs...>(
+            return _Callable<C, typename _partial_function<P, sizeof...(Xs)>::type, I, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -110,7 +124,7 @@ namespace cat
     auto callable(F &&f)
     {
         auto fun = make_function(std::forward<F>(f));
-        return _callable<decltype(fun), typename callable_traits<F>::type, callable_traits<std::decay_t<F>>::arity>(std::move(fun));
+        return _Callable<decltype(fun), typename callable_traits<F>::type, callable_traits<std::decay_t<F>>::arity>(std::move(fun));
     }
 
 

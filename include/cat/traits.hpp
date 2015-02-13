@@ -163,13 +163,13 @@ namespace cat
     // callable_traits
     //
 
-    template <typename C, typename P, size_t N, typename ...Ts> struct _callable;
+    template <typename C, typename P, size_t N, typename ...Ts> struct _Callable;
 
     template <typename T>
     struct callable_traits : callable_traits<decltype(&T::operator())> { };
 
     template <typename F, typename P, size_t N, typename ...Ts>
-    struct callable_traits<_callable<F, P, N, Ts...>>
+    struct callable_traits<_Callable<F, P, N, Ts...>>
     {
         using type = typename callable_traits<P>::type;
         enum : size_t { arity = sizeof...(Ts) };
