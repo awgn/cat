@@ -10,7 +10,7 @@ using namespace yats;
 using namespace cat;
 
 
-Context(currying_test)
+Context(callable_test)
 {
     int f0(int, std::string, char, bool)
     {
@@ -27,21 +27,21 @@ Context(currying_test)
         return a+b;
     }
 
-    Test(basic_curry)
+    Test(basic_callable)
     {
         auto val = callable(negate)(1);
         Assert(val, is_equal_to(-1));
     }
 
 
-    Test(simple_curry)
+    Test(simple_callable)
     {
         auto add_ = callable(add)(1);
         Assert(add_(2), is_equal_to(3));
     }
 
 
-    Test(mixed_curry)
+    Test(mixed_callable)
     {
         auto f1 = callable(f0)(42, "hello");
         auto f2 = f1('x');
@@ -49,7 +49,7 @@ Context(currying_test)
         Assert(f2(true), is_equal_to(42));
     }
 
-    Test(total_curry)
+    Test(total_callable)
     {
         Assert(callable(f0)(42)("hello")('x')(true), is_equal_to(42));
     }
@@ -60,7 +60,6 @@ Context(currying_test)
         n++;
     }
 
-
     Test(lvalue)
     {
         int a = 0;
@@ -68,12 +67,10 @@ Context(currying_test)
         Assert(a, is_equal_to(1));
     }
 
-
     void temporary(int &&n)
     {
         n++;
     }
-
 
     Test(rvalue)
     {

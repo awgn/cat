@@ -39,7 +39,7 @@ namespace cat
     // identity function
     //
 
-    struct Id
+    struct Identity
     {
         template <typename T>
         constexpr auto operator()(T &&x) const noexcept
@@ -49,7 +49,7 @@ namespace cat
 
     };
 
-    constexpr Id id = {};
+    constexpr Identity identity = {};
 
 
     //////////////////////////////////////////////////////////////////////////////////
