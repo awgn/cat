@@ -101,6 +101,63 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // _partial_function
+    //
+
+    template <typename F, size_t N> struct _partial_function;
+
+    template <typename R, typename ...Ts>
+    struct _partial_function<R(Ts...), 0>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T, typename ...Ts>
+    struct _partial_function<R(T, Ts...), 1>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename ...Ts>
+    struct _partial_function<R(T1, T2, Ts...), 2>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, Ts...), 3>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename T4, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, T4, Ts...), 4>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, T4, T5, Ts...), 5>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, T4, T5, T6, Ts...), 6>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, T4, T5, T6, T7, Ts...), 7>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, T4, T5, T6, T7, T8, Ts...), 8>
+    {
+        using type = R(Ts...);
+    };
+    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename ...Ts>
+    struct _partial_function<R(T1, T2, T3, T4, T5, T6, T7, T8, T9, Ts...), 9>
+    {
+        using type = R(Ts...);
+    };
+
+
     // callable_traits
     //
 
