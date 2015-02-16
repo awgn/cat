@@ -236,9 +236,16 @@ namespace cat
         enum : size_t { arity_value = sizeof...(Ts) };
     };
 
+    template <typename F> struct _result_type;
+
+    template <typename R, typename ...Ts>
+    struct _result_type<R(Ts...)>
+    {
+        using type = R;
+    };
+
 
     CAT_CLASS_HAS_TYPEDEF(function_type);
-    CAT_CLASS_HAS_TYPEDEF(return_type);
     CAT_CLASS_HAS_MEMBER(arity_value);
 
 
@@ -253,7 +260,7 @@ namespace cat
     struct return_type
     {
         using G = typename std::decay<F>::type;
-        using type = typename std::conditional< has_return_type<G>::value, G, _callable_traits<G> >::type::return_type;
+        using type = typename _result_type<typename function_type<F>::type>::type;
     };
 
     template <typename F>

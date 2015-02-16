@@ -44,7 +44,6 @@ namespace cat
     struct Identity
     {
         using function_type = unspec(unspec);
-        using return_type   = unspec;
         enum : size_t { arity_value = 1 };
 
         template <typename T>
@@ -80,9 +79,6 @@ namespace cat
         using function_type =
             typename _partial_function<
                 typename function_type<F>::type, sizeof...(Ts)>::type;
-
-        using return_type =
-            typename return_type<F>::type;
 
         enum : size_t { arity_value = arity<F>::value - sizeof...(Ts) };
 
