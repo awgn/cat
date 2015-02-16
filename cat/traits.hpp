@@ -31,6 +31,30 @@
 
 namespace cat
 {
+
+#define CAT_CLASS_HAS_TYPEDEF(typedef_) \
+    template <typename T> \
+    class has_ ## typedef_ \
+    { \
+        template <class C> static void check(typename std::decay<typename C::typedef_>::type *) noexcept; \
+        template <class C> static void check(...) noexcept(false); \
+    public: \
+    \
+        enum { value = noexcept(check<T>(0)) }; \
+    };
+
+#define CAT_CLASS_HAS_MEMBER(member) \
+    template <typename T> \
+    class has_ ## member \
+    { \
+        template <class C> static void check(typename std::decay<decltype(C::member)>::type *) noexcept; \
+        template <class C> static void check(...) noexcept(false); \
+    public: \
+    \
+        enum { value = noexcept(check<T>(0)) }; \
+    };
+
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // has_rebind
@@ -43,7 +67,7 @@ namespace cat
         template <class C> static void check(...) noexcept(false);
     public:
 
-        enum { value = noexcept(check<T>(0)) };
+        enum { value = noexcept(check<T>(nullptr)) };
     };
 
 
@@ -89,6 +113,7 @@ namespace cat
 
     // rebind for allocators...
     //
+
     template <typename T, typename To>
     struct rebind<T, To, std::enable_if_t<has_rebind<T>::value>>
     {
@@ -160,57 +185,82 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // callable_traits
+    // _callable_traits: function_type, return_type, arity_value....
     //
 
     template <typename C, typename ...Ts> struct _Callable;
 
-    template <typename T>
-    struct callable_traits : callable_traits<decltype(&T::operator())> { };
+    template <typename F>
+    struct _callable_traits : _callable_traits<decltype(&F::operator())> { };
 
-    template <typename F, typename ...Ts>
-    struct callable_traits<_Callable<F, Ts...>>
+    template <typename F, typename R, typename ...Ts>
+    struct _callable_traits<R(F::*)(Ts...) const>
     {
-        using type = typename _partial_function<
-                        typename callable_traits<F>::type, sizeof...(Ts)>::type;
-
-        enum : size_t { arity = callable_traits<F>::arity - sizeof...(Ts) };
+        using function_type = R(Ts...);
+        using return_type = R;
+        enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename F, typename R, typename ...Ts>
-    struct callable_traits<R(F::*)(Ts...) const>
+    struct _callable_traits<R(F::*)(Ts...)>
     {
-        using type = R(Ts...);
-        enum : size_t { arity = sizeof...(Ts) };
-    };
-    template <typename F, typename R, typename ...Ts>
-    struct callable_traits<R(F::*)(Ts...)>
-    {
-        using type = R(Ts...);
-        enum : size_t { arity = sizeof...(Ts) };
+        using function_type = R(Ts...);
+        using return_type = R;
+        enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct callable_traits<R(Ts...)>
+    struct _callable_traits<R(Ts...)>
     {
-        using type = R(Ts...);
-        enum : size_t { arity = sizeof...(Ts) };
+        using function_type = R(Ts...);
+        using return_type = R;
+        enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct callable_traits<R(*)(Ts...)>
+    struct _callable_traits<R(*)(Ts...)>
     {
-        using type = R(Ts...);
-        enum : size_t { arity = sizeof...(Ts) };
+        using function_type = R(Ts...);
+        using return_type = R;
+        enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct callable_traits<R(*&)(Ts...)>
+    struct _callable_traits<R(*&)(Ts...)>
     {
-        using type = R(Ts...);
-        enum : size_t { arity = sizeof...(Ts) };
+        using function_type = R(Ts...);
+        using return_type = R;
+        enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct callable_traits<R(&)(Ts...)>
+    struct _callable_traits<R(&)(Ts...)>
     {
-        using type = R(Ts...);
-        enum : size_t { arity = sizeof...(Ts) };
+        using function_type = R(Ts...);
+        using return_type = R;
+        enum : size_t { arity_value = sizeof...(Ts) };
+    };
+
+
+    CAT_CLASS_HAS_TYPEDEF(function_type);
+    CAT_CLASS_HAS_TYPEDEF(return_type);
+    CAT_CLASS_HAS_MEMBER(arity_value);
+
+
+    template <typename F>
+    struct function_type
+    {
+        using G = typename std::decay<F>::type;
+        using type = typename std::conditional< has_function_type<G>::value, G, _callable_traits<G> >::type::function_type;
+    };
+
+    template <typename F>
+    struct return_type
+    {
+        using G = typename std::decay<F>::type;
+        using type = typename std::conditional< has_return_type<G>::value, G, _callable_traits<G> >::type::return_type;
+    };
+
+    template <typename F>
+    struct arity
+    {
+        using G = typename std::decay<F>::type;
+        enum { value = std::conditional< has_arity_value<G>::value, G, _callable_traits<G> >::type::arity_value };
     };
 
 } // namespace cat

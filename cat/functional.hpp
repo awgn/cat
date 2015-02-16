@@ -34,6 +34,8 @@
 
 namespace cat
 {
+    struct unspec { };
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // identity function
@@ -41,12 +43,15 @@ namespace cat
 
     struct Identity
     {
+        using function_type = unspec(unspec);
+        using return_type   = unspec;
+        enum : size_t { arity_value = 1 };
+
         template <typename T>
         constexpr auto operator()(T &&x) const noexcept
         {
             return std::forward<T>(x);
         }
-
     };
 
     constexpr Identity identity = {};
@@ -60,7 +65,7 @@ namespace cat
     template<typename F>
     auto constexpr make_function(F &&f)
     {
-        return std::function<typename callable_traits<F>::type>(std::forward<F>(f));
+        return std::function<typename function_type<F>::type>(std::forward<F>(f));
     }
 
 
@@ -69,11 +74,21 @@ namespace cat
     // _Callable with partial application support
     //
 
-    template <typename C, typename ...Ts>
+    template <typename F, typename ...Ts>
     struct _Callable
     {
+        using function_type =
+            typename _partial_function<
+                typename function_type<F>::type, sizeof...(Ts)>::type;
+
+        using return_type =
+            typename return_type<F>::type;
+
+        enum : size_t { arity_value = arity<F>::value - sizeof...(Ts) };
+
+
         template <typename ...Xs>
-        constexpr explicit _Callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        constexpr explicit _Callable(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
         , args_(std::move(args))
         { }
@@ -81,7 +96,7 @@ namespace cat
         template <typename ...Xs>
         auto operator()(Xs && ... xs) const
         {
-            constexpr size_t N = callable_traits<C>::arity - sizeof...(Ts);
+            constexpr size_t N = arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
             return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
@@ -89,7 +104,7 @@ namespace cat
         template <typename ...Xs>
         auto apply(Xs && ... xs) const
         {
-            constexpr size_t N = callable_traits<C>::arity - sizeof...(Ts);
+            constexpr size_t N = arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
             return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
@@ -104,18 +119,18 @@ namespace cat
         template <size_t I, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _Callable<C, Ts..., Xs...>(
+            return _Callable<F, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _Callable<C, Ts..., Xs...>(
+            return _Callable<F, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
-        C fun_;
+        F fun_;
         std::tuple<Ts...> args_;
     };
 

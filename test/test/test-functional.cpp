@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <type_traits>
 
 #include <yats.hpp>
 
@@ -88,10 +89,10 @@ Context(callable_test)
         auto f2 = f1.apply("hello",'x');
         auto f3 = f2.apply(true);
 
-        Assert(callable_traits<decltype(f) >::arity == 4);
-        Assert(callable_traits<decltype(f1)>::arity == 3);
-        Assert(callable_traits<decltype(f2)>::arity == 1);
-        Assert(callable_traits<decltype(f3)>::arity == 0);
+        Assert(arity<decltype(f) >::value == 4);
+        Assert(arity<decltype(f1)>::value == 3);
+        Assert(arity<decltype(f2)>::value == 1);
+        Assert(arity<decltype(f3)>::value == 0);
 
         Assert(!std::is_same<decltype(f3), int>::value);
 
@@ -106,6 +107,10 @@ Context(callable_test)
         assert_constexpr(cfun);
     }
 
+    Test(return_type)
+    {
+
+    }
 }
 
 

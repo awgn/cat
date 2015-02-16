@@ -33,13 +33,13 @@ Context(traits)
         std::cout << type_of(f1) << std::endl;
         std::cout << type_of(f2) << std::endl;
 
-        Assert(std::is_same< callable_traits<decltype(f0)>::type, int()>::value);
-        Assert(std::is_same< callable_traits<decltype(f1)>::type, int(int)>::value);
-        Assert(std::is_same< callable_traits<decltype(f2)>::type, int(int, char)>::value);
+        Assert(std::is_same< function_type<decltype(f0)>::type, int()>::value);
+        Assert(std::is_same< function_type<decltype(f1)>::type, int(int)>::value);
+        Assert(std::is_same< function_type<decltype(f2)>::type, int(int, char)>::value);
 
-        Assert(callable_traits<decltype(f0)>::arity == 0);
-        Assert(callable_traits<decltype(f1)>::arity == 1);
-        Assert(callable_traits<decltype(f2)>::arity == 2);
+        Assert(arity<decltype(f0)>::value == 0);
+        Assert(arity<decltype(f1)>::value == 1);
+        Assert(arity<decltype(f2)>::value == 2);
 
         // function pointer...
 
@@ -51,9 +51,9 @@ Context(traits)
         std::cout << type_of(p1) << std::endl;
         std::cout << type_of(p2) << std::endl;
 
-        Assert(std::is_same< callable_traits<decltype(p0)>::type, int()>::value);
-        Assert(std::is_same< callable_traits<decltype(p1)>::type, int(int)>::value);
-        Assert(std::is_same< callable_traits<decltype(p2)>::type, int(int, char)>::value);
+        Assert(std::is_same< function_type<decltype(p0)>::type, int()>::value);
+        Assert(std::is_same< function_type<decltype(p1)>::type, int(int)>::value);
+        Assert(std::is_same< function_type<decltype(p2)>::type, int(int, char)>::value);
 
         // std::function
 
@@ -61,9 +61,9 @@ Context(traits)
         auto fun1 = make_function(f1);
         auto fun2 = make_function(f2);
 
-        Assert(std::is_same< callable_traits<decltype(fun0)>::type, int()>::value);
-        Assert(std::is_same< callable_traits<decltype(fun1)>::type, int(int)>::value);
-        Assert(std::is_same< callable_traits<decltype(fun2)>::type, int(int, char)>::value);
+        Assert(std::is_same< function_type<decltype(fun0)>::type, int()>::value);
+        Assert(std::is_same< function_type<decltype(fun1)>::type, int(int)>::value);
+        Assert(std::is_same< function_type<decltype(fun2)>::type, int(int, char)>::value);
 
         // C++ lambda
 
@@ -75,9 +75,9 @@ Context(traits)
         std::cout << type_of(l1) << std::endl;
         std::cout << type_of(l2) << std::endl;
 
-        Assert(std::is_same< callable_traits<decltype(l0)>::type, int()>::value);
-        Assert(std::is_same< callable_traits<decltype(l1)>::type, int(int)>::value);
-        Assert(std::is_same< callable_traits<decltype(l2)>::type, int(int, char)>::value);
+        Assert(std::is_same< function_type<decltype(l0)>::type, int()>::value);
+        Assert(std::is_same< function_type<decltype(l1)>::type, int(int)>::value);
+        Assert(std::is_same< function_type<decltype(l2)>::type, int(int, char)>::value);
 
         // cat::callable
 
@@ -86,10 +86,11 @@ Context(traits)
         auto c2 = callable(f2);
         auto c3 = callable(f2)(42);
 
-        Assert(std::is_same< callable_traits<decltype(c0)>::type, int()>::value);
-        Assert(std::is_same< callable_traits<decltype(c1)>::type, int(int)>::value);
-        Assert(std::is_same< callable_traits<decltype(c2)>::type, int(int, char)>::value);
-        Assert(std::is_same< callable_traits<decltype(c3)>::type, int(char)>::value);
+        Assert(std::is_same< function_type<decltype(c0)>::type, int()>::value);
+        Assert(std::is_same< function_type<decltype(c1)>::type, int(int)>::value);
+        Assert(std::is_same< function_type<decltype(c2)>::type, int(int, char)>::value);
+        Assert(std::is_same< function_type<decltype(c3)>::type, int(char)>::value);
+
     }
 }
 
