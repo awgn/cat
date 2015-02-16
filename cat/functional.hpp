@@ -69,7 +69,7 @@ namespace cat
     // _Callable with partial application support
     //
 
-    template <typename C, typename P, size_t N, typename ...Ts>
+    template <typename C, typename ...Ts>
     struct _Callable
     {
         _Callable(_Callable const &) = default;
@@ -83,6 +83,7 @@ namespace cat
         template <typename ...Xs>
         auto operator()(Xs && ... xs) const
         {
+            constexpr size_t N = callable_traits<C>::arity - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
             return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
@@ -90,6 +91,7 @@ namespace cat
         template <typename ...Xs>
         auto apply(Xs && ... xs) const
         {
+            constexpr size_t N = callable_traits<C>::arity - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
             return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
@@ -104,14 +106,14 @@ namespace cat
         template <size_t I, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _Callable<C, typename _partial_function<P, sizeof...(Xs)>::type, I, Ts..., Xs...>(
+            return _Callable<C, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _Callable<C, typename _partial_function<P, sizeof...(Xs)>::type, I, Ts..., Xs...>(
+            return _Callable<C, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -124,7 +126,7 @@ namespace cat
     auto callable(F &&f)
     {
         auto fun = make_function(std::forward<F>(f));
-        return _Callable<decltype(fun), typename callable_traits<F>::type, callable_traits<std::decay_t<F>>::arity>(std::move(fun));
+        return _Callable<decltype(fun)>(std::move(fun));
     }
 
 
