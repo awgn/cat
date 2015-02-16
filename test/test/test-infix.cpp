@@ -1,4 +1,5 @@
 #include <cat/utility/infix.hpp>
+#include <cat/utility/constexpr.hpp>
 
 #include <type_traits>
 
@@ -67,20 +68,12 @@ Context(test_infix)
     struct oper_t
     {
         constexpr oper_t() { }
-    };
+    } oper;
 
-    template <typename T>
-    constexpr bool check_constexpr(T)
-    {
-        return true;
-    }
-
-    constexpr auto oper = infix(oper_t{});
 
     Test(constexpr)
     {
-        std::integral_constant<bool, check_constexpr(oper)> ok;
-        (void) ok;
+        assert_constexpr(infix(oper));
     }
 
 }

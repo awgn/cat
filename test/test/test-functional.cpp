@@ -1,4 +1,5 @@
 #include <cat/functional.hpp>
+#include <cat/utility/constexpr.hpp>
 
 #include <string>
 #include <iostream>
@@ -96,6 +97,15 @@ Context(callable_test)
 
         Assert(f3(), is_equal_to(42));
     }
+
+
+    constexpr auto cfun = callable(identity);
+
+    Test(constexpr)
+    {
+        assert_constexpr(cfun);
+    }
+
 }
 
 
