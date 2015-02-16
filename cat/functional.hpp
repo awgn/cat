@@ -58,7 +58,7 @@ namespace cat
     //
 
     template<typename F>
-    auto make_function(F &&f)
+    auto constexpr make_function(F &&f)
     {
         return std::function<typename callable_traits<F>::type>(std::forward<F>(f));
     }
@@ -72,10 +72,8 @@ namespace cat
     template <typename C, typename ...Ts>
     struct _Callable
     {
-        _Callable(_Callable const &) = default;
-
         template <typename ...Xs>
-        explicit _Callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        constexpr explicit _Callable(C fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
         , args_(std::move(args))
         { }
@@ -123,10 +121,9 @@ namespace cat
 
 
     template<typename F>
-    auto callable(F &&f)
+    constexpr auto callable(F &&f)
     {
-        auto fun = make_function(std::forward<F>(f));
-        return _Callable<decltype(fun)>(std::move(fun));
+        return _Callable<F>(std::forward<F>(f));
     }
 
 
