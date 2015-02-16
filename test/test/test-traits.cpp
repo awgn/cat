@@ -37,6 +37,10 @@ Context(traits)
         Assert(std::is_same< callable_traits<decltype(f1)>::type, int(int)>::value);
         Assert(std::is_same< callable_traits<decltype(f2)>::type, int(int, char)>::value);
 
+        Assert(callable_traits<decltype(f0)>::arity == 0);
+        Assert(callable_traits<decltype(f1)>::arity == 1);
+        Assert(callable_traits<decltype(f2)>::arity == 2);
+
         // function pointer...
 
         auto p0 = &f0;

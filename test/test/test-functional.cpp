@@ -83,12 +83,18 @@ Context(callable_test)
     Test(apply)
     {
         auto f = callable(f0);
+        auto f1 = f.apply(0);
+        auto f2 = f1.apply("hello",'x');
+        auto f3 = f2.apply(true);
 
-        auto f1 = f.apply(0, "hello",'x');
-        auto f2 = f1.apply(true);
+        Assert(callable_traits<decltype(f) >::arity == 4);
+        Assert(callable_traits<decltype(f1)>::arity == 3);
+        Assert(callable_traits<decltype(f2)>::arity == 1);
+        Assert(callable_traits<decltype(f3)>::arity == 0);
 
-        Assert(!std::is_same<decltype(f2), int>::value);
-        Assert(f2(), is_equal_to(42));
+        Assert(!std::is_same<decltype(f3), int>::value);
+
+        Assert(f3(), is_equal_to(42));
     }
 }
 
