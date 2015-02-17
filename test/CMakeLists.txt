@@ -9,6 +9,7 @@ add_executable(test-infix test/test-infix.cpp)
 add_executable(test-tuple test/test-tuple.cpp)
 add_executable(test-traits test/test-traits.cpp)
 add_executable(test-functional test/test-functional.cpp)
+add_executable(test-iterator test/test-iterator.cpp)
 
 add_executable(test-monad test/test-monad.cpp)
 add_executable(test-functor test/test-functor.cpp)
