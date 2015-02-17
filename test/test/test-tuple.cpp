@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <cat/utility/tuple.hpp>
+#include <cat/tuple.hpp>
 
 #include <yats.hpp>
 
@@ -25,7 +25,6 @@ Context(tuple)
         std::tuple<int, int> const tup{40,2};
 
         Assert(tuple_apply(add, tup), is_equal_to(42));
-
     }
 
     Test(apply_forward)

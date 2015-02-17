@@ -1,5 +1,5 @@
 #include <cat/type_traits.hpp>
-#include <cat/utility/type.hpp>
+#include <cat/utility/typeof.hpp>
 #include <cat/functional.hpp>
 
 #include <yats.hpp>

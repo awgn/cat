@@ -30,7 +30,7 @@
 #include <functional>
 
 #include <cat/type_traits.hpp>
-#include <cat/utility/tuple.hpp>
+#include <cat/tuple.hpp>
 
 namespace cat
 {

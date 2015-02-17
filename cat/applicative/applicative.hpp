@@ -29,7 +29,7 @@
 #include <utility>
 
 #include <cat/functional.hpp>
-#include <cat/utility/infix.hpp>
+#include <cat/infix.hpp>
 #include <cat/functor/functor.hpp>
 
 
