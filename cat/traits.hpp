@@ -188,8 +188,6 @@ namespace cat
     // _callable_traits: function_type, return_type, arity_value....
     //
 
-    template <typename C, typename ...Ts> struct _Callable;
-
     template <typename F>
     struct _callable_traits : _callable_traits<decltype(&F::operator())> { };
 
@@ -197,47 +195,40 @@ namespace cat
     struct _callable_traits<R(F::*)(Ts...) const>
     {
         using function_type = R(Ts...);
-        using return_type = R;
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename F, typename R, typename ...Ts>
     struct _callable_traits<R(F::*)(Ts...)>
     {
         using function_type = R(Ts...);
-        using return_type = R;
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
     struct _callable_traits<R(Ts...)>
     {
         using function_type = R(Ts...);
-        using return_type = R;
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
     struct _callable_traits<R(*)(Ts...)>
     {
         using function_type = R(Ts...);
-        using return_type = R;
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
     struct _callable_traits<R(*&)(Ts...)>
     {
         using function_type = R(Ts...);
-        using return_type = R;
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
     struct _callable_traits<R(&)(Ts...)>
     {
         using function_type = R(Ts...);
-        using return_type = R;
         enum : size_t { arity_value = sizeof...(Ts) };
     };
 
     template <typename F> struct _result_type;
-
     template <typename R, typename ...Ts>
     struct _result_type<R(Ts...)>
     {
@@ -269,5 +260,43 @@ namespace cat
         using G = typename std::decay<F>::type;
         enum { value = std::conditional< has_arity_value<G>::value, G, _callable_traits<G> >::type::arity_value };
     };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // has_call_operator
+    //
+
+    template <typename T>
+    class has_call_operator
+    {
+        template <class C> static void check(decltype(&C::operator()) *) noexcept;
+        template <class C> static void check(...) noexcept(false);
+    public:
+        enum { value = noexcept(check<T>(nullptr)) };
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // is_function (std)
+    //
+
+    template <typename F> struct is_function : std::false_type { };
+
+    template <typename R, typename ...Ts>
+    struct is_function<std::function<R(Ts...)>> : std::false_type { };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_callable....
+    //
+
+    template <typename F>
+    struct _is_callable : std::integral_constant<bool,
+                            std::is_function<F>::value  ||
+                            is_function<F>::value       ||
+                            has_call_operator<F>::value ||
+                            has_function_type<F>::value> { };
+
+    template <typename F>
+    struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };
+
 
 } // namespace cat
