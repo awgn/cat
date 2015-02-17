@@ -1,4 +1,4 @@
-#include <cat/traits.hpp>
+#include <cat/type_traits.hpp>
 #include <cat/utility/type.hpp>
 #include <cat/functional.hpp>
 

@@ -27,7 +27,7 @@
 #pragma once
 
 #include <utility>
-#include <cat/traits.hpp>
+#include <cat/type_traits.hpp>
 
 namespace cat
 {
