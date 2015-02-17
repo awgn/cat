@@ -34,12 +34,15 @@
 
 namespace cat
 {
-    struct unspec { };
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // identity function
     //
+
+    struct unspec
+    {
+        template <typename T> operator T();
+    };
 
     struct Identity
     {
@@ -129,7 +132,6 @@ namespace cat
         F fun_;
         std::tuple<Ts...> args_;
     };
-
 
     template<typename F>
     constexpr auto callable(F &&f)
