@@ -134,9 +134,58 @@ namespace cat
     };
 
     template<typename F>
-    constexpr auto callable(F &&f)
+    constexpr auto callable(F f)
     {
-        return _Callable<F>(std::forward<F>(f));
+        return _Callable<F>(std::move(f));
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // _Compose: functional composition of callable types
+    //
+
+    template <typename F_, typename G_, typename = void>  struct _Compose;
+
+    template <typename F_, typename G_>
+    struct _Compose<F_, G_, typename std::enable_if<arity<G_>::value != 0>::type>
+    {
+        template <typename T, typename ...Ts>
+        auto operator()(T &&x, Ts && ...xs) const
+        {
+            return f_( g_(std::forward<T>(x)), std::forward<Ts>(xs)... );
+        }
+
+        F_ f_;
+        G_ g_;
+    };
+
+    template <typename F_, typename G_>
+    struct _Compose<F_, G_, typename std::enable_if<arity<G_>::value == 0>::type>
+    {
+        template <typename ...Ts>
+        auto operator()(Ts && ...xs) const
+        {
+            return f_( g_(), std::forward<Ts>(xs)...);
+        }
+
+        F_ f_;
+        G_ g_;
+    };
+
+
+    template <typename F, typename G,
+              typename std::enable_if<is_callable<F>::value && is_callable<G>::value>::type * = nullptr>
+    constexpr auto compose(F f, G g)
+    {
+        return _Compose<F,G>{ std::move(f), std::move(g) };
+    }
+
+    template <typename F, typename G,
+              typename std::enable_if<is_callable<F>::value && is_callable<G>::value>::type * = nullptr>
+    constexpr auto operator^(F f, G g)
+    {
+        return compose(std::move(f), std::move(g));
     }
 
 

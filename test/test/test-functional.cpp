@@ -99,7 +99,6 @@ Context(callable_test)
         Assert(f3(), is_equal_to(42));
     }
 
-
     constexpr auto cfun = callable(identity);
 
     Test(constexpr)
@@ -107,10 +106,43 @@ Context(callable_test)
         assert_constexpr(cfun);
     }
 
-    Test(return_type)
+    int next(int a)
     {
+        return a+1;
+    }
+
+    int constant() { return 42; }
+
+    int sum(int a, int b)
+    {
+        return a - b;
+    }
+
+    Test(composition)
+    {
+        auto h1 = compose(sum,next);
+        auto h2 = compose(callable(sum),next);
+        auto h3 = compose(sum,callable(next));
+        auto h4 = compose(callable(sum),callable(next));
+
+        Assert(h1(10,1)  == 10);
+        Assert(h2(10)(1) == 10);
+        Assert(h3(10,1)  == 10);
+        Assert(h4(10)(1)  == 10);
+
+        auto l1 = compose(callable(sum), [](int n) { return n+1; });
+        auto l2 = l1(10);
+
+        Assert( l2(1) == 10);
+
+        auto x1 = compose(sum, constant);
+        Assert(x1(1) == 41);
+
+        auto x2 = callable(sum) ^ (constant);
+        Assert(x2(1) == 41);
 
     }
+
 }
 
 
