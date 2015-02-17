@@ -535,4 +535,22 @@ namespace cat
     template <typename F>
     struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // inner_type....
+    //
+
+    template <typename C> struct inner_type;
+
+    template <template <typename ...> class F, typename T, typename ...Ts>
+    struct inner_type<F<T, Ts...>>
+    {
+        using type = T;
+    };
+
+    template <typename T>
+    using inner_type_t = typename inner_type<T>::type;
+
+
 } // namespace cat
