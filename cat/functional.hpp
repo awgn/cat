@@ -85,7 +85,6 @@ namespace cat
 
         enum : size_t { arity_value = arity<F>::value - sizeof...(Ts) };
 
-
         template <typename ...Xs>
         constexpr explicit _Callable(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
@@ -150,10 +149,16 @@ namespace cat
     template <typename F_, typename G_>
     struct _Compose<F_, G_, typename std::enable_if<arity<G_>::value != 0>::type>
     {
+        template <typename F, typename G>
+        constexpr _Compose(F && f, G && g)
+        : f_(std::forward<F>(f))
+        , g_(std::forward<G>(g))
+        { }
+
         template <typename T, typename ...Ts>
-        auto operator()(T &&x, Ts && ...xs) const
+        constexpr auto operator()(T &&x, Ts && ...xs) const
         {
-            return f_( g_(std::forward<T>(x)), std::forward<Ts>(xs)... );
+            return f_( g_(std::forward<T>(x)), std::forward<Ts>(xs)...);
         }
 
         F_ f_;
@@ -163,8 +168,14 @@ namespace cat
     template <typename F_, typename G_>
     struct _Compose<F_, G_, typename std::enable_if<arity<G_>::value == 0>::type>
     {
+        template <typename F, typename G>
+        constexpr _Compose(F && f, G && g)
+        : f_(std::forward<F>(f))
+        , g_(std::forward<G>(g))
+        { }
+
         template <typename ...Ts>
-        auto operator()(Ts && ...xs) const
+        constexpr auto operator()(Ts && ...xs) const
         {
             return f_( g_(), std::forward<Ts>(xs)...);
         }
