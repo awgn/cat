@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <type_traits>
 
@@ -53,6 +54,224 @@ namespace cat
     \
         enum { value = noexcept(check<T>(0)) }; \
     };
+
+    namespace details
+    {
+        CAT_CLASS_HAS_MEMBER(value_type);
+        CAT_CLASS_HAS_MEMBER(key_type);
+        CAT_CLASS_HAS_MEMBER(mapped_type);
+        CAT_CLASS_HAS_MEMBER(container_type);
+
+        CAT_CLASS_HAS_MEMBER(pointer);
+        CAT_CLASS_HAS_MEMBER(const_pointer);
+        CAT_CLASS_HAS_MEMBER(reference);
+        CAT_CLASS_HAS_MEMBER(const_reference);
+        CAT_CLASS_HAS_MEMBER(iterator);
+        CAT_CLASS_HAS_MEMBER(const_iterator);
+        CAT_CLASS_HAS_MEMBER(reverse_iterator);
+        CAT_CLASS_HAS_MEMBER(const_reverse_iterator);
+        CAT_CLASS_HAS_MEMBER(size_type);
+        CAT_CLASS_HAS_MEMBER(difference_type);
+
+    } // namespace details
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // generic type traits...
+    //
+
+    CAT_CLASS_HAS_TYPEDEF(function_type);
+    CAT_CLASS_HAS_MEMBER(arity_value);
+
+
+    template <typename T>
+    struct has_value_type : std::integral_constant<bool, details::has_value_type<T>::value>
+    {};
+
+    template <typename t>
+    struct has_key_type : std::integral_constant<bool, details::has_key_type<t>::value>
+    {};
+
+    template <typename t>
+    struct has_mapped_type : std::integral_constant<bool, details::has_mapped_type<t>::value>
+    {};
+
+    template <typename t>
+    struct has_container_type : std::integral_constant<bool, details::has_container_type<t>::value>
+    {};
+
+    template <typename T>
+    struct has_pointer : std::integral_constant<bool, details::has_pointer<T>::value>
+    {};
+
+    template <typename T>
+    struct has_const_pointer : std::integral_constant<bool, details::has_const_pointer<T>::value>
+    {};
+
+    template <typename T>
+    struct has_reference : std::integral_constant<bool, details::has_reference<T>::value>
+    {};
+
+    template <typename T>
+    struct has_const_reference : std::integral_constant<bool, details::has_const_reference<T>::value>
+    {};
+
+    template <typename T>
+    struct has_iterator : std::integral_constant<bool, details::has_iterator<T>::value>
+    {};
+
+    template <typename T>
+    struct has_const_iterator : std::integral_constant<bool, details::has_const_iterator<T>::value>
+    {};
+
+    template <typename T>
+    struct has_reverse_iterator : std::integral_constant<bool, details::has_reverse_iterator<T>::value>
+    {};
+
+    template <typename T>
+    struct has_const_reverse_iterator : std::integral_constant<bool, details::has_const_reverse_iterator<T>::value>
+    {};
+
+    template <typename T>
+    struct has_size_type : std::integral_constant<bool, details::has_size_type<T>::value>
+    {};
+
+    template <typename T>
+    struct has_difference_type : std::integral_constant<bool, details::has_difference_type<T>::value>
+    {};
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_container
+    //
+
+    template <typename T>
+    struct is_container : std::integral_constant<bool, details::has_value_type<T>::value &&
+                                                       details::has_reference<T>::value &&
+                                                       details::has_const_reference<T>::value &&
+                                                       details::has_iterator<T>::value &&
+                                                       details::has_const_iterator<T>::value &&
+                                                       details::has_pointer<T>::value &&
+                                                       details::has_const_pointer<T>::value &&
+                                                       details::has_size_type<T>::value &&
+                                                       details::has_difference_type<T>::value>
+    { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_associative_container
+    //
+
+    template <typename T>
+    struct is_associative_container : std::integral_constant<bool, is_container<T>::value &&
+                                                                   details::has_key_type<T>::value &&
+                                                                   details::has_mapped_type<T>::value>
+    { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // not_type
+    //
+
+    template <typename Trait, bool V = Trait::value>
+    struct not_type : std::false_type {};
+
+    template <typename Trait>
+    struct not_type<Trait, false> : std::true_type {};
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_tuple
+    //
+
+    template <typename T>
+    struct is_tuple : std::integral_constant<bool, false>
+    { };
+
+    template <typename ...Ti>
+    struct is_tuple<std::tuple<Ti...>> : std::integral_constant<bool, true>
+    { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_pair
+    //
+
+    template <typename T>
+    struct is_pair : std::integral_constant<bool, false>
+    { };
+
+    template <typename T, typename U>
+    struct is_pair<std::pair<T,U>> : std::integral_constant<bool, true>
+    { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // has_insertion_operator: (<<)
+    //
+
+    template <typename T>
+    class __has_insertion_operator
+    {
+        template <typename C> static void test(std::remove_reference_t<decltype((std::cout << std::declval<C>())) > *) noexcept;
+        template <typename C> static void test(...) noexcept(false);
+    public:
+        enum { value = noexcept(test<T>(0)) };
+    };
+
+    template <typename T>
+    struct has_insertion_operator
+        : std::integral_constant<bool, __has_insertion_operator<T>::value>
+    { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // has_extraction_operator: (>>)
+    //
+
+    template <typename T>
+    class __has_extraction_operator
+    {
+        template <typename C> static void test(std::remove_reference_t<decltype((std::cin >> std::declval<C &>())) > *) noexcept;
+        template <typename C> static void test(...) noexcept(false);
+    public:
+        enum { value = noexcept(test<T>(0)) };
+    };
+
+    template <typename T>
+    struct has_extraction_operator
+        : std::integral_constant<bool, __has_extraction_operator<T>::value>
+    {};
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_copy_constructing:
+    //
+
+    template <typename T, typename ...U>
+    struct is_copy_constructing : std::false_type {};
+
+    template <typename T, typename U>
+    struct is_copy_constructing<T,U> : std::is_same<typename std::decay<T>::type, typename std::decay<U>::type> {};
+
+    // is_not_copy_constructing:
+    // trait useful to disable universal constructor to enable copy constructor:
+    //
+    //  template <typename ...Ts, typename = typename std::enable_if<is_not_copy_constructing<ThisClass, Ts...>::value>::type>
+    //  ThisClass(Ts&& ...args)
+    //
+
+    template <typename T, typename ...U>
+    struct is_not_copy_constructing : not_type<is_copy_constructing<T,U...>> {};
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -229,9 +448,6 @@ namespace cat
     };
 
 
-    CAT_CLASS_HAS_TYPEDEF(function_type);
-    CAT_CLASS_HAS_MEMBER(arity_value);
-
     template <typename F>
     struct function_type
     {
@@ -280,22 +496,6 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // is_callable....
-    //
-
-    template <typename F>
-    struct _is_callable : std::integral_constant<bool,
-                            std::is_function<F>::value  ||
-                            is_function<F>::value       ||
-                            has_call_operator<F>::value ||
-                            has_function_type<F>::value> { };
-
-    template <typename F>
-    struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
     // is_callable_with, is_callable_as....
     //
 
@@ -312,5 +512,20 @@ namespace cat
     template <typename F, typename ...Ts>
     struct is_callable_as<F(Ts...)> : is_callable_with<F, Ts...> { };
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_callable....
+    //
+
+    template <typename F>
+    struct _is_callable : std::integral_constant<bool,
+                            std::is_function<F>::value  ||
+                            is_function<F>::value       ||
+                            has_call_operator<F>::value ||
+                            has_function_type<F>::value> { };
+
+    template <typename F>
+    struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };
 
 } // namespace cat
