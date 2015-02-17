@@ -296,7 +296,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // is_callable_with....
+    // is_callable_with, is_callable_as....
     //
 
     template <typename F, typename ...Ts>
