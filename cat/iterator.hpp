@@ -36,15 +36,14 @@
 
 namespace cat
 {
-
     template <typename Fun, typename Iter>
     struct _map_iterator
     {
-        using value_type = typename std::iterator_traits<Iter>::value_type;
-        using difference_type = typename std::iterator_traits<Iter>::difference_type;
-        using pointer = typename std::iterator_traits<Iter>::pointer;
-        using reference = typename std::iterator_traits<Iter>::reference;
-        using iterator_category = typename std::iterator_traits<Iter>::iterator_category;
+        using value_type        = typename std::iterator_traits<Iter>::value_type;
+        using difference_type   = typename std::iterator_traits<Iter>::difference_type;
+        using pointer           = typename std::iterator_traits<Iter>::pointer;
+        using reference         = decltype(std::declval<Fun>()(std::declval<value_type>()));
+        using iterator_category = std::bidirectional_iterator_tag;
 
         _map_iterator(Iter it, Fun fun = {})
         : fun_(std::move(fun))
@@ -67,14 +66,7 @@ namespace cat
             return r;
         }
 
-        //
-        // pointer
-        // operator->() const
-        // {
-        //     return &(*it_);
-        // }
-
-        value_type
+        reference
         operator*() const
         {
             return fun_(*it_);
@@ -99,4 +91,6 @@ namespace cat
     {
         return _map_iterator<Fun, Iter>(it, f);
     }
-}
+
+
+} // namespace cat
