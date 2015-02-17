@@ -27,6 +27,8 @@
 #pragma once
 
 #include <forward_list>
+
+#include <cat/iterator.hpp>
 #include <cat/functor/functor.hpp>
 
 
@@ -48,12 +50,11 @@ namespace cat
         std::forward_list<B, rebind_t<Alloc, B>>
         fmap(Fun f, std::forward_list<A, Alloc> const &xs) final
         {
-            std::forward_list<B, rebind_t<Alloc, B> > out;
+            std::forward_list<B, rebind_t<Alloc, B> > out {
+                map_iterator( std::begin(xs), f ),
+                map_iterator( std::end(xs), f )
+            };
 
-            for(auto & x : xs)
-                out.push_front(f(x));
-
-            out.reverse();
             return out;
         }
     };
