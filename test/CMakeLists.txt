@@ -10,6 +10,7 @@ add_executable(test-tuple test/test-tuple.cpp)
 add_executable(test-traits test/test-traits.cpp)
 add_executable(test-functional test/test-functional.cpp)
 
+add_executable(test-monad test/test-monad.cpp)
 add_executable(test-functor test/test-functor.cpp)
 add_executable(test-applicative test/test-applicative.cpp)
 add_executable(test-monoid test/test-monoid.cpp)
