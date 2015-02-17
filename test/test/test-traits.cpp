@@ -144,6 +144,13 @@ Context(traits)
         Assert(is_callable< decltype(l1)>::value, is_true());
         Assert(is_callable< decltype(l2)>::value, is_true());
 
+        // Generic lambda needs a callable wrapper:
+        //
+
+        auto g1 = unspecified<1>([](auto n) { return n+1; });
+        Assert(is_callable< decltype(g1)>::value, is_true());
+
+
         // callable...
 
         auto c0 = callable(f0);

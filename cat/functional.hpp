@@ -36,13 +36,18 @@ namespace cat
 {
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // identity function
+    // convertible type useful in unevaluated operands
     //
 
     struct unspec
     {
         template <typename T> operator T();
     };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // identity function
+    //
 
     struct Identity
     {
@@ -141,6 +146,37 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // Unspecified callable (for generic lambdas)
+    //
+
+    template <typename F, size_t Arity>
+    struct _Unspecified
+    {
+        using function_type = unspec();
+        enum : size_t { arity_value = Arity };
+
+        constexpr _Unspecified(F f)
+        : fun_(std::move(f))
+        { }
+
+        template <typename ...Ts>
+        auto operator()(Ts&& ... xs) const
+        {
+            return fun_(std::forward<Ts>(xs)...);
+        }
+
+        F fun_;
+    };
+
+
+    template <size_t A, typename F>
+    constexpr auto unspecified(F f)
+    {
+        return _Unspecified<F, A>(std::move(f));
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // _Compose: functional composition of callable types
     //
 
@@ -183,7 +219,6 @@ namespace cat
         F_ f_;
         G_ g_;
     };
-
 
     template <typename F, typename G,
               typename std::enable_if<is_callable<F>::value && is_callable<G>::value>::type * = nullptr>

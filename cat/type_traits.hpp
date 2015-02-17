@@ -341,7 +341,11 @@ namespace cat
     // _partial_function
     //
 
-    template <typename F, size_t N> struct _partial_function;
+    template <typename F, size_t N>
+    struct _partial_function
+    {
+        using type = F;
+    };
 
     template <typename R, typename ...Ts>
     struct _partial_function<R(Ts...), 0>
@@ -471,6 +475,7 @@ namespace cat
 
 
     //////////////////////////////////////////////////////////////////////////////////
+    //
     // has_call_operator
     //
 
@@ -485,6 +490,7 @@ namespace cat
 
 
     //////////////////////////////////////////////////////////////////////////////////
+    //
     // is_function (std)
     //
 
@@ -522,8 +528,9 @@ namespace cat
     struct _is_callable : std::integral_constant<bool,
                             std::is_function<F>::value  ||
                             is_function<F>::value       ||
-                            has_call_operator<F>::value ||
-                            has_function_type<F>::value> { };
+                            has_function_type<F>::value ||
+                            has_call_operator<F>::value>
+    { };
 
     template <typename F>
     struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };

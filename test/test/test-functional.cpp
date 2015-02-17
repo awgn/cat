@@ -140,7 +140,15 @@ Context(callable_test)
 
         auto x2 = callable(sum) ^ (constant);
         Assert(x2(1) == 41);
+    }
 
+
+    Test(unspecified)
+    {
+        auto h1 = callable(unspecified<2>([](auto a, auto b) { return a+b;}));
+
+        Assert(h1(1,2) == 3);
+        Assert(h1(1)(2) == 3);
     }
 
 }
