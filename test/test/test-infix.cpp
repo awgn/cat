@@ -26,7 +26,7 @@ Context(test_infix)
 
     Test(simple)
     {
-        auto s = infix_adaptor<sum>{};
+        constexpr auto s = infix_adaptor<sum>{};
 
         Assert ( 1 *s* 2 == 3 );
         Assert ( 1 /s/ 2 == 3 );

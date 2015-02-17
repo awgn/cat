@@ -156,19 +156,19 @@ namespace cat
     // infix 5:
 
     template <typename L, typename F>
-    auto operator*(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator*(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
-    auto operator/(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator/(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
-    auto operator%(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator%(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
     }
@@ -176,13 +176,13 @@ namespace cat
     // infix 6:
 
     template <typename L, typename F>
-    auto operator+(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator+(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 6>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
-    auto operator-(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator-(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 6>{ std::forward<L>(lhs), f.oper };
     }
@@ -190,7 +190,7 @@ namespace cat
     // infix 8:
 
     template <typename L, typename F>
-    auto operator<(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator<(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 8>{ std::forward<L>(lhs), f.oper };
     }
@@ -198,7 +198,7 @@ namespace cat
     // infix 10:
 
     template <typename L, typename F>
-    auto operator&(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator&(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 10>{ std::forward<L>(lhs), f.oper };
     }
@@ -206,7 +206,7 @@ namespace cat
     // infix 11:
 
     template <typename L, typename F>
-    auto operator^(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator^(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 11>{ std::forward<L>(lhs), f.oper };
     }
@@ -214,7 +214,7 @@ namespace cat
     // infix 12:
 
     template <typename L, typename F>
-    auto operator|(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator|(L && lhs, infix_adaptor<F> const & f)
     {
         return infix_left<L, decltype(f.oper), 12>{ std::forward<L>(lhs), f.oper };
     }
