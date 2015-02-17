@@ -156,6 +156,24 @@ Context(traits)
         Assert(is_callable<decltype(c2)>::value, is_true());
         Assert(is_callable<decltype(c3)>::value, is_true());
     }
+
+    struct Object
+    {
+        int operator()() const;
+        int operator()(int) const;
+        int operator()(int, char) const;
+    };
+
+    Test(is_callable_with)
+    {
+        Assert(is_callable_with<int()>::value);
+        Assert(is_callable_with<decltype(f1), int>::value);
+        Assert(is_callable_with<decltype(f2), int, char>::value);
+
+        Assert(is_callable_as<Object()>::value);
+        Assert(is_callable_as<Object(int)>::value);
+        Assert(is_callable_as<Object(int,char)>::value);
+    }
 }
 
 

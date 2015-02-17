@@ -102,18 +102,11 @@ namespace cat
     {
         using type = T;
     };
-
-    // rebind for default deleter...
-    //
     template <typename T, typename To>
     struct rebind<T, To, std::enable_if_t<is_default_deleter<T>::value>>
     {
         using type = std::default_delete<To>;
     };
-
-    // rebind for allocators...
-    //
-
     template <typename T, typename To>
     struct rebind<T, To, std::enable_if_t<has_rebind<T>::value>>
     {
@@ -239,7 +232,6 @@ namespace cat
     CAT_CLASS_HAS_TYPEDEF(function_type);
     CAT_CLASS_HAS_MEMBER(arity_value);
 
-
     template <typename F>
     struct function_type
     {
@@ -261,6 +253,7 @@ namespace cat
         enum { value = std::conditional< has_arity_value<G>::value, G, _callable_traits<G> >::type::arity_value };
     };
 
+
     //////////////////////////////////////////////////////////////////////////////////
     // has_call_operator
     //
@@ -274,6 +267,7 @@ namespace cat
         enum { value = noexcept(check<T>(nullptr)) };
     };
 
+
     //////////////////////////////////////////////////////////////////////////////////
     // is_function (std)
     //
@@ -282,6 +276,7 @@ namespace cat
 
     template <typename R, typename ...Ts>
     struct is_function<std::function<R(Ts...)>> : std::false_type { };
+
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -297,6 +292,25 @@ namespace cat
 
     template <typename F>
     struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_callable_with....
+    //
+
+    template <typename F, typename ...Ts>
+    class is_callable_with
+    {
+        template <class C> static void check(std::decay_t<decltype(std::declval<C>()(std::declval<Ts>()...))> *) noexcept;
+        template <class C> static void check(...) noexcept(false);
+    public:
+        enum { value = noexcept(check<F>(nullptr)) };
+    };
+
+    template <typename F> struct is_callable_as;
+    template <typename F, typename ...Ts>
+    struct is_callable_as<F(Ts...)> : is_callable_with<F, Ts...> { };
 
 
 } // namespace cat
