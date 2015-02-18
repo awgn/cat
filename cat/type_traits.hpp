@@ -87,59 +87,59 @@ namespace cat
 
     template <typename T>
     struct has_value_type : std::integral_constant<bool, details::has_value_type<T>::value>
-    {};
+    { };
 
     template <typename t>
     struct has_key_type : std::integral_constant<bool, details::has_key_type<t>::value>
-    {};
+    { };
 
     template <typename t>
     struct has_mapped_type : std::integral_constant<bool, details::has_mapped_type<t>::value>
-    {};
+    { };
 
     template <typename t>
     struct has_container_type : std::integral_constant<bool, details::has_container_type<t>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_pointer : std::integral_constant<bool, details::has_pointer<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_const_pointer : std::integral_constant<bool, details::has_const_pointer<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_reference : std::integral_constant<bool, details::has_reference<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_const_reference : std::integral_constant<bool, details::has_const_reference<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_iterator : std::integral_constant<bool, details::has_iterator<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_const_iterator : std::integral_constant<bool, details::has_const_iterator<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_reverse_iterator : std::integral_constant<bool, details::has_reverse_iterator<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_const_reverse_iterator : std::integral_constant<bool, details::has_const_reverse_iterator<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_size_type : std::integral_constant<bool, details::has_size_type<T>::value>
-    {};
+    { };
 
     template <typename T>
     struct has_difference_type : std::integral_constant<bool, details::has_difference_type<T>::value>
-    {};
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -178,10 +178,10 @@ namespace cat
     //
 
     template <typename Trait, bool V = Trait::value>
-    struct not_type : std::false_type {};
+    struct not_type : std::false_type { };
 
     template <typename Trait>
-    struct not_type<Trait, false> : std::true_type {};
+    struct not_type<Trait, false> : std::true_type { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +249,7 @@ namespace cat
     template <typename T>
     struct has_extraction_operator
         : std::integral_constant<bool, __has_extraction_operator<T>::value>
-    {};
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -258,10 +258,10 @@ namespace cat
     //
 
     template <typename T, typename ...U>
-    struct is_copy_constructing : std::false_type {};
+    struct is_copy_constructing : std::false_type { };
 
     template <typename T, typename U>
-    struct is_copy_constructing<T,U> : std::is_same<typename std::decay<T>::type, typename std::decay<U>::type> {};
+    struct is_copy_constructing<T,U> : std::is_same<typename std::decay<T>::type, typename std::decay<U>::type> { };
 
     // is_not_copy_constructing:
     // trait useful to disable universal constructor to enable copy constructor:
@@ -271,7 +271,7 @@ namespace cat
     //
 
     template <typename T, typename ...U>
-    struct is_not_copy_constructing : not_type<is_copy_constructing<T,U...>> {};
+    struct is_not_copy_constructing : not_type<is_copy_constructing<T,U...>> { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
