@@ -541,12 +541,22 @@ namespace cat
     // inner_type....
     //
 
-    template <typename C> struct inner_type;
+    template <typename C, size_t Idx = 0> struct inner_type;
 
     template <template <typename ...> class F, typename T, typename ...Ts>
-    struct inner_type<F<T, Ts...>>
+    struct inner_type<F<T, Ts...>, 0>
     {
         using type = T;
+    };
+    template <template <typename ...> class F, typename T, typename T1, typename ...Ts>
+    struct inner_type<F<T, T1, Ts...>, 1>
+    {
+        using type = T1;
+    };
+    template <template <typename ...> class F, typename T, typename T1, typename T2, typename ...Ts>
+    struct inner_type<F<T, T1, T2, Ts...>, 2>
+    {
+        using type = T2;
     };
 
     template <typename T>
