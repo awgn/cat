@@ -18,7 +18,7 @@ Context(test_infix)
     struct sum
     {
         template <typename T>
-        auto operator()(T a, T b) const
+        constexpr auto operator()(T a, T b) const
         {
             return a + b;
         }
@@ -65,15 +65,21 @@ Context(test_infix)
         Assert(d, is_equal_to(9));
     }
 
-    struct oper_t
-    {
-        constexpr oper_t() { }
-    } oper;
-
 
     Test(constexpr)
     {
-        assert_constexpr(infix(oper));
+        constexpr int val = 0;
+        constexpr auto plus = infix_adaptor<sum>{};
+
+        assert_constexpr(val *plus* val);
+        assert_constexpr(val /plus/ val);
+        assert_constexpr(val %plus% val);
+        assert_constexpr(val +plus+ val);
+        assert_constexpr(val -plus- val);
+        assert_constexpr(val <plus> val);
+        assert_constexpr(val &plus& val);
+        assert_constexpr(val ^plus^ val);
+        assert_constexpr(val |plus| val);
     }
 
 }

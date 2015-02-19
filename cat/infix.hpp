@@ -57,22 +57,22 @@ namespace cat
     struct infix_left<L, F, 5>
     {
         L lhs;
-        F const &oper;
+        F oper;
 
         template <typename R>
-        auto operator*(R && rhs)
+        constexpr auto operator*(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
 
         template <typename R>
-        auto operator/(R && rhs)
+        constexpr auto operator/(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
 
         template <typename R>
-        auto operator%(R && rhs)
+        constexpr auto operator%(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
@@ -83,16 +83,16 @@ namespace cat
     struct infix_left<L, F, 6>
     {
         L lhs;
-        F const &oper;
+        F oper;
 
         template <typename R>
-        auto operator+(R && rhs)
+        constexpr auto operator+(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
 
         template <typename R>
-        auto operator-(R && rhs)
+        constexpr auto operator-(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
@@ -103,12 +103,12 @@ namespace cat
     struct infix_left<L, F, 8>
     {
         L lhs;
-        F const &oper;
+        F oper;
 
         template <typename R>
-        auto operator>(R && rhs)
+        constexpr auto operator>(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::move(lhs), std::forward<R>(rhs));
         }
     };
 
@@ -117,10 +117,10 @@ namespace cat
     struct infix_left<L, F, 10>
     {
         L lhs;
-        F const &oper;
+        F oper;
 
         template <typename R>
-        auto operator&(R && rhs)
+        constexpr auto operator&(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
@@ -130,10 +130,10 @@ namespace cat
     struct infix_left<L, F, 11>
     {
         L lhs;
-        F const &oper;
+        F oper;
 
         template <typename R>
-        auto operator^(R && rhs)
+        constexpr auto operator^(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
@@ -143,10 +143,10 @@ namespace cat
     struct infix_left<L, F, 12>
     {
         L lhs;
-        F const &oper;
+        F oper;
 
         template <typename R>
-        auto operator|(R && rhs)
+        constexpr auto operator|(R && rhs)
         {
             return oper(std::forward<L>(lhs), std::forward<R>(rhs));
         }
@@ -190,9 +190,9 @@ namespace cat
     // infix 8:
 
     template <typename L, typename F>
-    constexpr auto operator<(L && lhs, infix_adaptor<F> const & f)
+    constexpr auto operator<(L lhs, infix_adaptor<F> f)
     {
-        return infix_left<L, decltype(f.oper), 8>{ std::forward<L>(lhs), f.oper };
+        return infix_left<L, decltype(f.oper), 8>{ lhs, f.oper };
     }
 
     // infix 10:
