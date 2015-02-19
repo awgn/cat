@@ -42,6 +42,12 @@ namespace cat
         : oper(o)
         {}
 
+        template <typename ...Ts>
+        constexpr auto operator()(Ts && ...xs) const
+        {
+            return oper(std::forward<Ts>(xs)...);
+        }
+
         F oper;
     };
 
@@ -190,9 +196,9 @@ namespace cat
     // infix 8:
 
     template <typename L, typename F>
-    constexpr auto operator<(L lhs, infix_adaptor<F> f)
+    constexpr auto operator<(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<L, decltype(f.oper), 8>{ lhs, f.oper };
+        return infix_left<L, decltype(f.oper), 8>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 10:
