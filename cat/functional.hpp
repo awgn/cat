@@ -27,16 +27,196 @@
 #pragma once
 
 #include <utility>
+#include <iterator>
 #include <functional>
-#include <iostream>
 
-#include <cat/type_traits.hpp>
 #include <cat/tuple.hpp>
+#include <cat/type_traits.hpp>
 #include <cat/infix.hpp>
-#include <cat/utility.hpp>
 
 namespace cat
 {
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // convertible type useful in unevaluated operands
+    //
+
+    struct unspec
+    {
+        template <typename T> operator T();
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // identity function
+    //
+
+    struct Identity
+    {
+        using function_type = unspec(unspec);
+        enum : size_t { arity_value = 1 };
+
+        template <typename T>
+        constexpr auto
+        operator()(T &&x) const noexcept
+        {
+            return std::forward<T>(x);
+        }
+    };
+
+    constexpr Identity identity = {};
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // make_function
+    //
+
+    template<typename F>
+    auto constexpr make_function(F &&f)
+    {
+        return std::function<typename function_type<F>::type>(std::forward<F>(f));
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // first, second, elem<> on pair/tuple...:
+    //
+
+    struct First_
+    {
+        template <typename P>
+        constexpr decltype(auto)
+        operator()(P && p) const noexcept
+        {
+            return std::get<0>(std::forward<P>(p));
+        }
+
+    } constexpr first = First_{};
+
+    struct Second_
+    {
+        template <typename P>
+        constexpr decltype(auto)
+        operator()(P &&p) const noexcept
+        {
+            return std::get<1>(std::forward<P>(p));
+        }
+
+    } constexpr second = Second_{};
+
+
+    template <size_t N>
+    struct Elem_
+    {
+        template <typename Tuple>
+        constexpr decltype(auto)
+        operator()(Tuple && t) const noexcept
+        {
+            return std::get<N>(std::forward<Tuple>(t));
+        }
+    };
+
+#ifdef __clang
+
+    template <size_t N>
+    constexpr auto elem = Elem_<N>{};
+
+#endif
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // print:
+    //
+
+    struct Print_
+    {
+        template <typename T>
+        void operator()(T const &elem)
+        {
+            // TODO: use show typeclass...
+            //
+            std::cout << elem << std::endl;
+        }
+
+    } constexpr print = Print_{ };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // foldl, foldl1
+    //
+
+    struct Foldl_
+    {
+        template <typename F, typename A, template <typename ...> class C, typename ...Ts>
+        auto operator()(F f, A acc, C<Ts...> const &xs) const
+        {
+            for(auto it = xs.cbegin(); it != xs.cend(); ++it)
+                acc = f(std::move(acc), *it);
+
+            return acc;
+        }
+
+    } constexpr foldl = Foldl_{ };
+
+    struct Foldl1_
+    {
+        template <typename F, template <typename ...> class C, typename ...Ts>
+        auto operator()(F f, C<Ts...> const &xs) const
+        {
+            if (xs.empty())
+                throw std::runtime_error("foldl1: empty container");
+
+            auto acc = xs.front();
+
+            for(auto it = std::next(xs.cbegin()); it != xs.cend(); ++it)
+                acc = f(std::move(acc), *it);
+
+            return acc;
+        }
+
+    } constexpr foldl1 = Foldl1_{ };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // foldr, foldr1
+    //
+
+    struct Foldr_
+    {
+        template <typename F, typename A, template <typename ...> class C, typename ...Ts>
+        auto operator()(F f, A acc, C<Ts...> const &xs) const
+        {
+            for(auto it = xs.crbegin(); it != xs.crend(); ++it)
+                acc = f(*it, std::move(acc));
+
+            return acc;
+        }
+
+    } constexpr foldr = Foldr_{ };
+
+
+    struct Foldr1_
+    {
+        template <typename F, template <typename ...> class C, typename ...Ts>
+        auto operator()(F f, C<Ts...> const &xs) const
+        {
+            if (xs.empty())
+                throw std::runtime_error("foldr1: empty container");
+
+            auto acc = xs.back();
+
+            for(auto it = std::next(xs.crbegin()); it != xs.crend(); ++it)
+                acc = f(*it, std::move(acc));
+
+            return acc;
+        }
+
+    } constexpr foldr1 = Foldr1_{ };
+
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // Callable_ with partial application support
@@ -265,9 +445,6 @@ namespace cat
         };
     };
 
-
     constexpr auto on = infix(on_{});
 
-
 } // namespace cat
-
