@@ -145,16 +145,16 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // Unspecified callable (for generic lambdas)
+    // Generic callable (for generic lambdas)
     //
 
     template <typename F, size_t Arity>
-    struct Unspecified_
+    struct Generic_
     {
         using function_type = unspec();
         enum : size_t { arity_value = Arity };
 
-        constexpr Unspecified_(F f)
+        constexpr Generic_(F f)
         : fun_(std::move(f))
         { }
 
@@ -169,9 +169,9 @@ namespace cat
 
 
     template <size_t A, typename F>
-    constexpr auto unspecified(F f)
+    constexpr auto generic(F f)
     {
-        return Unspecified_<F, A>(std::move(f));
+        return Generic_<F, A>(std::move(f));
     };
 
     //////////////////////////////////////////////////////////////////////////////////
