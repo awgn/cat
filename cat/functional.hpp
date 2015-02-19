@@ -348,9 +348,12 @@ namespace cat
         }
     };
 
+#ifdef __clang
+
     template <size_t N>
     constexpr auto elem = Elem_<N>{};
 
+#endif
 
 } // namespace cat
 
