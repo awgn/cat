@@ -27,19 +27,26 @@
 #pragma once
 
 #include <utility>
+#include <list>
+
 #include <cat/type_traits.hpp>
+#include <cat/functional.hpp>
+#include <cat/infix.hpp>
 
 namespace cat
 {
-    template <template <typename ...> class M>
-    struct MonadNull
+    namespace details
     {
-        template <typename T>
-        M<T> operator()(T const &) const
+        template <template <typename ...> class M>
+        struct Null
         {
-            return M<T>{};
-        }
-    };
+            template <typename T>
+            M<T> operator()(T const &) const
+            {
+                return M<T>{};
+            }
+        };
+    }
 
     //
     // class Monad
@@ -60,6 +67,12 @@ namespace cat
 
     template <template <typename ...> class M, typename ...> struct MonadInstance;
 
+    template <template <typename ...> class M, typename A>
+    auto mreturn(A a)
+    {
+        return MonadInstance<M, A, details::Null<M>>{}.mreturn(std::move(a));
+    }
+
     template <template <typename ...> class M, typename Fun, typename A>
     auto mbind(M<A> ma, Fun f)
     {
@@ -72,10 +85,33 @@ namespace cat
         return mbind(std::move(ma), std::move(f));
     }
 
-    template <template <typename ...> class M, typename A>
-    auto mreturn(A a)
+    template <template <typename ...> class M, typename A, typename B>
+    auto operator>>(M<A> ma, M<B> mb)
     {
-        return MonadInstance<M, A, MonadNull<M>>{}.mreturn(std::move(a));
+        return mbind(std::move(ma), constant(mb));
+    }
+    //
+    // sequence
+    //
+
+    template <template <typename ...> class M, typename A>
+    auto sequence(std::list<M<A>> const &ms)
+    {
+        auto k = [] (auto m, auto ms)
+        {
+            return (m >>= [&](auto x) {
+                return (ms >>= [&] (auto xs) {
+
+                    std::list<A> l{x};
+
+                    l.insert(l.end(), std::begin(xs), std::end(xs));
+
+                    return mreturn<M>(std::move(l));
+                });
+            });
+        };
+
+        return foldr(k, mreturn<M>( std::list<A>{} ), ms);
     }
 
 
