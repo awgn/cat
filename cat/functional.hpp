@@ -56,7 +56,8 @@ namespace cat
         enum : size_t { arity_value = 1 };
 
         template <typename T>
-        constexpr auto operator()(T &&x) const noexcept
+        constexpr auto
+        operator()(T &&x) const noexcept
         {
             return std::forward<T>(x);
         }
@@ -160,7 +161,8 @@ namespace cat
         { }
 
         template <typename ...Ts>
-        auto operator()(Ts&& ... xs) const
+        constexpr decltype(auto)
+        operator()(Ts&& ... xs) const
         {
             return fun_(std::forward<Ts>(xs)...);
         }
@@ -192,7 +194,8 @@ namespace cat
         { }
 
         template <typename T, typename ...Ts>
-        constexpr auto operator()(T &&x, Ts && ...xs) const
+        constexpr decltype(auto)
+        operator()(T &&x, Ts && ...xs) const
         {
             return f_( g_(std::forward<T>(x)), std::forward<Ts>(xs)...);
         }
@@ -211,7 +214,8 @@ namespace cat
         { }
 
         template <typename ...Ts>
-        constexpr auto operator()(Ts && ...xs) const
+        constexpr decltype(auto)
+        operator()(Ts && ...xs) const
         {
             return f_( g_(), std::forward<Ts>(xs)...);
         }
@@ -247,7 +251,7 @@ namespace cat
         { }
 
         template <typename T1, typename T2, typename ...Ts>
-        decltype(auto)
+        constexpr decltype(auto)
         operator()(T1 && x1, T2 && x2, Ts && ...xs) const
         {
             return fun_(std::forward<T2>(x2),
@@ -280,7 +284,7 @@ namespace cat
         { }
 
         template <typename T1, typename T2, typename ...Ts>
-        decltype(auto)
+        constexpr decltype(auto)
         operator()(T1 && x1, T2 && x2, Ts && ...xs) const
         {
             return f_(g_(std::forward<T1>(x1)),
@@ -312,20 +316,22 @@ namespace cat
 
     struct First_
     {
-        template <typename T, typename V>
-        constexpr T operator()(std::pair<T,V> const &p) const noexcept
+        template <typename P>
+        constexpr decltype(auto)
+        operator()(P && p) const noexcept
         {
-            return p.first;
+            return std::get<0>(std::forward<P>(p));
         }
 
     } constexpr first = First_{};
 
     struct Second_
     {
-        template <typename T, typename V>
-        constexpr V operator()(std::pair<T,V> const &p) const noexcept
+        template <typename P>
+        constexpr decltype(auto)
+        operator()(P &&p) const noexcept
         {
-            return p.second;
+            return std::get<1>(std::forward<P>(p));
         }
 
     } constexpr second = Second_{};
@@ -335,7 +341,8 @@ namespace cat
     struct Elem_
     {
         template <typename Tuple>
-        constexpr auto operator()(Tuple && t) const noexcept
+        constexpr decltype(auto)
+        operator()(Tuple && t) const noexcept
         {
             return std::get<N>(std::forward<Tuple>(t));
         }

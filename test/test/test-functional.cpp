@@ -184,6 +184,16 @@ Context(callable_test)
         Assert (rev(1,2) == 1);
     }
 
+    Test(tuple)
+    {
+        std::pair<int, int> x { 1, 1};
+
+        first(x) = 2;
+        second(x) = 3;
+
+        Assert( x == std::make_pair(2, 3) );
+    }
+
 
     Test(on)
     {
