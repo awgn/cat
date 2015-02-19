@@ -147,7 +147,7 @@ Context(traits)
         // Generic lambda needs a callable wrapper:
         //
 
-        auto g1 = unspecified<1>([](auto n) { return n+1; });
+        auto g1 = generic<1>([](auto n) { return n+1; });
         Assert(is_callable< decltype(g1)>::value, is_true());
 
 

@@ -99,12 +99,26 @@ Context(callable_test)
         Assert(f3(), is_equal_to(42));
     }
 
-    constexpr auto cfun = callable(identity);
+    struct Diff
+    {
+        constexpr Diff() {}
+        int operator()(int a, int b) const
+        {
+            return a - b;
+        }
+    };
 
     Test(constexpr)
     {
-        assert_constexpr(cfun);
+        constexpr auto diff = Diff{};
+
+        assert_constexpr(identity);
+        assert_constexpr(callable(identity));
+        assert_constexpr(generic<1>(identity));
+        assert_constexpr(compose(identity, identity));
+        assert_constexpr(flip(diff));
     }
+
 
     int next(int a)
     {
@@ -143,9 +157,9 @@ Context(callable_test)
     }
 
 
-    Test(unspecified)
+    Test(generic)
     {
-        auto h1 = callable(unspecified<2>([](auto a, auto b) { return a+b;}));
+        auto h1 = callable(generic<2>([](auto a, auto b) { return a+b;}));
 
         Assert(h1(1,2) == 3);
         Assert(h1(1)(2) == 3);
