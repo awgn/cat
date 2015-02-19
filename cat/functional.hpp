@@ -447,4 +447,29 @@ namespace cat
 
     constexpr auto on = infix(on_{});
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // constant
+    //
+
+    template <typename T>
+    struct Constant_
+    {
+        template <typename Tp>
+        constexpr T operator()(Tp const &) const
+        {
+            return value_;
+        }
+
+        T value_;
+    };
+
+    template <typename T>
+    constexpr auto constant(T value)
+    {
+        return Constant_<T>{ std::move(value) };
+    }
+
+
 } // namespace cat
