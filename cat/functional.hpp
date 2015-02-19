@@ -233,6 +233,36 @@ namespace cat
         return compose(std::move(f), std::move(g));
     }
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // flip:
+    //
+
+    template <typename F>
+    struct Flip_
+    {
+        constexpr Flip_(F fun)
+        : fun_(std::move(fun))
+        { }
+
+        template <typename T1, typename T2, typename ...Ts>
+        decltype(auto)
+        operator()(T1 && x1, T2 && x2, Ts && ...xs) const
+        {
+            return fun_(std::forward<T2>(x2),
+                        std::forward<T1>(x1),
+                        std::forward<Ts>(xs)...);
+        }
+
+    private:
+        F fun_;
+    };
+
+    template <typename F>
+    constexpr auto flip(F fun_)
+    {
+        return Flip_<F>{ std::move(fun_) };
+    };
 
 } // namespace cat
 

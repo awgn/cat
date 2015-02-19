@@ -151,6 +151,24 @@ Context(callable_test)
         Assert(h1(1)(2) == 3);
     }
 
+    struct Diff_
+    {
+        int operator()(int a, int b) const
+        {
+            return a - b;
+        }
+    };
+
+    constexpr auto diff = Diff_{};
+
+    Test(flip)
+    {
+        constexpr auto rev = flip(diff);
+
+        assert_constexpr(rev);
+        Assert (rev(1,2) == 1);
+    }
+
 }
 
 
