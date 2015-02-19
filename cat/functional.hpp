@@ -307,7 +307,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // first, second on pair...:
+    // first, second, elem<> on pair/tuple...:
     //
 
     struct First_
@@ -329,6 +329,20 @@ namespace cat
         }
 
     } constexpr second = Second_{};
+
+
+    template <size_t N>
+    struct Elem_
+    {
+        template <typename Tuple>
+        constexpr auto operator()(Tuple && t) const noexcept
+        {
+            return std::get<N>(std::forward<Tuple>(t));
+        }
+    };
+
+    template <size_t N>
+    constexpr auto elem = Elem_<N>{};
 
 
 } // namespace cat

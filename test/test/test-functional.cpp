@@ -187,7 +187,7 @@ Context(callable_test)
 
     Test(on)
     {
-        std::vector<std::pair<int, std::string>> v { {2, "world"}, {1, "hello"} };
+        std::vector<std::pair<int, std::string>> v { {2, "abc"}, {1, "hello"} };
 
         // std::sort(std::begin(v), std::end(v), on(std::less<int>(), first)); or better...
         //
@@ -196,6 +196,11 @@ Context(callable_test)
 
         Assert(first(v[0]) == 1);
         Assert(first(v[1]) == 2);
+
+        std::sort(std::begin(v), std::end(v), std::less<std::string>{} -on- elem<1>);
+
+        Assert(first(v[0]) == 2);
+        Assert(first(v[1]) == 1);
     }
 
 }
