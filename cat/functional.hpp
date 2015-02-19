@@ -31,6 +31,7 @@
 
 #include <cat/type_traits.hpp>
 #include <cat/tuple.hpp>
+#include <cat/infix.hpp>
 
 namespace cat
 {
@@ -263,6 +264,72 @@ namespace cat
     {
         return Flip_<F>{ std::move(fun_) };
     };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // on (infix version):
+    //
+
+    template <typename F, typename G>
+    struct On_
+    {
+        constexpr On_(F f, G g)
+        : f_(std::move(f))
+        , g_(std::move(g))
+        { }
+
+        template <typename T1, typename T2, typename ...Ts>
+        decltype(auto)
+        operator()(T1 && x1, T2 && x2, Ts && ...xs) const
+        {
+            return f_(g_(std::forward<T1>(x1)),
+                      g_(std::forward<T2>(x2)), std::forward<Ts>(xs)...);
+        }
+
+    private:
+        F f_;
+        G g_;
+    };
+
+    struct on_
+    {
+        template <typename F, typename G>
+        constexpr auto operator()(F f_, G g_) const
+        {
+            return On_<F,G>{ std::move(f_), std::move(g_) };
+        };
+    };
+
+
+    constexpr auto on = infix(on_{});
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // first, second on pair...:
+    //
+
+    struct First_
+    {
+        template <typename T, typename V>
+        constexpr T operator()(std::pair<T,V> const &p) const noexcept
+        {
+            return p.first;
+        }
+
+    } constexpr first = First_{};
+
+    struct Second_
+    {
+        template <typename T, typename V>
+        constexpr V operator()(std::pair<T,V> const &p) const noexcept
+        {
+            return p.second;
+        }
+
+    } constexpr second = Second_{};
+
 
 } // namespace cat
 
