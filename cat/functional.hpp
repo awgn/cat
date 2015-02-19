@@ -78,20 +78,20 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // _Callable with partial application support
+    // Callable_ with partial application support
     //
 
     template <typename F, typename ...Ts>
-    struct _Callable
+    struct Callable_
     {
         using function_type =
-            typename _partial_function<
+            typename partial_function_type<
                 typename function_type<F>::type, sizeof...(Ts)>::type;
 
         enum : size_t { arity_value = arity<F>::value - sizeof...(Ts) };
 
         template <typename ...Xs>
-        constexpr explicit _Callable(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        constexpr explicit Callable_(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
         , args_(std::move(args))
         { }
@@ -122,14 +122,14 @@ namespace cat
         template <size_t I, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _Callable<F, Ts..., Xs...>(
+            return Callable_<F, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return _Callable<F, Ts..., Xs...>(
+            return Callable_<F, Ts..., Xs...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -140,9 +140,8 @@ namespace cat
     template<typename F>
     constexpr auto callable(F f)
     {
-        return _Callable<F>(std::move(f));
+        return Callable_<F>(std::move(f));
     }
-
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -150,12 +149,12 @@ namespace cat
     //
 
     template <typename F, size_t Arity>
-    struct _Unspecified
+    struct Unspecified_
     {
         using function_type = unspec();
         enum : size_t { arity_value = Arity };
 
-        constexpr _Unspecified(F f)
+        constexpr Unspecified_(F f)
         : fun_(std::move(f))
         { }
 
@@ -172,21 +171,21 @@ namespace cat
     template <size_t A, typename F>
     constexpr auto unspecified(F f)
     {
-        return _Unspecified<F, A>(std::move(f));
+        return Unspecified_<F, A>(std::move(f));
     };
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // _Compose: functional composition of callable types
+    // Compose_: functional composition of callable types
     //
 
-    template <typename F_, typename G_, typename = void>  struct _Compose;
+    template <typename F_, typename G_, typename = void>  struct Compose_;
 
     template <typename F_, typename G_>
-    struct _Compose<F_, G_, typename std::enable_if<arity<G_>::value != 0>::type>
+    struct Compose_<F_, G_, typename std::enable_if<arity<G_>::value != 0>::type>
     {
         template <typename F, typename G>
-        constexpr _Compose(F && f, G && g)
+        constexpr Compose_(F && f, G && g)
         : f_(std::forward<F>(f))
         , g_(std::forward<G>(g))
         { }
@@ -202,10 +201,10 @@ namespace cat
     };
 
     template <typename F_, typename G_>
-    struct _Compose<F_, G_, typename std::enable_if<arity<G_>::value == 0>::type>
+    struct Compose_<F_, G_, typename std::enable_if<arity<G_>::value == 0>::type>
     {
         template <typename F, typename G>
-        constexpr _Compose(F && f, G && g)
+        constexpr Compose_(F && f, G && g)
         : f_(std::forward<F>(f))
         , g_(std::forward<G>(g))
         { }
@@ -224,7 +223,7 @@ namespace cat
               typename std::enable_if<is_callable<F>::value && is_callable<G>::value>::type * = nullptr>
     constexpr auto compose(F f, G g)
     {
-        return _Compose<F,G>{ std::move(f), std::move(g) };
+        return Compose_<F,G>{ std::move(f), std::move(g) };
     }
 
     template <typename F, typename G,

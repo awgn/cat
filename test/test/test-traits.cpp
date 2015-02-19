@@ -12,11 +12,11 @@ Context(traits)
 {
     Test(partail_function_type)
     {
-       Assert(std::is_same<_partial_function<int(char,short,int,long), 0>::type, int(char,short,int,long)>::value);
-       Assert(std::is_same<_partial_function<int(char,short,int,long), 1>::type, int(short,int,long)>::value);
-       Assert(std::is_same<_partial_function<int(char,short,int,long), 2>::type, int(int,long)>::value);
-       Assert(std::is_same<_partial_function<int(char,short,int,long), 3>::type, int(long)>::value);
-       Assert(std::is_same<_partial_function<int(char,short,int,long), 4>::type, int()>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 0>::type, int(char,short,int,long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 1>::type, int(short,int,long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 2>::type, int(int,long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 3>::type, int(long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 4>::type, int()>::value);
     }
 
 

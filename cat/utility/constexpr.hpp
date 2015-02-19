@@ -29,16 +29,16 @@
 namespace cat
 {
     template <typename t>
-    struct _assert_constexpr
+    struct assert_constexpr_test
     {
-        constexpr _assert_constexpr() {}
+        constexpr assert_constexpr_test() {}
     };
 
     template <typename T>
-    constexpr _assert_constexpr<T>
+    constexpr assert_constexpr_test<T>
     assert_constexpr(T)
     {
-        return _assert_constexpr<T>{};
+        return assert_constexpr_test<T>{};
     };
 
 } // namespace cat

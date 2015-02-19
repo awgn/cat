@@ -73,72 +73,101 @@ namespace cat
         CAT_CLASS_HAS_MEMBER(size_type);
         CAT_CLASS_HAS_MEMBER(difference_type);
 
+        CAT_CLASS_HAS_TYPEDEF(function_type);
+        CAT_CLASS_HAS_MEMBER(arity_value);
+
     } // namespace details
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // boolean type
+    //
+
+    template <bool value>
+    using bool_type = std::integral_constant<bool, value>;
+
+    template <typename Trait, bool V = Trait::value> struct not_type;
+
+    template <typename Trait>
+    struct not_type<Trait, false> : std::true_type { };
+
+    template <typename Trait>
+    struct not_type<Trait, true> : std::false_type { };
 
     //////////////////////////////////////////////////////////////////////////////////
     //
     // generic type traits...
     //
 
-    CAT_CLASS_HAS_TYPEDEF(function_type);
-    CAT_CLASS_HAS_MEMBER(arity_value);
-
-
     template <typename T>
-    struct has_value_type : std::integral_constant<bool, details::has_value_type<T>::value>
+    struct has_value_type
+        : bool_type<details::has_value_type<T>::value>
     { };
 
     template <typename t>
-    struct has_key_type : std::integral_constant<bool, details::has_key_type<t>::value>
+    struct has_key_type
+        : bool_type<details::has_key_type<t>::value>
     { };
 
     template <typename t>
-    struct has_mapped_type : std::integral_constant<bool, details::has_mapped_type<t>::value>
+    struct has_mapped_type
+        : bool_type<details::has_mapped_type<t>::value>
     { };
 
     template <typename t>
-    struct has_container_type : std::integral_constant<bool, details::has_container_type<t>::value>
+    struct has_container_type
+        : bool_type<details::has_container_type<t>::value>
     { };
 
     template <typename T>
-    struct has_pointer : std::integral_constant<bool, details::has_pointer<T>::value>
+    struct has_pointer
+        : bool_type<details::has_pointer<T>::value>
     { };
 
     template <typename T>
-    struct has_const_pointer : std::integral_constant<bool, details::has_const_pointer<T>::value>
+    struct has_const_pointer
+        : bool_type<details::has_const_pointer<T>::value>
     { };
 
     template <typename T>
-    struct has_reference : std::integral_constant<bool, details::has_reference<T>::value>
+    struct has_reference
+        : bool_type<details::has_reference<T>::value>
     { };
 
     template <typename T>
-    struct has_const_reference : std::integral_constant<bool, details::has_const_reference<T>::value>
+    struct has_const_reference
+        : bool_type<details::has_const_reference<T>::value>
     { };
 
     template <typename T>
-    struct has_iterator : std::integral_constant<bool, details::has_iterator<T>::value>
+    struct has_iterator
+        : bool_type<details::has_iterator<T>::value>
     { };
 
     template <typename T>
-    struct has_const_iterator : std::integral_constant<bool, details::has_const_iterator<T>::value>
+    struct has_const_iterator
+        : bool_type<details::has_const_iterator<T>::value>
     { };
 
     template <typename T>
-    struct has_reverse_iterator : std::integral_constant<bool, details::has_reverse_iterator<T>::value>
+    struct has_reverse_iterator
+        : bool_type<details::has_reverse_iterator<T>::value>
     { };
 
     template <typename T>
-    struct has_const_reverse_iterator : std::integral_constant<bool, details::has_const_reverse_iterator<T>::value>
+    struct has_const_reverse_iterator
+        : bool_type<details::has_const_reverse_iterator<T>::value>
     { };
 
     template <typename T>
-    struct has_size_type : std::integral_constant<bool, details::has_size_type<T>::value>
+    struct has_size_type
+        : bool_type<details::has_size_type<T>::value>
     { };
 
     template <typename T>
-    struct has_difference_type : std::integral_constant<bool, details::has_difference_type<T>::value>
+    struct has_difference_type
+        : bool_type<details::has_difference_type<T>::value>
     { };
 
 
@@ -148,15 +177,16 @@ namespace cat
     //
 
     template <typename T>
-    struct is_container : std::integral_constant<bool, details::has_value_type<T>::value &&
-                                                       details::has_reference<T>::value &&
-                                                       details::has_const_reference<T>::value &&
-                                                       details::has_iterator<T>::value &&
-                                                       details::has_const_iterator<T>::value &&
-                                                       details::has_pointer<T>::value &&
-                                                       details::has_const_pointer<T>::value &&
-                                                       details::has_size_type<T>::value &&
-                                                       details::has_difference_type<T>::value>
+    struct is_container
+        : bool_type<details::has_value_type<T>::value &&
+                    details::has_reference<T>::value &&
+                    details::has_const_reference<T>::value &&
+                    details::has_iterator<T>::value &&
+                    details::has_const_iterator<T>::value &&
+                    details::has_pointer<T>::value &&
+                    details::has_const_pointer<T>::value &&
+                    details::has_size_type<T>::value &&
+                    details::has_difference_type<T>::value>
     { };
 
 
@@ -166,22 +196,11 @@ namespace cat
     //
 
     template <typename T>
-    struct is_associative_container : std::integral_constant<bool, is_container<T>::value &&
-                                                                   details::has_key_type<T>::value &&
-                                                                   details::has_mapped_type<T>::value>
+    struct is_associative_container
+        : bool_type<is_container<T>::value &&
+                    details::has_key_type<T>::value &&
+                    details::has_mapped_type<T>::value>
     { };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // not_type
-    //
-
-    template <typename Trait, bool V = Trait::value>
-    struct not_type : std::false_type { };
-
-    template <typename Trait>
-    struct not_type<Trait, false> : std::true_type { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -190,11 +209,11 @@ namespace cat
     //
 
     template <typename T>
-    struct is_tuple : std::integral_constant<bool, false>
+    struct is_tuple : bool_type<false>
     { };
 
     template <typename ...Ti>
-    struct is_tuple<std::tuple<Ti...>> : std::integral_constant<bool, true>
+    struct is_tuple<std::tuple<Ti...>> : bool_type<true>
     { };
 
 
@@ -204,11 +223,11 @@ namespace cat
     //
 
     template <typename T>
-    struct is_pair : std::integral_constant<bool, false>
+    struct is_pair : bool_type<false>
     { };
 
     template <typename T, typename U>
-    struct is_pair<std::pair<T,U>> : std::integral_constant<bool, true>
+    struct is_pair<std::pair<T,U>> : bool_type<true>
     { };
 
 
@@ -217,18 +236,22 @@ namespace cat
     // has_insertion_operator: (<<)
     //
 
-    template <typename T>
-    class __has_insertion_operator
+    namespace details
     {
-        template <typename C> static void test(std::remove_reference_t<decltype((std::cout << std::declval<C>())) > *) noexcept;
-        template <typename C> static void test(...) noexcept(false);
-    public:
-        enum { value = noexcept(test<T>(0)) };
-    };
+        template <typename T>
+        class has_insertion_operator
+        {
+            template <typename C> static void test(std::remove_reference_t<decltype((std::cout << std::declval<C>())) > *) noexcept;
+            template <typename C> static void test(...) noexcept(false);
+        public:
+            enum { value = noexcept(test<T>(0)) };
+        };
+
+    } // namespace details
 
     template <typename T>
     struct has_insertion_operator
-        : std::integral_constant<bool, __has_insertion_operator<T>::value>
+        : bool_type<details::has_insertion_operator<T>::value>
     { };
 
 
@@ -237,18 +260,23 @@ namespace cat
     // has_extraction_operator: (>>)
     //
 
-    template <typename T>
-    class __has_extraction_operator
+    namespace details
     {
-        template <typename C> static void test(std::remove_reference_t<decltype((std::cin >> std::declval<C &>())) > *) noexcept;
-        template <typename C> static void test(...) noexcept(false);
-    public:
-        enum { value = noexcept(test<T>(0)) };
-    };
+        template <typename T>
+        class has_extraction_operator
+        {
+            template <typename C> static void test(std::remove_reference_t<decltype((std::cin >> std::declval<C &>())) > *) noexcept;
+            template <typename C> static void test(...) noexcept(false);
+        public:
+            enum { value = noexcept(test<T>(0)) };
+        };
+
+    } // namespace details
+
 
     template <typename T>
     struct has_extraction_operator
-        : std::integral_constant<bool, __has_extraction_operator<T>::value>
+        : bool_type<details::has_extraction_operator<T>::value>
     { };
 
 
@@ -258,10 +286,14 @@ namespace cat
     //
 
     template <typename T, typename ...U>
-    struct is_copy_constructing : std::false_type { };
+    struct is_copy_constructing
+        : std::false_type
+    { };
 
     template <typename T, typename U>
-    struct is_copy_constructing<T,U> : std::is_same<typename std::decay<T>::type, typename std::decay<U>::type> { };
+    struct is_copy_constructing<T,U>
+        : std::is_same<typename std::decay<T>::type, typename std::decay<U>::type>
+    { };
 
     // is_not_copy_constructing:
     // trait useful to disable universal constructor to enable copy constructor:
@@ -271,7 +303,9 @@ namespace cat
     //
 
     template <typename T, typename ...U>
-    struct is_not_copy_constructing : not_type<is_copy_constructing<T,U...>> { };
+    struct is_not_copy_constructing
+        : not_type<is_copy_constructing<T,U...>>
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -279,15 +313,23 @@ namespace cat
     // has_rebind
     //
 
-    template <typename T>
-    class has_rebind
+    namespace details
     {
-        template <class C> static void check(typename C::template rebind<int>::other *) noexcept;
-        template <class C> static void check(...) noexcept(false);
-    public:
+        template <typename T>
+        class has_rebind
+        {
+            template <class C> static void check(typename C::template rebind<int>::other *) noexcept;
+            template <class C> static void check(...) noexcept(false);
+        public:
 
-        enum { value = noexcept(check<T>(nullptr)) };
-    };
+            enum { value = noexcept(check<T>(nullptr)) };
+        };
+    }
+
+    template <typename T>
+    struct has_rebind
+        : bool_type<details::has_rebind<T>::value>
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -296,20 +338,17 @@ namespace cat
     //
 
     template <typename T>
-    struct is_default_deleter
-    {
-        enum { value = false };
-    };
+    struct is_default_deleter : std::false_type
+    { };
+
     template <typename T>
-    struct is_default_deleter<std::default_delete<T>>
-    {
-        enum { value = true };
-    };
+    struct is_default_deleter<std::default_delete<T>> : std::true_type
+    { };
+
     template <typename T>
-    struct is_default_deleter<std::default_delete<T[]>>
-    {
-        enum { value = true };
-    };
+    struct is_default_deleter<std::default_delete<T[]>> : std::true_type
+    { };
+
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -338,62 +377,62 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // _partial_function
+    // partial_function_type
     //
 
     template <typename F, size_t N>
-    struct _partial_function
+    struct partial_function_type
     {
         using type = F;
     };
 
     template <typename R, typename ...Ts>
-    struct _partial_function<R(Ts...), 0>
+    struct partial_function_type<R(Ts...), 0>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T, typename ...Ts>
-    struct _partial_function<R(T, Ts...), 1>
+    struct partial_function_type<R(T, Ts...), 1>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename ...Ts>
-    struct _partial_function<R(T1, T2, Ts...), 2>
+    struct partial_function_type<R(T1, T2, Ts...), 2>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, Ts...), 3>
+    struct partial_function_type<R(T1, T2, T3, Ts...), 3>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename T4, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, T4, Ts...), 4>
+    struct partial_function_type<R(T1, T2, T3, T4, Ts...), 4>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, T4, T5, Ts...), 5>
+    struct partial_function_type<R(T1, T2, T3, T4, T5, Ts...), 5>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, T4, T5, T6, Ts...), 6>
+    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, Ts...), 6>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, T4, T5, T6, T7, Ts...), 7>
+    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, T7, Ts...), 7>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, T4, T5, T6, T7, T8, Ts...), 8>
+    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, T7, T8, Ts...), 8>
     {
         using type = R(Ts...);
     };
     template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename ...Ts>
-    struct _partial_function<R(T1, T2, T3, T4, T5, T6, T7, T8, T9, Ts...), 9>
+    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, T7, T8, T9, Ts...), 9>
     {
         using type = R(Ts...);
     };
@@ -401,76 +440,76 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // _callable_traits: function_type, return_type, arity_value....
+    // callable_traits: function_type, return_type, arity_value....
     //
 
     template <typename F>
-    struct _callable_traits : _callable_traits<decltype(&F::operator())> { };
+    struct callable_traits : callable_traits<decltype(&F::operator())> { };
 
     template <typename F, typename R, typename ...Ts>
-    struct _callable_traits<R(F::*)(Ts...) const>
+    struct callable_traits<R(F::*)(Ts...) const>
     {
         using function_type = R(Ts...);
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename F, typename R, typename ...Ts>
-    struct _callable_traits<R(F::*)(Ts...)>
+    struct callable_traits<R(F::*)(Ts...)>
     {
         using function_type = R(Ts...);
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct _callable_traits<R(Ts...)>
+    struct callable_traits<R(Ts...)>
     {
         using function_type = R(Ts...);
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct _callable_traits<R(*)(Ts...)>
+    struct callable_traits<R(*)(Ts...)>
     {
         using function_type = R(Ts...);
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct _callable_traits<R(*&)(Ts...)>
+    struct callable_traits<R(*&)(Ts...)>
     {
         using function_type = R(Ts...);
         enum : size_t { arity_value = sizeof...(Ts) };
     };
     template <typename R, typename ...Ts>
-    struct _callable_traits<R(&)(Ts...)>
+    struct callable_traits<R(&)(Ts...)>
     {
         using function_type = R(Ts...);
         enum : size_t { arity_value = sizeof...(Ts) };
     };
 
-    template <typename F> struct _result_type;
+
+    template <typename F> struct result_type;
     template <typename R, typename ...Ts>
-    struct _result_type<R(Ts...)>
+    struct result_type<R(Ts...)>
     {
         using type = R;
     };
-
 
     template <typename F>
     struct function_type
     {
         using G = typename std::decay<F>::type;
-        using type = typename std::conditional< has_function_type<G>::value, G, _callable_traits<G> >::type::function_type;
+        using type = typename std::conditional<details::has_function_type<G>::value, G, callable_traits<G> >::type::function_type;
     };
 
     template <typename F>
     struct return_type
     {
         using G = typename std::decay<F>::type;
-        using type = typename _result_type<typename function_type<F>::type>::type;
+        using type = typename result_type<typename function_type<F>::type>::type;
     };
 
     template <typename F>
     struct arity
     {
         using G = typename std::decay<F>::type;
-        enum { value = std::conditional< has_arity_value<G>::value, G, _callable_traits<G> >::type::arity_value };
+        enum { value = std::conditional<details::has_arity_value<G>::value, G, callable_traits<G> >::type::arity_value };
     };
 
 
@@ -479,25 +518,35 @@ namespace cat
     // has_call_operator
     //
 
-    template <typename T>
-    class has_call_operator
+    namespace details
     {
-        template <class C> static void check(decltype(&C::operator()) *) noexcept;
-        template <class C> static void check(...) noexcept(false);
-    public:
-        enum { value = noexcept(check<T>(nullptr)) };
-    };
+        template <typename T>
+        class has_call_operator
+        {
+            template <class C> static void check(decltype(&C::operator()) *) noexcept;
+            template <class C> static void check(...) noexcept(false);
+        public:
+            enum { value = noexcept(check<T>(nullptr)) };
+        };
+
+    } // namespace details
+
+
+    template <typename T>
+    struct has_call_operator
+        : bool_type< details::has_call_operator<T>::value >
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // is_function (std)
+    // is_std_function (std)
     //
 
-    template <typename F> struct is_function : std::false_type { };
+    template <typename F> struct is_std_function : std::false_type { };
 
     template <typename R, typename ...Ts>
-    struct is_function<std::function<R(Ts...)>> : std::false_type { };
+    struct is_std_function<std::function<R(Ts...)>> : std::true_type { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -505,18 +554,29 @@ namespace cat
     // is_callable_with, is_callable_as....
     //
 
-    template <typename F, typename ...Ts>
-    class is_callable_with
+    namespace details
     {
-        template <class C> static void check(std::decay_t<decltype(std::declval<C>()(std::declval<Ts>()...))> *) noexcept;
-        template <class C> static void check(...) noexcept(false);
-    public:
-        enum { value = noexcept(check<F>(nullptr)) };
-    };
+        template <typename F, typename ...Ts>
+        class is_callable_with
+        {
+            template <class C> static void check(std::decay_t<decltype(std::declval<C>()(std::declval<Ts>()...))> *) noexcept;
+            template <class C> static void check(...) noexcept(false);
+        public:
+            enum { value = noexcept(check<F>(nullptr)) };
+        };
+
+    } // namespace details
+
+    template <typename F, typename ... Ts>
+    struct is_callable_with
+        : bool_type<details::is_callable_with<F, Ts...>::value>
+    { };
+
 
     template <typename F> struct is_callable_as;
     template <typename F, typename ...Ts>
-    struct is_callable_as<F(Ts...)> : is_callable_with<F, Ts...> { };
+    struct is_callable_as<F(Ts...)>
+        : is_callable_with<F, Ts...> { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -524,16 +584,22 @@ namespace cat
     // is_callable....
     //
 
-    template <typename F>
-    struct _is_callable : std::integral_constant<bool,
-                            std::is_function<F>::value  ||
-                            is_function<F>::value       ||
-                            has_function_type<F>::value ||
-                            has_call_operator<F>::value>
-    { };
+    namespace details
+    {
+        template <typename F>
+        struct is_callable
+        {
+            enum { value = std::is_function<F>::value  ||
+                           is_std_function<F>::value   ||
+                           has_function_type<F>::value ||
+                           has_call_operator<F>::value };
+        };
+    }
 
     template <typename F>
-    struct is_callable : _is_callable<std::remove_pointer_t<std::decay_t<F>>> { };
+    struct is_callable
+        : bool_type<details::is_callable<std::remove_pointer_t<std::decay_t<F>>>::value>
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
