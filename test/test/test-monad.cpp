@@ -1,5 +1,5 @@
 #include <cat/monad.hpp>
-
+#include <cat/utility/typeof.hpp>
 #include <yats.hpp>
 
 using namespace yats;
@@ -44,6 +44,10 @@ Context(monad)
 
         Assert( (v >>= f) == std::vector<int>{1, 1, 2, 2, 3, 3} );
         Assert( ((v >>= f) >>= f) == std::vector<int>{1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3} );
+
+        std::vector<int> q { 1, 2 };
+
+        Assert( (q >> v) == std::vector<int> {1, 2, 3, 1, 2, 3});
     }
 
 
@@ -107,16 +111,6 @@ Context(monad)
     }
 
 
-    // Test(monad_pair)
-    // {
-    //     auto p = std::make_pair(std::string("one"), std::string("two"));
-
-    //     auto r = fmap([](const std::string &s) -> size_t { return s.size(); }, p);
-
-    //     Assert(r, is_equal_to(std::pair<std::string, size_t>{"one", 3}));
-    // }
-
-
     Test(monad_constraint)
     {
         monad_constraint( std::experimental::make_optional<std::string>( "one" ));
@@ -125,6 +119,23 @@ Context(monad)
         monad_constraint( std::list<std::string>  { "one", "two", "three" });
         monad_constraint( std::make_shared<std::string>( "one" ));
         monad_constraint( std::make_unique<std::string>( "one" ));
+    }
+
+    Test(monad_sequence)
+    {
+        std::list< std::vector<int> > l = { {1}, {1,2}, {1,2,3} };
+        std::vector< std::list<int> > expected = { {1,1,1}, {1,1,2}, {1,1,3}, {1,2,1}, {1,2,2}, {1,2,3} };
+
+        Assert(sequence(l) == expected);
+
+        std::list< std::experimental::optional<int> > l2 = { std::experimental::make_optional(1), std::experimental::make_optional(2) };
+        Assert( sequence(l2) == std::experimental::make_optional(std::list<int>{1,2}) );
+
+        std::list< std::experimental::optional<int> > l3 = { std::experimental::nullopt, std::experimental::make_optional(2) };
+        Assert( sequence(l3) == std::experimental::nullopt );
+
+        std::list< std::experimental::optional<int> > l4 = { std::experimental::make_optional(1), std::experimental::nullopt };
+        Assert( sequence(l4) == std::experimental::nullopt );
     }
 
 }
