@@ -43,14 +43,12 @@ namespace cat
             return std::deque<T>{};
         }
 
-        virtual std::deque<T> mappend(std::deque<T> const &a, std::deque<T> const &b) final
+        virtual std::deque<T> mappend(std::deque<T> a, std::deque<T> b) final
         {
-            auto ret = a;
+            for(auto &x : b)
+                a.push_back(std::move(x));
 
-            for(auto const &x : b)
-                ret.push_back(x);
-
-            return ret;
+            return a;
         }
     };
 

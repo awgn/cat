@@ -42,16 +42,14 @@ namespace cat
             return std::forward_list<T>{};
         }
 
-        virtual std::forward_list<T> mappend(std::forward_list<T> const &a, std::forward_list<T> const &b) final
+        virtual std::forward_list<T> mappend(std::forward_list<T> a, std::forward_list<T> b) final
         {
-            std::forward_list<T> ret{a};
-            auto before_end = ret.before_begin();
-
-            for(auto const & e: ret)
+            auto before_end = a.before_begin();
+            for(auto & e: a)
                 (void)e, ++before_end;
 
-            ret.insert_after(before_end, std::begin(b), std::end(b));
-            return ret;
+            a.insert_after(before_end, std::begin(b), std::end(b));
+            return a;
         }
     };
 

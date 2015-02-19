@@ -45,19 +45,19 @@ namespace cat
         using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
 
         std::vector<B>
-        mbind(std::vector<A> const &xs, Fun f) final
+        mbind(std::vector<A> xs, Fun f) final
         {
             std::vector<B> ret;
             for(auto & x : xs)
-                for(auto &y : f(x))
+                for(auto & y : f(std::move(x)))
                     ret.push_back(std::move(y));
             return ret;
         }
 
         std::vector<A>
-        mreturn(A const &a) final
+        mreturn(A a) final
         {
-            return {a};
+            return {std::move(a)};
         }
 
     };

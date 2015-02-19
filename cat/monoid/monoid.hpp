@@ -41,13 +41,14 @@ namespace cat
         struct Class
         {
             virtual M mempty() = 0;
-            virtual M mappend(M const &, M const &) = 0;
+            virtual M mappend(M, M) = 0;
 
-            virtual M mconcat(F<M> const &xs)
+            virtual M mconcat(F<M> xs)
             {
                 auto r = mempty();
-                for(auto const & x : xs)
-                    r = mappend(r, x);
+
+                for(auto && x : xs)
+                    r = mappend(std::move(r), std::move(x));
                 return r;
             };
         };
@@ -62,16 +63,17 @@ namespace cat
     }
 
     template <typename M>
-    M mappend(M const &a, M const &b)
+    M mappend(M a, M b)
     {
-        return MonoidInstance<M, std::vector>{}.mappend(a, b);
+        return MonoidInstance<M, std::vector>{}.mappend(std::move(a), std::move(b));
     }
 
     template <template <typename ...> class F, typename M>
-    M mconcat(F<M> const &f)
+    M mconcat(F<M> f)
     {
-        return MonoidInstance<M, F>{}.mconcat(f);
+        return MonoidInstance<M, F>{}.mconcat(std::move(f));
     }
+
 
     template <typename M>
     struct is_monoid : std::false_type

@@ -42,9 +42,9 @@ namespace cat
             return std::string{};
         }
 
-        virtual std::string mappend(std::string const &a, std::string const &b) final
+        virtual std::string mappend(std::string a, std::string b) final
         {
-            return a + b;
+            return std::move(a) + std::move(b);
         }
     };
 };

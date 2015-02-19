@@ -45,21 +45,18 @@ namespace cat
         using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
 
         std::shared_ptr<B>
-        mbind(std::shared_ptr<A> const &x, Fun f) final
+        mbind(std::shared_ptr<A> x, Fun f) final
         {
             if (!x)
                 return std::shared_ptr<B>{};
 
-            if (auto v = f(*x))
-                return std::make_shared<B>(*v);
-
-            return {};
+            return f(std::move(*x));
         }
 
         std::shared_ptr<A>
-        mreturn(A const &a) final
+        mreturn(A a) final
         {
-            return std::make_shared<A>(a);
+            return std::make_shared<A>(std::move(a));
         }
 
     };

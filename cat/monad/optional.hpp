@@ -45,17 +45,17 @@ namespace cat
         using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
 
         std::experimental::optional<B>
-        mbind(std::experimental::optional<A> const &x, Fun f) final
+        mbind(std::experimental::optional<A> x, Fun f) final
         {
             if (!x)
                 return std::experimental::optional<B>{};
-            return f(*x);
+            return f(std::move(*x));
         }
 
         std::experimental::optional<A>
-        mreturn(A const &a) final
+        mreturn(A a) final
         {
-            return std::experimental::make_optional(a);
+            return {std::move(a)};
         }
 
     };

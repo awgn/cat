@@ -51,32 +51,33 @@ namespace cat
         template <typename Fun, typename A>
         struct Class
         {
-            virtual auto mbind(M<A> const & ma, Fun f)
+            virtual auto mbind(M<A> ma, Fun f)
                 -> M< inner_type_t<decltype(f(std::declval<A>()))> > = 0;
 
-            virtual M<A> mreturn(A const &) = 0;
+            virtual M<A> mreturn(A) = 0;
         };
     };
 
     template <template <typename ...> class M, typename ...> struct MonadInstance;
 
     template <template <typename ...> class M, typename Fun, typename A>
-    auto mbind(M<A> const &ma, Fun f)
+    auto mbind(M<A> ma, Fun f)
     {
-        return MonadInstance<M, A, Fun>{}.mbind(ma, std::move(f));
+        return MonadInstance<M, A, Fun>{}.mbind(std::move(ma), std::move(f));
     }
 
     template <template <typename ...> class M, typename Fun, typename A>
-    auto operator>>=(M<A> const &ma, Fun f)
+    auto operator>>=(M<A> ma, Fun f)
     {
-        return mbind(ma, std::move(f));
+        return mbind(std::move(ma), std::move(f));
     }
 
     template <template <typename ...> class M, typename A>
-    auto mreturn(A const &a)
+    auto mreturn(A a)
     {
-        return MonadInstance<M, A, MonadNull<M>>{}.mreturn(a);
+        return MonadInstance<M, A, MonadNull<M>>{}.mreturn(std::move(a));
     }
+
 
     template <template <typename...> class F>
     struct is_monad : std::false_type

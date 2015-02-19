@@ -46,8 +46,8 @@ namespace cat
         }
 
         virtual std::experimental::optional<T>
-        mappend(std::experimental::optional<T> const &a,
-                std::experimental::optional<T> const &b) final
+        mappend(std::experimental::optional<T> a,
+                std::experimental::optional<T> b) final
         {
             if (!a && !b)
                 std::experimental::optional<T>{};
@@ -55,7 +55,7 @@ namespace cat
                 return a;
             if (!a && b)
                 return b;
-            return std::experimental::make_optional(cat::mappend(*a, *b));
+            return std::experimental::make_optional(cat::mappend(std::move(*a), std::move(*b)));
         }
     };
 };

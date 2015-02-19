@@ -42,14 +42,12 @@ namespace cat
             return std::vector<T>{};
         }
 
-        virtual std::vector<T> mappend(std::vector<T> const &a, std::vector<T> const &b) final
+        virtual std::vector<T> mappend(std::vector<T> a, std::vector<T> b) final
         {
-            auto ret = a;
-            ret.reserve(a.size() + b.size());
-            for(auto const &x : b)
-                ret.push_back(x);
-
-            return ret;
+            a.reserve(a.size() + b.size());
+            for(auto &x : b)
+                a.push_back(std::move(x));
+            return a;
         }
     };
 };

@@ -44,11 +44,12 @@ namespace cat
             return std::map<K,V>{};
         }
 
-        virtual std::map<K,V> mappend(std::map<K,V> const &a, std::map<K,V> const &b) final
+        virtual std::map<K,V> mappend(std::map<K,V> a, std::map<K,V> b) final
         {
-            auto ret = a;
-            ret.insert(std::begin(b), std::end(b));
-            return ret;
+            using iter_t = decltype(std::begin(b));
+
+            a.insert(std::move_iterator<iter_t>(std::begin(b)), std::move_iterator<iter_t>(std::end(b)));
+            return a;
         }
     };
 };

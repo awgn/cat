@@ -42,14 +42,12 @@ namespace cat
             return std::list<T>{};
         }
 
-        virtual std::list<T> mappend(std::list<T> const &a, std::list<T> const &b) final
+        virtual std::list<T> mappend(std::list<T> a, std::list<T> b) final
         {
-            auto ret = a;
+            for(auto &x : b)
+                a.push_back(std::move(x));
 
-            for(auto const &x : b)
-                ret.push_back(x);
-
-            return ret;
+            return a;
         }
     };
 

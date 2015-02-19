@@ -45,19 +45,19 @@ namespace cat
         using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
 
         std::list<B>
-        mbind(std::list<A> const &xs, Fun f) final
+        mbind(std::list<A> xs, Fun f) final
         {
             std::list<B> ret;
             for(auto & x : xs)
-                for(auto &y : f(x))
+                for(auto & y : f(std::move(x)))
                     ret.push_back(std::move(y));
             return ret;
         }
 
         std::list<A>
-        mreturn(A const &a) final
+        mreturn(A a) final
         {
-            return {a};
+            return {std::move(a)};
         }
     };
 

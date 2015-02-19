@@ -45,21 +45,18 @@ namespace cat
         using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
 
         std::unique_ptr<B>
-        mbind(std::unique_ptr<A> const &x, Fun f) final
+        mbind(std::unique_ptr<A> x, Fun f) final
         {
             if (!x)
                 return std::unique_ptr<B>{};
 
-            if (auto v = f(*x))
-                return std::make_unique<B>(*v);
-
-            return {};
+            return f(std::move(*x));
         }
 
         std::unique_ptr<A>
-        mreturn(A const &a) final
+        mreturn(A a) final
         {
-            return std::make_unique<A>(a);
+            return std::make_unique<A>(std::move(a));
         }
 
     };

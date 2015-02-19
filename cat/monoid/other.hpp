@@ -54,7 +54,7 @@ namespace cat
             return Any{ false };
         }
 
-        virtual Any mappend(Any const &a, Any const &b) final
+        virtual Any mappend(Any a, Any b) final
         {
             return Any { a.value || b.value };
         }
@@ -83,7 +83,7 @@ namespace cat
             return All{ true };
         }
 
-        virtual All mappend(All const &a, All const &b) final
+        virtual All mappend(All a, All b) final
         {
             return All { a.value && b.value };
         }
@@ -119,7 +119,7 @@ namespace cat
             return Sum<T>{0};
         }
 
-        virtual Sum<T> mappend(Sum<T> const &a, Sum<T> const &b) final
+        virtual Sum<T> mappend(Sum<T> a, Sum<T> b) final
         {
             return Sum<T>{ a.value + b.value };
         }
@@ -155,7 +155,7 @@ namespace cat
             return Product<T>{1};
         }
 
-        virtual Product<T> mappend(Product<T> const &a, Product<T> const &b) final
+        virtual Product<T> mappend(Product<T> a, Product<T> b) final
         {
             return Product<T>{ a.value * b.value };
         }
