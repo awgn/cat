@@ -26,19 +26,5 @@
 
 #pragma once
 
-namespace cat
-{
-    template <typename t>
-    struct assert_constexpr_test
-    {
-        constexpr assert_constexpr_test() {}
-    };
+#define assert_constexpr(expr)     { constexpr auto test_constexpr = expr; (void)test_constexpr; }
 
-    template <typename T>
-    constexpr assert_constexpr_test<T>
-    assert_constexpr(T)
-    {
-        return assert_constexpr_test<T>{};
-    };
-
-} // namespace cat
