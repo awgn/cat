@@ -28,56 +28,15 @@
 
 #include <utility>
 #include <functional>
+#include <iostream>
 
 #include <cat/type_traits.hpp>
 #include <cat/tuple.hpp>
 #include <cat/infix.hpp>
+#include <cat/utility.hpp>
 
 namespace cat
 {
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // convertible type useful in unevaluated operands
-    //
-
-    struct unspec
-    {
-        template <typename T> operator T();
-    };
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // identity function
-    //
-
-    struct Identity
-    {
-        using function_type = unspec(unspec);
-        enum : size_t { arity_value = 1 };
-
-        template <typename T>
-        constexpr auto
-        operator()(T &&x) const noexcept
-        {
-            return std::forward<T>(x);
-        }
-    };
-
-    constexpr Identity identity = {};
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // make_function
-    //
-
-    template<typename F>
-    auto constexpr make_function(F &&f)
-    {
-        return std::function<typename function_type<F>::type>(std::forward<F>(f));
-    }
-
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // Callable_ with partial application support
@@ -299,7 +258,8 @@ namespace cat
     struct on_
     {
         template <typename F, typename G>
-        constexpr auto operator()(F f_, G g_) const
+        constexpr auto
+        operator()(F f_, G g_) const
         {
             return On_<F,G>{ std::move(f_), std::move(g_) };
         };
@@ -308,52 +268,6 @@ namespace cat
 
     constexpr auto on = infix(on_{});
 
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // first, second, elem<> on pair/tuple...:
-    //
-
-    struct First_
-    {
-        template <typename P>
-        constexpr decltype(auto)
-        operator()(P && p) const noexcept
-        {
-            return std::get<0>(std::forward<P>(p));
-        }
-
-    } constexpr first = First_{};
-
-    struct Second_
-    {
-        template <typename P>
-        constexpr decltype(auto)
-        operator()(P &&p) const noexcept
-        {
-            return std::get<1>(std::forward<P>(p));
-        }
-
-    } constexpr second = Second_{};
-
-
-    template <size_t N>
-    struct Elem_
-    {
-        template <typename Tuple>
-        constexpr decltype(auto)
-        operator()(Tuple && t) const noexcept
-        {
-            return std::get<N>(std::forward<Tuple>(t));
-        }
-    };
-
-#ifdef __clang
-
-    template <size_t N>
-    constexpr auto elem = Elem_<N>{};
-
-#endif
 
 } // namespace cat
 
