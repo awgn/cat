@@ -57,30 +57,31 @@ namespace cat
         return infix_adaptor<F>{std::move(f)};
     }
 
+
     template <typename L, typename F, std::size_t N> struct infix_left;
 
     template <typename L, typename F>
     struct infix_left<L, F, 5>
     {
-        L lhs;
+        L ref;
         F oper;
 
         template <typename R>
         constexpr auto operator*(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
 
         template <typename R>
         constexpr auto operator/(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
 
         template <typename R>
         constexpr auto operator%(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
     };
 
@@ -88,19 +89,19 @@ namespace cat
     template <typename L, typename F>
     struct infix_left<L, F, 6>
     {
-        L lhs;
+        L ref;
         F oper;
 
         template <typename R>
         constexpr auto operator+(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
 
         template <typename R>
         constexpr auto operator-(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
     };
 
@@ -108,13 +109,13 @@ namespace cat
     template <typename L, typename F>
     struct infix_left<L, F, 8>
     {
-        L lhs;
+        L ref;
         F oper;
 
         template <typename R>
         constexpr auto operator>(R && rhs)
         {
-            return oper(std::move(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
     };
 
@@ -122,39 +123,39 @@ namespace cat
     template <typename L, typename F>
     struct infix_left<L, F, 10>
     {
-        L lhs;
+        L ref;
         F oper;
 
         template <typename R>
         constexpr auto operator&(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
     };
 
     template <typename L, typename F>
     struct infix_left<L, F, 11>
     {
-        L lhs;
+        L ref;
         F oper;
 
         template <typename R>
         constexpr auto operator^(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
     };
 
     template <typename L, typename F>
     struct infix_left<L, F, 12>
     {
-        L lhs;
+        L ref;
         F oper;
 
         template <typename R>
         constexpr auto operator|(R && rhs)
         {
-            return oper(std::forward<L>(lhs), std::forward<R>(rhs));
+            return oper(std::forward<L>(ref), std::forward<R>(rhs));
         }
     };
 
@@ -164,19 +165,19 @@ namespace cat
     template <typename L, typename F>
     constexpr auto operator*(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
     constexpr auto operator/(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
     constexpr auto operator%(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 5>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 6:
@@ -184,13 +185,13 @@ namespace cat
     template <typename L, typename F>
     constexpr auto operator+(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 6>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 6>{ std::forward<L>(lhs), f.oper };
     }
 
     template <typename L, typename F>
     constexpr auto operator-(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 6>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 6>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 8:
@@ -198,7 +199,7 @@ namespace cat
     template <typename L, typename F>
     constexpr auto operator<(L && lhs, infix_adaptor<F> f)
     {
-        return infix_left<L, decltype(f.oper), 8>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 8>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 10:
@@ -206,7 +207,7 @@ namespace cat
     template <typename L, typename F>
     constexpr auto operator&(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 10>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 10>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 11:
@@ -214,7 +215,7 @@ namespace cat
     template <typename L, typename F>
     constexpr auto operator^(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 11>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 11>{ std::forward<L>(lhs), f.oper };
     }
 
     // infix 12:
@@ -222,7 +223,7 @@ namespace cat
     template <typename L, typename F>
     constexpr auto operator|(L && lhs, infix_adaptor<F> const & f)
     {
-        return infix_left<L, decltype(f.oper), 12>{ std::forward<L>(lhs), f.oper };
+        return infix_left<std::add_rvalue_reference_t<L>, decltype(f.oper), 12>{ std::forward<L>(lhs), f.oper };
     }
 
 } // namespace cat
