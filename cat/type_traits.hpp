@@ -604,10 +604,19 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // inner_type....
+    // outer/inner_type....
     //
 
-    template <typename C, size_t Idx = 0> struct inner_type;
+    template <typename F> struct outer_type;
+
+    template <typename F, typename ...Ts>
+    struct outer_type< F<Ts...> >
+    {
+        using type = F;
+    };
+
+
+    template <typename F, size_t Idx = 0> struct inner_type;
 
     template <template <typename ...> class F, typename T, typename ...Ts>
     struct inner_type<F<T, Ts...>, 0>
