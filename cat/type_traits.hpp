@@ -515,6 +515,9 @@ namespace cat
     struct return_type : details::return_type< function_type_t<F> >
     { };
 
+    template <typename F>
+    using return_type_t = typename return_type<F>::type;
+
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -607,18 +610,8 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // outer/inner_type....
+    // inner_type....
     //
-
-    template <typename F> struct outer_type;
-
-    template <template <typename ...> class F, typename ...Ts>
-    struct outer_type< F<Ts...> >
-    {
-        template <typename ...Xs>
-        using type = F<Xs...>;
-    };
-
 
     template <typename F, size_t Idx = 0> struct inner_type;
 
@@ -638,8 +631,8 @@ namespace cat
         using type = T2;
     };
 
-    template <typename T>
-    using inner_type_t = typename inner_type<T>::type;
+    template <typename T, size_t Idx = 0>
+    using inner_type_t = typename inner_type<T, Idx>::type;
 
 
 } // namespace cat
