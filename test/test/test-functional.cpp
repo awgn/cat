@@ -115,7 +115,7 @@ Context(callable_test)
 
         assert_constexpr(identity);
         assert_constexpr(callable(identity));
-        assert_constexpr(generic<1>(identity));
+        assert_constexpr(generic<int(int)>(identity));
         assert_constexpr(compose(identity, identity));
         assert_constexpr(flip(diff));
     }
@@ -160,7 +160,7 @@ Context(callable_test)
 
     Test(generic)
     {
-        auto h1 = callable(generic<2>([](auto a, auto b) { return a+b;}));
+        auto h1 = callable(generic<int(int, int)>([](auto a, auto b) { return a+b;}));
 
         Assert(h1(1,2) == 3);
         Assert(h1(1)(2) == 3);

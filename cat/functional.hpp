@@ -36,15 +36,15 @@
 
 namespace cat
 {
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // convertible type useful in unevaluated operands
-    //
-
-    struct unspec
+    namespace placeholders
     {
-        template <typename T> operator T();
+        struct unspec { };
+
+        struct A_  { } constexpr a_ = A_ { };
+        struct B_  { } constexpr b_ = B_ { };
+        struct C_  { } constexpr c_ = C_ { };
     };
+
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -53,8 +53,7 @@ namespace cat
 
     struct Identity
     {
-        using function_type = unspec(unspec);
-        enum : size_t { arity_value = 1 };
+        using function_type = placeholders::unspec(placeholders::unspec);
 
         template <typename T>
         constexpr auto
@@ -229,8 +228,6 @@ namespace cat
             typename partial_function_type<
                 typename function_type<F>::type, sizeof...(Ts)>::type;
 
-        enum : size_t { arity_value = arity<F>::value - sizeof...(Ts) };
-
         template <typename ...Xs>
         constexpr explicit Callable_(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
@@ -286,14 +283,13 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // Generic callable (for generic lambdas)
+    // Generic callable (for generic lambdas and polymorphic C++ callable objects)
     //
 
-    template <typename F, size_t Arity>
+    template <typename Fun, typename F>
     struct Generic_
     {
-        using function_type = unspec();
-        enum : size_t { arity_value = Arity };
+        using function_type = Fun;
 
         constexpr Generic_(F f)
         : fun_(std::move(f))
@@ -310,10 +306,10 @@ namespace cat
     };
 
 
-    template <size_t A, typename F>
+    template <typename Fun, typename F>
     constexpr auto generic(F f)
     {
-        return Generic_<F, A>(std::move(f));
+        return Generic_<Fun, F>(std::move(f));
     };
 
     //////////////////////////////////////////////////////////////////////////////////

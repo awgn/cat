@@ -74,6 +74,7 @@ namespace cat
         CAT_CLASS_HAS_MEMBER(difference_type);
 
         CAT_CLASS_HAS_TYPEDEF(function_type);
+        CAT_CLASS_HAS_TYPEDEF(return_type);
         CAT_CLASS_HAS_MEMBER(arity_value);
 
     } // namespace details
@@ -352,7 +353,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    //  generic rebind
+    //  generic rebind (for allocator, default deleter etc.)
     //
 
     template <typename T, typename To, typename = void>
@@ -440,77 +441,79 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // callable_traits: function_type, return_type, arity_value....
+    // function_type
     //
 
-    template <typename F>
-    struct callable_traits : callable_traits<decltype(&F::operator())> { };
+    namespace details
+    {
+        template <typename F>
+        struct function_type_ : function_type_<decltype(&F::operator())> { };
 
-    template <typename F, typename R, typename ...Ts>
-    struct callable_traits<R(F::*)(Ts...) const>
-    {
-        using function_type = R(Ts...);
-        enum : size_t { arity_value = sizeof...(Ts) };
-    };
-    template <typename F, typename R, typename ...Ts>
-    struct callable_traits<R(F::*)(Ts...)>
-    {
-        using function_type = R(Ts...);
-        enum : size_t { arity_value = sizeof...(Ts) };
-    };
-    template <typename R, typename ...Ts>
-    struct callable_traits<R(Ts...)>
-    {
-        using function_type = R(Ts...);
-        enum : size_t { arity_value = sizeof...(Ts) };
-    };
-    template <typename R, typename ...Ts>
-    struct callable_traits<R(*)(Ts...)>
-    {
-        using function_type = R(Ts...);
-        enum : size_t { arity_value = sizeof...(Ts) };
-    };
-    template <typename R, typename ...Ts>
-    struct callable_traits<R(*&)(Ts...)>
-    {
-        using function_type = R(Ts...);
-        enum : size_t { arity_value = sizeof...(Ts) };
-    };
-    template <typename R, typename ...Ts>
-    struct callable_traits<R(&)(Ts...)>
-    {
-        using function_type = R(Ts...);
-        enum : size_t { arity_value = sizeof...(Ts) };
-    };
+        template <typename F, typename R, typename ...Ts>
+        struct function_type_<R(F::*)(Ts...) const>
+        {
+            using function_type = R(Ts...);
+        };
 
+        template <typename F, typename R, typename ...Ts>
+        struct function_type_<R(F::*)(Ts...)>
+        {
+            using function_type = R(Ts...);
+        };
+        template <typename R, typename ...Ts>
+        struct function_type_<R(Ts...)>
+        {
+            using function_type = R(Ts...);
+        };
+        template <typename R, typename ...Ts>
+        struct function_type_<R(*)(Ts...)>
+        {
+            using function_type = R(Ts...);
+        };
+        template <typename R, typename ...Ts>
+        struct function_type_<R(*&)(Ts...)>
+        {
+            using function_type = R(Ts...);
+        };
+        template <typename R, typename ...Ts>
+        struct function_type_<R(&)(Ts...)>
+        {
+            using function_type = R(Ts...);
+        };
 
-    template <typename F> struct result_type;
-    template <typename R, typename ...Ts>
-    struct result_type<R(Ts...)>
-    {
-        using type = R;
-    };
+        template <typename F> struct arity;
+        template <typename R, typename ...Ts>
+        struct arity<R(Ts...)>
+        {
+            enum { value = sizeof...(Ts) };
+        };
+
+        template <typename F> struct return_type;
+        template <typename R, typename ...Ts>
+        struct return_type<R(Ts...)>
+        {
+            using type = R;
+        };
+    }
+
 
     template <typename F>
     struct function_type
     {
-        using G = typename std::decay<F>::type;
-        using type = typename std::conditional<details::has_function_type<G>::value, G, callable_traits<G> >::type::function_type;
+        using _F = std::decay_t<F>;
+        using type = typename std::conditional_t<details::has_function_type<F>::value, _F, details::function_type_<_F> >::function_type;
     };
 
     template <typename F>
-    struct return_type
-    {
-        using G = typename std::decay<F>::type;
-        using type = typename result_type<typename function_type<F>::type>::type;
-    };
+    using function_type_t = typename function_type<F>::type;
 
     template <typename F>
-    struct arity
-    {
-        using G = typename std::decay<F>::type;
-        enum { value = std::conditional<details::has_arity_value<G>::value, G, callable_traits<G> >::type::arity_value };
-    };
+    struct arity : details::arity< function_type_t<F> >
+    { };
+
+    template <typename F>
+    struct return_type : details::return_type< function_type_t<F> >
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -609,10 +612,11 @@ namespace cat
 
     template <typename F> struct outer_type;
 
-    template <typename F, typename ...Ts>
+    template <template <typename ...> class F, typename ...Ts>
     struct outer_type< F<Ts...> >
     {
-        using type = F;
+        template <typename ...Xs>
+        using type = F<Xs...>;
     };
 
 
