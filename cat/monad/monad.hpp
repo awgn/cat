@@ -28,7 +28,9 @@
 
 #include <utility>
 #include <list>
+#include <vector>
 
+#include <cat/functor.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/functional.hpp>
 #include <cat/infix.hpp>
@@ -90,6 +92,7 @@ namespace cat
     {
         return mbind(std::move(ma), constant(mb));
     }
+
     //
     // sequence
     //
@@ -105,7 +108,6 @@ namespace cat
                     std::list<A> l{x};
 
                     l.insert(l.end(), std::begin(xs), std::end(xs));
-
                     return mreturn<M>(std::move(l));
                 });
             });
@@ -114,6 +116,21 @@ namespace cat
         return foldr(k, mreturn<M>( std::list<A>{} ), ms);
     }
 
+    //
+    // mapM and forM
+    //
+
+    template <template <typename ...> class M = std::vector, typename A, typename F>
+    auto mapM(F f, std::list<A> const &xs)
+    {
+        return sequence( fmap(f, xs) );
+    }
+
+    template <template <typename ...> class M = std::vector, typename A, typename F>
+    auto forM(M<A> const &ma, F f)
+    {
+        return mapM(f, ma);
+    }
 
     //
     // Kelisli composition

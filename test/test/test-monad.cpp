@@ -116,8 +116,7 @@ Context(monad)
         monad_constraint( std::experimental::make_optional<std::string>( "one" ));
         monad_constraint( std::vector<std::string>{} );
         monad_constraint( std::deque<std::string>{} );
-        monad_constraint( std::list<std::string>  { "one", "two", "three" });
-        monad_constraint( std::make_shared<std::string>( "one" ));
+        monad_constraint( std::list<std::string>  { "one", "two", "three" }); monad_constraint( std::make_shared<std::string>( "one" ));
         monad_constraint( std::make_unique<std::string>( "one" ));
     }
 
@@ -149,6 +148,35 @@ Context(monad)
         auto h = callable(f) <k> g;
 
         Assert( *(mreturn<std::unique_ptr>(10) >>= h) == 12 );
+    }
+
+
+    Test(for_and_map)
+    {
+        std::list<int> xs = { 1, 2, 3 };
+        auto f = [] (int n) { return std::vector<std::string> { std::to_string(n) }; };
+
+        Assert( mapM(f, xs) == std::vector< std::list<std::string> >{{"1", "2", "3" }} );
+
+        auto r = forM(xs, []( int n) {
+             return mreturn<std::vector>( std::to_string(n) );
+        });
+
+        Assert( r == std::vector< std::list<std::string> >{{"1", "2", "3" }} );
+
+        std::list<int> ys = {1, 2};
+
+        auto z = forM(ys, [](int n)
+        {
+            return std::vector<std::string>{ std::to_string(n), std::to_string(n) + "!" };
+        });
+
+        Assert( z == std::vector<std::list<std::string> > {
+                { "1", "2" },
+                { "1", "2!" },
+                { "1!", "2" },
+                { "1!", "2!" }
+       });
     }
 }
 
