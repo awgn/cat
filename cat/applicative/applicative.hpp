@@ -46,8 +46,7 @@ namespace cat
         struct Class
         {
             virtual auto pure(A const &) -> F<A, Ts...> = 0; // lift a value.
-            virtual auto apply(F<Fun> const &, F<A, Ts...> const &) -> F<decltype(std::declval<Fun>()(std::declval<A>()))>
-            { throw nullptr; }
+            virtual auto apply(F<Fun> const &, F<A, Ts...> const &) -> F<decltype(std::declval<Fun>()(std::declval<A>()))> = 0;
         };
     };
 

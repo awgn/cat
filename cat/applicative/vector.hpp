@@ -44,6 +44,7 @@ namespace cat
     {
         using B = decltype(std::declval<Fun>()(std::declval<A>()));
 
+
         std::vector<A>
         pure(A const &elem) final
         {
