@@ -77,7 +77,7 @@ namespace cat
         CAT_CLASS_HAS_TYPEDEF(return_type);
         CAT_CLASS_HAS_MEMBER(arity_value);
 
-    } // namespace details
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -248,7 +248,7 @@ namespace cat
             enum { value = noexcept(test<T>(0)) };
         };
 
-    } // namespace details
+    }
 
     template <typename T>
     struct has_insertion_operator
@@ -272,8 +272,7 @@ namespace cat
             enum { value = noexcept(test<T>(0)) };
         };
 
-    } // namespace details
-
+    }
 
     template <typename T>
     struct has_extraction_operator
@@ -472,7 +471,7 @@ namespace cat
             enum { value = noexcept(check<T>(nullptr)) };
         };
 
-    } // namespace details
+    }
 
 
     template <typename T>
@@ -507,8 +506,7 @@ namespace cat
         public:
             enum { value = noexcept(check<F>(nullptr)) };
         };
-
-    } // namespace details
+    }
 
     template <typename F, typename ... Ts>
     struct is_callable_with
@@ -545,7 +543,6 @@ namespace cat
     { };
 
 
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // arg_type
@@ -562,6 +559,9 @@ namespace cat
     template <typename R, typename T0, typename ...Ts, size_t N>
     struct arg_type<R(T0, Ts...), N> : arg_type<R(Ts...), N-1>
     {  };
+
+    template <typename T, size_t N>
+    using arg_type_t = typename arg_type<T, N>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -601,6 +601,9 @@ namespace cat
     {
         using type = R(Ts...);
     };
+
+    template <typename F, size_t N>
+    using partial_function_type_t = typename partial_function_type<F, N>::type;
 
 
 } // namespace cat
