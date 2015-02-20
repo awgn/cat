@@ -378,69 +378,6 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // partial_function_type
-    //
-
-    template <typename F, size_t N>
-    struct partial_function_type
-    {
-        using type = F;
-    };
-
-    template <typename R, typename ...Ts>
-    struct partial_function_type<R(Ts...), 0>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T, typename ...Ts>
-    struct partial_function_type<R(T, Ts...), 1>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename ...Ts>
-    struct partial_function_type<R(T1, T2, Ts...), 2>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, Ts...), 3>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename T4, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, T4, Ts...), 4>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, T4, T5, Ts...), 5>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, Ts...), 6>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, T7, Ts...), 7>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, T7, T8, Ts...), 8>
-    {
-        using type = R(Ts...);
-    };
-    template <typename R, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename ...Ts>
-    struct partial_function_type<R(T1, T2, T3, T4, T5, T6, T7, T8, T9, Ts...), 9>
-    {
-        using type = R(Ts...);
-    };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
     // function_type
     //
 
@@ -608,6 +545,25 @@ namespace cat
     { };
 
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // arg_type
+    //
+
+    template <typename F, size_t N> struct arg_type;
+
+    template <typename R, typename T0, typename ...Ts>
+    struct arg_type<R(T0, Ts...), 0>
+    {
+        using type = T0;
+    };
+
+    template <typename R, typename T0, typename ...Ts, size_t N>
+    struct arg_type<R(T0, Ts...), N> : arg_type<R(Ts...), N-1>
+    {  };
+
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // inner_type....
@@ -616,23 +572,35 @@ namespace cat
     template <typename F, size_t Idx = 0> struct inner_type;
 
     template <template <typename ...> class F, typename T, typename ...Ts>
-    struct inner_type<F<T, Ts...>, 0>
+    struct inner_type<F<T,Ts...>, 0>
     {
         using type = T;
+
     };
-    template <template <typename ...> class F, typename T, typename T1, typename ...Ts>
-    struct inner_type<F<T, T1, Ts...>, 1>
-    {
-        using type = T1;
-    };
-    template <template <typename ...> class F, typename T, typename T1, typename T2, typename ...Ts>
-    struct inner_type<F<T, T1, T2, Ts...>, 2>
-    {
-        using type = T2;
-    };
+    template <template <typename ...> class F, size_t N, typename T, typename ...Ts>
+    struct inner_type<F<T, Ts...>, N> : inner_type<F<Ts...>, N-1>
+    { };
 
     template <typename T, size_t Idx = 0>
     using inner_type_t = typename inner_type<T, Idx>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // partial_function_type
+    //
+
+    template <typename F, size_t N, typename = void > struct partial_function_type;
+
+    template <typename R, typename T, typename ...Ts, size_t N>
+    struct partial_function_type<R(T, Ts...), N, typename std::enable_if<(N != 0)>::type>
+        : partial_function_type<R(Ts...), N-1> { };
+
+    template <typename R, typename ...Ts, size_t N>
+    struct partial_function_type<R(Ts...), N, typename std::enable_if<(N == 0)>::type>
+    {
+        using type = R(Ts...);
+    };
 
 
 } // namespace cat
