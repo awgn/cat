@@ -221,6 +221,20 @@ namespace cat
     // Callable_ with partial application support
     //
 
+    template <typename T>
+    struct callable_decay
+    {
+        using type = typename std::conditional<
+                    std::is_lvalue_reference<T>::value && !std::is_const<std::remove_reference_t<T>>::value,
+                        T,
+                        std::decay_t<T>
+                    >::type;
+    };
+
+    template <typename T>
+    using callable_decay_t = typename callable_decay<T>::type;
+
+
     template <typename F, typename ...Ts>
     struct Callable_
     {
@@ -260,14 +274,14 @@ namespace cat
         template <size_t I, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., Xs...>(
+            return Callable_<F, Ts..., callable_decay_t<Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., Xs...>(
+            return Callable_<F, Ts..., callable_decay_t<Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
