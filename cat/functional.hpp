@@ -131,7 +131,7 @@ namespace cat
     struct Print_
     {
         template <typename T>
-        void operator()(T const &elem)
+        void operator()(T const &elem) const
         {
             // TODO: use show typeclass...
             //
@@ -305,11 +305,10 @@ namespace cat
         F fun_;
     };
 
-
     template <typename Fun, typename F>
     constexpr auto generic(F f)
     {
-        return Generic_<Fun, F>(std::move(f));
+        return callable(Generic_<Fun, F>(std::move(f)));
     };
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +441,6 @@ namespace cat
     };
 
     constexpr auto on = infix(on_{});
-
 
     //////////////////////////////////////////////////////////////////////////////////
     //

@@ -160,7 +160,7 @@ Context(callable_test)
 
     Test(generic)
     {
-        auto h1 = callable(generic<int(int, int)>([](auto a, auto b) { return a+b;}));
+        auto h1 = generic<int(int, int)>([](auto a, auto b) { return a+b;});
 
         Assert(h1(1,2) == 3);
         Assert(h1(1)(2) == 3);
@@ -181,6 +181,7 @@ Context(callable_test)
         constexpr auto rev = flip(diff);
 
         assert_constexpr(rev);
+
         Assert (rev(1,2) == 1);
     }
 
