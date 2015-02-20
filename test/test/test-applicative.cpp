@@ -1,4 +1,6 @@
 #include <cat/applicative.hpp>
+#include <cat/functional.hpp>
+#include <cat/utility/typeof.hpp>
 
 #include "yats.hpp"
 
@@ -53,6 +55,7 @@ namespace cat
 
 Context(applicative)
 {
+
     template <template <typename...> class F, typename T>
     void applicative_constraint(F<T> const &)
     {
@@ -235,6 +238,28 @@ Context(applicative)
         Assert(!y4);
     }
 
+
+    int sum_f(int a, int b) { return a + b; };
+
+
+    Test(applicative_callable)
+    {
+        auto sum = callable(sum_f);
+
+        std::cout << type_of(sum) << std::endl;
+
+        auto x = std::experimental::make_optional(21);
+
+        auto a  = std::vector<int>{ 1, 2 };
+        auto b  = std::vector<int>{ 0, 1, 2};
+
+        Assert( (sum <$> x) * x == 42);
+
+        auto n = (sum <$> a) * b;
+        std::cout << type_of(n) << std::endl;
+
+        Assert( n == std::vector<int>{ 1, 2, 3, 2, 3, 4, } );
+    };
 }
 
 
