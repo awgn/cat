@@ -115,6 +115,42 @@ namespace cat
     }
 
 
+    //
+    // Kelisli composition
+    //
+
+    template <typename F, typename G>
+    struct Kleisli_
+    {
+        template <template <typename ...> class M, typename _, typename A>
+        static constexpr auto return_to(M<_>, A a)
+        {
+            return mreturn<M>(std::move(a));
+        }
+
+        template <typename A>
+        constexpr auto operator()(A a) const
+        {
+            return ( return_to(return_type_t<F>{}, std::move(a)) >>= f_ ) >>= g_;
+        }
+
+        F f_;
+        G g_;
+    };
+
+
+    struct kleisli_
+    {
+        template <typename F, typename G>
+        constexpr auto operator()(F f, G g) const
+        {
+            return Kleisli_<F,G>{ std::move(f), std::move(g) };
+        }
+    };
+
+    constexpr auto k = infix(kleisli_{});
+
+
     template <template <typename...> class F>
     struct is_monad : std::false_type
     { };

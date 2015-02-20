@@ -138,6 +138,18 @@ Context(monad)
         Assert( sequence(l4) == std::experimental::nullopt );
     }
 
+
+    Test(kleisli)
+    {
+        auto f = [](int n) { return mreturn<std::unique_ptr>(n); };
+        auto g = [](int n) { return mreturn<std::unique_ptr>(n+2); };
+
+        Assert( *((mreturn<std::unique_ptr>(10) >>= f) >>= g) == 12 );
+
+        auto h = callable(f) <k> g;
+
+        Assert( *(mreturn<std::unique_ptr>(10) >>= h) == 12 );
+    }
 }
 
 
