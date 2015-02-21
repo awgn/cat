@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <cat/functor/functor.hpp>
+#include <cat/utility.hpp>
 
 namespace cat
 {
@@ -39,23 +40,49 @@ namespace cat
     // vector instance:
     //
 
-    template <typename Fun, typename A, typename Alloc>
-    struct FunctorInstance<std::vector, Fun, A, Alloc> : Functor<std::vector>::Class<Fun, A, Alloc>
+    namespace functor_vector
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::vector<B, rebind_t<Alloc, B> >
-        fmap(Fun f, std::vector<A, Alloc> const &xs) final
+        template <typename Fun, typename Functor>
+        static auto fmap(Fun f, Functor && xs)
         {
-            std::vector<B, rebind_t<Alloc, B> > out;
+            std::vector< decltype(f( forward_as<Functor>(xs.front()) )) > out;
             out.reserve(xs.size());
 
             for(auto & x : xs)
-                out.push_back(f(x));
+                out.push_back(f(forward_as<Functor>(x)));
 
             return out;
         }
     };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::vector<A> const &, Fun> final : Functor<std::vector<A> const &>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::vector<B>
+        fmap(Fun f, std::vector<A> const & xs) override
+        {
+            return functor_vector::fmap(std::move(f), xs);
+        }
+    };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::vector<A> &&, Fun> final : Functor<std::vector<A> &&>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::vector<B>
+        fmap(Fun f, std::vector<A> && xs) override
+        {
+            return functor_vector::fmap(std::move(f), std::move(xs));
+        }
+    };
+
 
 } // namespace cat
 

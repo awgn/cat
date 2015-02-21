@@ -39,15 +39,29 @@ namespace cat
     // std::pair instance:
     //
 
-    template <typename Fun, typename P, typename A>
-    struct FunctorInstance<std::pair, Fun, P, A> : Functor<std::pair>::Class1<Fun, P, A>
+    template <typename Fun, typename K, typename A>
+    struct FunctorInstance<std::pair<K,A> const &, Fun> final : Functor<std::pair<K,A> const &>::
+    template __<Fun>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = typename std::result_of<Fun(A)>::type;
 
-        std::pair<P, B>
-        fmap(Fun f, std::pair<P, A> const &xs) final
+        std::pair<K, B>
+        fmap(Fun f, std::pair<K, A> const &xs) override
         {
             return std::make_pair(xs.first, f(xs.second));
+        }
+    };
+
+    template <typename Fun, typename K, typename A>
+    struct FunctorInstance<std::pair<K,A> &&, Fun> final : Functor<std::pair<K,A> &&>::
+    template __<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::pair<K, B>
+        fmap(Fun f, std::pair<K, A> &&xs) override
+        {
+            return std::make_pair(std::move(xs.first), f(std::move(xs.second)));
         }
     };
 

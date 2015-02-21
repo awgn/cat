@@ -42,22 +42,50 @@ namespace cat
     // forward_list instance:
     //
 
-    template <typename Fun, typename A, typename Alloc>
-    struct FunctorInstance<std::forward_list, Fun, A, Alloc> : Functor<std::forward_list>::Class<Fun, A, Alloc>
+    namespace functor_forward_list
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::forward_list<B, rebind_t<Alloc, B>>
-        fmap(Fun f, std::forward_list<A, Alloc> const &xs) final
+        template <typename Fun, typename Functor>
+        auto fmap(Fun f, Functor && xs)
         {
-            std::forward_list<B, rebind_t<Alloc, B> > out {
-                map_iterator( std::begin(xs), f ),
-                map_iterator( std::end(xs), f )
+            using B = decltype(f(forward_as<Functor>(xs.front())));
+
+            std::forward_list<B> out
+            {
+                map_iterator( auto_begin(xs), f ),
+                map_iterator( auto_end(xs), f )
             };
 
             return out;
         }
     };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::forward_list<A> const &, Fun> final : Functor<std::forward_list<A> const &>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::forward_list<B>
+        fmap(Fun f, std::forward_list<A> const & xs) override
+        {
+            return functor_forward_list::fmap(std::move(f), std::move(xs));
+        }
+    };
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::forward_list<A> &&, Fun> final : Functor<std::forward_list<A> &&>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::forward_list<B>
+        fmap(Fun f, std::forward_list<A> && xs) override
+        {
+            return functor_forward_list::fmap(std::move(f), std::move(xs));
+        }
+    };
+
 
 } // namespace cat
 

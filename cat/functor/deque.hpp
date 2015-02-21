@@ -40,22 +40,48 @@ namespace cat
     // deque instance:
     //
 
-    template <typename Fun, typename A, typename Alloc>
-    struct FunctorInstance<std::deque, Fun, A, Alloc> : Functor<std::deque>::Class<Fun, A, Alloc>
+    namespace functor_deque
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::deque<B, rebind_t<Alloc, B>>
-        fmap(Fun f, std::deque<A, Alloc> const &xs) final
+        template <typename Fun, typename Functor>
+        auto fmap(Fun f, Functor && xs)
         {
-            std::deque<B, rebind_t<Alloc, B> > out;
+            std::deque< decltype(f( forward_as<Functor>(xs.front()) )) > out;
 
             for(auto & x : xs)
-                out.push_back(f(x));
+                out.push_back(f(forward_as<Functor>(x)));
 
             return out;
         }
     };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::deque<A> const &, Fun> final : Functor<std::deque<A> const &>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::deque<B>
+        fmap(Fun f, std::deque<A> const & xs) override
+        {
+            return functor_deque::fmap(std::move(f), std::move(xs));
+        }
+    };
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::deque<A> &&, Fun> final : Functor<std::deque<A> &&>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::deque<B>
+        fmap(Fun f, std::deque<A> && xs) override
+        {
+            return functor_deque::fmap(std::move(f), std::move(xs));
+        }
+    };
+
+
 
 } // namespace cat
 

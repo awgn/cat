@@ -39,20 +39,45 @@ namespace cat
     // shared_ptr instance:
     //
 
-    template <typename Fun, typename A>
-    struct FunctorInstance<std::shared_ptr, Fun, A> : Functor<std::shared_ptr>::Class<Fun, A>
+    namespace functor_shared_ptr
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::shared_ptr<B>
-        fmap(Fun f, std::shared_ptr<A> const &xs) final
+        template <typename Fun, typename Functor>
+        static auto fmap(Fun f, Functor && x)
         {
-            using type = decltype(f(*xs));
+            using type = decltype(f(forward_as<Functor>(*x)));
 
-            if (xs)
-                return std::make_shared<type>(f(*xs));
+            if (x)
+                return std::make_shared<type>(f(forward_as<Functor>(*x)));
 
             return std::shared_ptr<type>();
+        }
+    };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::shared_ptr<A> const &, Fun> final : Functor<std::shared_ptr<A> const &>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::shared_ptr<B>
+        fmap(Fun f, std::shared_ptr<A> const & xs) override
+        {
+            return functor_shared_ptr::fmap(std::move(f), xs);
+        }
+    };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::shared_ptr<A> &&, Fun> final : Functor<std::shared_ptr<A> &&>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::shared_ptr<B>
+        fmap(Fun f, std::shared_ptr<A> && xs) override
+        {
+            return functor_shared_ptr::fmap(std::move(f), std::move(xs));
         }
     };
 

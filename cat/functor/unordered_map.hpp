@@ -39,24 +39,49 @@ namespace cat
     // unordered_map instance:
     //
 
-    template <typename Fun, typename K, typename A, typename Hash, typename Comp, typename Alloc>
-    struct FunctorInstance<std::unordered_map, Fun, K, A, Hash, Comp, Alloc> : Functor<std::unordered_map>::Class1<Fun, K, A, Hash, Comp, Alloc>
+    namespace functor_unordered_map
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::unordered_map<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>>>
-        fmap(Fun f, std::unordered_map<K, A, Hash, Comp, Alloc> const &xs) final
+        template <typename Key, typename Fun, typename Functor>
+        static auto fmap(Fun f, Functor && xs)
         {
-            std::unordered_map<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>> > out;
+            std::unordered_map<Key, decltype(f( forward_as<Functor>(xs.begin()->second) )) > out;
 
             for(auto & x : xs)
-                out.insert(std::make_pair(x.first, f(x.second)));
+                out.insert(std::make_pair(x.first, f(forward_as<Functor>(x.second))));
 
             return out;
         }
     };
 
-    // unordered_multimap is a functor:
+
+    template <typename Fun, typename K, typename A>
+    struct FunctorInstance<std::unordered_map<K,A> const &, Fun> final : Functor<std::unordered_map<K,A> const &>::
+    template __<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::unordered_map<K, B>
+        fmap(Fun f, std::unordered_map<K, A> const &xs) override
+        {
+            return functor_unordered_map::fmap<K>(std::move(f), xs);
+        }
+    };
+
+    template <typename Fun, typename K, typename A>
+    struct FunctorInstance<std::unordered_map<K,A> &&, Fun> final : Functor<std::unordered_map<K,A> &&>::
+    template __<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::unordered_map<K, B>
+        fmap(Fun f, std::unordered_map<K, A> &&xs) override
+        {
+            return functor_unordered_map::fmap<K>(std::move(f), std::move(xs));
+        }
+    };
+
+
+    // multimap is a functor:
     //
 
     template <> struct is_functor<std::unordered_multimap> : std::true_type { };
@@ -64,20 +89,44 @@ namespace cat
     // unordered_multimap instance:
     //
 
-    template <typename Fun, typename K, typename A, typename Hash, typename Comp, typename Alloc>
-    struct FunctorInstance<std::unordered_multimap, Fun, K, A, Hash, Comp, Alloc> : Functor<std::unordered_multimap>::Class1<Fun, K, A, Hash, Comp, Alloc>
+    namespace functor_unordered_multimap
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::unordered_multimap<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>>>
-        fmap(Fun f, std::unordered_multimap<K, A, Hash, Comp, Alloc> const &xs) final
+        template <typename Key, typename Fun, typename Functor>
+        static auto fmap(Fun f, Functor && xs)
         {
-            std::unordered_multimap<K, B, Hash, Comp, rebind_t<Alloc, std::pair<const K, B>> > out;
+            std::unordered_multimap<Key, decltype(f( forward_as<Functor>(xs.begin()->second) )) > out;
 
             for(auto & x : xs)
-                out.insert(std::make_pair(x.first, f(x.second)));
+                out.insert(std::make_pair(x.first, f(forward_as<Functor>(x.second))));
 
             return out;
+        }
+    };
+
+
+    template <typename Fun, typename K, typename A>
+    struct FunctorInstance<std::unordered_multimap<K,A> const &, Fun> final : Functor<std::unordered_multimap<K,A> const &>::
+    template __<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::unordered_multimap<K, B>
+        fmap(Fun f, std::unordered_multimap<K, A> const &xs) override
+        {
+            return functor_unordered_multimap::fmap<K>(std::move(f), xs);
+        }
+    };
+
+    template <typename Fun, typename K, typename A>
+    struct FunctorInstance<std::unordered_multimap<K,A> &&, Fun> final : Functor<std::unordered_multimap<K,A> &&>::
+    template __<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::unordered_multimap<K, B>
+        fmap(Fun f, std::unordered_multimap<K, A> &&xs) override
+        {
+            return functor_unordered_multimap::fmap<K>(std::move(f), std::move(xs));
         }
     };
 } // namespace cat

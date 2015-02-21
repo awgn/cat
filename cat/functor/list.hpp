@@ -29,6 +29,7 @@
 #include <list>
 #include <cat/functor/functor.hpp>
 
+
 namespace cat
 {
     // list is a functor:
@@ -39,22 +40,48 @@ namespace cat
     // list instance:
     //
 
-    template <typename Fun, typename A, typename Alloc>
-    struct FunctorInstance<std::list, Fun, A, Alloc> : Functor<std::list>::Class<Fun, A, Alloc>
+    namespace functor_list
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::list<B, rebind_t<Alloc, B>>
-        fmap(Fun f, std::list<A, Alloc> const &xs) final
+        template <typename Fun, typename Functor>
+        static auto fmap(Fun f, Functor && xs)
         {
-            std::list<B, rebind_t<Alloc, B> > out;
+            std::list< decltype(f( forward_as<Functor>(xs.front()) )) > out;
 
             for(auto & x : xs)
-                out.push_back(f(x));
+                out.push_back(f(forward_as<Functor>(x)));
 
             return out;
         }
     };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::list<A> const &, Fun> final : Functor<std::list<A> const &>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::list<B>
+        fmap(Fun f, std::list<A> const & xs) override
+        {
+            return functor_list::fmap(std::move(f), std::move(xs));
+        }
+    };
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::list<A> &&, Fun> final : Functor<std::list<A> &&>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::list<B>
+        fmap(Fun f, std::list<A> && xs) override
+        {
+            return functor_list::fmap(std::move(f), std::move(xs));
+        }
+    };
+
+
 
 } // namespace cat
 

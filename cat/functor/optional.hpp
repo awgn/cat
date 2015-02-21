@@ -39,20 +39,44 @@ namespace cat
     // experimental::optional instance:
     //
 
-    template <typename Fun, typename A>
-    struct FunctorInstance<std::experimental::optional, Fun, A> : Functor<std::experimental::optional>::Class<Fun, A>
+    namespace functor_optional
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
-        std::experimental::optional<B>
-        fmap(Fun f, std::experimental::optional<A> const &xs) final
+        template <typename Fun, typename Functor>
+        static auto fmap(Fun f, Functor && x)
         {
-            using type = decltype(f(*xs));
+            using type = decltype(f(forward_as<Functor>(*x)));
 
-            if (xs)
-                return std::experimental::make_optional(f(*xs));
+            if (x)
+                return std::experimental::make_optional(f(forward_as<Functor>(*x)));
 
             return std::experimental::optional<type>();
+        }
+    };
+
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::experimental::optional<A> const &, Fun> final : Functor<std::experimental::optional<A> const &>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::experimental::optional<B>
+        fmap(Fun f, std::experimental::optional<A> const & xs) override
+        {
+            return functor_optional::fmap(std::move(f), xs);
+        }
+    };
+
+    template <typename Fun, typename A>
+    struct FunctorInstance<std::experimental::optional<A> &&, Fun> final : Functor<std::experimental::optional<A> &&>::
+    template _<Fun>
+    {
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::experimental::optional<B>
+        fmap(Fun f, std::experimental::optional<A> && xs) override
+        {
+            return functor_optional::fmap(std::move(f), std::move(xs));
         }
     };
 

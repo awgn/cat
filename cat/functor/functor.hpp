@@ -31,36 +31,67 @@
 
 namespace cat
 {
+    namespace details
+    {
+        template <typename Fun, typename Functor, size_t N> struct fmap_type;
+
+        template <typename Fun, template <typename ...> class Functor, typename T0>
+        struct fmap_type<Fun, Functor<T0>, 0 >
+        {
+            using type = Functor< std::result_of_t<Fun(T0)> >;
+        };
+
+        template <typename Fun, template <typename ...> class Functor, typename T0, typename T1>
+        struct fmap_type<Fun, Functor<T0, T1>, 1 >
+        {
+            using type = Functor< T0, std::result_of_t<Fun(T1)>>;
+        };
+    }
+
     //
-    // class Functor
+    // Map function Fun over Functor
     //
 
-    template <template <typename ...> class F>
+    template <typename Fun, typename Functor, size_t N = 0>
+    using fmap_type_t = typename details::fmap_type<Fun, std::decay_t<Functor>, N>::type;
+
+
+    //
+    // Type class Functor
+    //
+
+    template <typename Type>
     struct Functor
     {
-        template <typename Fun, typename A, typename ...Args>
-        struct Class
+        template <typename Fun>
+        struct _
         {
-            virtual auto fmap(Fun f, F<A, Args...> const & fa)
-                -> F< decltype(f(std::declval<A>())), rebind_t<Args, decltype(f(std::declval<A>()))>...> = 0;
+            virtual auto fmap(Fun fun, Type fa) -> fmap_type_t<Fun, Type> = 0;
         };
 
-        template <typename Fun, typename K, typename A, typename ...Args>
-        struct Class1
+        template <typename Fun>
+        struct __
         {
-            virtual auto fmap(Fun f, F<K, A, Args...> const & fa)
-                -> F<K, decltype(f(std::declval<A>())), rebind_t<Args, std::pair<const K, decltype(f(std::declval<A>()))>>...> = 0;
+            virtual auto fmap(Fun fun, Type fa) -> fmap_type_t<Fun, Type, 1> = 0;
         };
-
     };
 
-    template <template <typename ...> class F, typename ...> struct FunctorInstance;
+
+    template <typename Type, typename ...> struct FunctorInstance;
+
 
     template <template <typename ...> class F, typename Fun, typename ...A>
     auto fmap(Fun f, F<A...> const &xs)
     {
-        return FunctorInstance<F, Fun, A...>{}.fmap(f, xs);
+        return FunctorInstance<F<A...> const &, Fun>{}.fmap(std::move(f), xs);
     }
+
+    template <template <typename ...> class F, typename Fun, typename ...A>
+    auto fmap(Fun f, F<A...> &&xs)
+    {
+        return FunctorInstance<F<A...> &&, Fun>{}.fmap(std::move(f), std::move(xs));
+    }
+
 
     template <template <typename...> class F>
     struct is_functor : std::false_type
