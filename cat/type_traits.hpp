@@ -79,7 +79,6 @@ namespace cat
 
     }
 
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // boolean type
@@ -545,20 +544,32 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // type_index
+    //
+
+    template <size_t N, typename ...Ts> struct type_index;
+
+    template <typename T, typename ...Ts>
+    struct type_index<0, T, Ts...>
+    {
+        using type = T;
+    };
+    template <size_t N, typename T, typename ...Ts>
+    struct type_index<N, T, Ts...> : type_index<N-1, Ts...>
+    {
+    };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // arg_type
     //
 
     template <typename F, size_t N> struct arg_type;
 
-    template <typename R, typename T0, typename ...Ts>
-    struct arg_type<R(T0, Ts...), 0>
-    {
-        using type = T0;
-    };
-
-    template <typename R, typename T0, typename ...Ts, size_t N>
-    struct arg_type<R(T0, Ts...), N> : arg_type<R(Ts...), N-1>
-    {  };
+    template <typename R, typename T0, size_t N, typename ...Ts>
+    struct arg_type<R(T0, Ts...), N> : type_index<N, Ts...>
+    { };
 
     template <typename T, size_t N>
     using arg_type_t = typename arg_type<T, N>::type;
@@ -569,20 +580,14 @@ namespace cat
     // inner_type....
     //
 
-    template <typename F, size_t Idx = 0> struct inner_type;
+    template <typename F, size_t N = 0> struct inner_type;
 
-    template <template <typename ...> class F, typename T, typename ...Ts>
-    struct inner_type<F<T,Ts...>, 0>
-    {
-        using type = T;
-
-    };
-    template <template <typename ...> class F, size_t N, typename T, typename ...Ts>
-    struct inner_type<F<T, Ts...>, N> : inner_type<F<Ts...>, N-1>
+    template <size_t N, template <typename ...> class F, typename ...Ts>
+    struct inner_type<F<Ts...>, N> : type_index<N, Ts...>
     { };
 
-    template <typename T, size_t Idx = 0>
-    using inner_type_t = typename inner_type<T, Idx>::type;
+    template <typename T, size_t N = 0>
+    using inner_type_t = typename inner_type<T, N>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////
