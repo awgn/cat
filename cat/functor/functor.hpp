@@ -55,47 +55,47 @@ namespace cat
     template <typename Fun, typename Functor, size_t N = 0>
     using fmap_type_t = typename details::fmap_type<Fun, std::decay_t<Functor>, N>::type;
 
-
     //
     // Type class Functor
     //
 
-    template <typename Type>
+    template <template <typename ...> class F>
     struct Functor
     {
-        template <typename Fun>
+        template <typename Fun, typename Type, size_t Order = 0>
         struct _
         {
-            virtual auto fmap(Fun fun, Type fa) -> fmap_type_t<Fun, Type> = 0;
-        };
-
-        template <typename Fun>
-        struct __
-        {
-            virtual auto fmap(Fun fun, Type fa) -> fmap_type_t<Fun, Type, 1> = 0;
+            virtual auto fmap(Fun fun, Type fa) -> fmap_type_t<Fun, Type, Order> = 0;
         };
     };
 
+    //
+    // Functor Instance
+    //
 
-    template <typename Type, typename ...> struct FunctorInstance;
+    template <template <typename ...> class Functor, typename ...> struct FunctorInstance;
 
+    //
+    // fmap method
+    //
 
     template <template <typename ...> class F, typename Fun, typename ...A>
     auto fmap(Fun f, F<A...> const &xs)
     {
-        return FunctorInstance<F<A...> const &, Fun>{}.fmap(std::move(f), xs);
+        return FunctorInstance<F, Fun, F<A...> const &>{}.fmap(std::move(f), xs);
     }
 
     template <template <typename ...> class F, typename Fun, typename ...A>
     auto fmap(Fun f, F<A...> &&xs)
     {
-        return FunctorInstance<F<A...> &&, Fun>{}.fmap(std::move(f), std::move(xs));
+        return FunctorInstance<F, Fun, F<A...> &&>{}.fmap(std::move(f), std::move(xs));
     }
 
 
     template <template <typename...> class F>
     struct is_functor : std::false_type
     { };
+
 
 } // namespace cat
 

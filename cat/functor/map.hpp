@@ -39,44 +39,23 @@ namespace cat
     // map instance:
     //
 
-    namespace functor_map
+    template <typename Fun, typename Type>
+    struct FunctorInstance<std::map, Fun, Type> final : Functor<std::map>::
+    template _<Fun, Type, 1>
     {
-        template <typename Key, typename Fun, typename Functor>
-        static auto fmap(Fun f, Functor && xs)
+        using K = typename inner_type<std::decay_t<Type>, 0>::type;
+        using A = typename inner_type<std::decay_t<Type>, 1>::type;
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::map<K, B>
+        fmap(Fun f, Type xs) override
         {
-            std::map<Key, decltype(f( forward_as<Functor>(xs.begin()->second) )) > out;
+            std::map<K, B> out;
 
             for(auto & x : xs)
-                out.insert(std::make_pair(x.first, f(forward_as<Functor>(x.second))));
+                out.insert(std::make_pair(x.first, f(forward_as<Type>(x.second))));
 
             return out;
-        }
-    };
-
-
-    template <typename Fun, typename K, typename A>
-    struct FunctorInstance<std::map<K,A> const &, Fun> final : Functor<std::map<K,A> const &>::
-    template __<Fun>
-    {
-        using B = typename std::result_of<Fun(A)>::type;
-
-        std::map<K, B>
-        fmap(Fun f, std::map<K, A> const &xs) override
-        {
-            return functor_map::fmap<K>(std::move(f), xs);
-        }
-    };
-
-    template <typename Fun, typename K, typename A>
-    struct FunctorInstance<std::map<K,A> &&, Fun> final : Functor<std::map<K,A> &&>::
-    template __<Fun>
-    {
-        using B = typename std::result_of<Fun(A)>::type;
-
-        std::map<K, B>
-        fmap(Fun f, std::map<K, A> &&xs) override
-        {
-            return functor_map::fmap<K>(std::move(f), std::move(xs));
         }
     };
 
@@ -89,45 +68,26 @@ namespace cat
     // multimap instance:
     //
 
-    namespace functor_multimap
+    template <typename Fun, typename Type>
+    struct FunctorInstance<std::multimap, Fun, Type> final : Functor<std::multimap>::
+    template _<Fun, Type, 1>
     {
-        template <typename Key, typename Fun, typename Functor>
-        static auto fmap(Fun f, Functor && xs)
+        using K = typename inner_type<std::decay_t<Type>, 0>::type;
+        using A = typename inner_type<std::decay_t<Type>, 1>::type;
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::multimap<K, B>
+        fmap(Fun f, Type xs) override
         {
-            std::multimap<Key, decltype(f( forward_as<Functor>(xs.begin()->second) )) > out;
+            std::multimap<K, B> out;
 
             for(auto & x : xs)
-                out.insert(std::make_pair(x.first, f(forward_as<Functor>(x.second))));
+                out.insert(std::make_pair(x.first, f(forward_as<Type>(x.second))));
 
             return out;
         }
     };
 
 
-    template <typename Fun, typename K, typename A>
-    struct FunctorInstance<std::multimap<K,A> const &, Fun> final : Functor<std::multimap<K,A> const &>::
-    template __<Fun>
-    {
-        using B = typename std::result_of<Fun(A)>::type;
-
-        std::multimap<K, B>
-        fmap(Fun f, std::multimap<K, A> const &xs) override
-        {
-            return functor_multimap::fmap<K>(std::move(f), xs);
-        }
-    };
-
-    template <typename Fun, typename K, typename A>
-    struct FunctorInstance<std::multimap<K,A> &&, Fun> final : Functor<std::multimap<K,A> &&>::
-    template __<Fun>
-    {
-        using B = typename std::result_of<Fun(A)>::type;
-
-        std::multimap<K, B>
-        fmap(Fun f, std::multimap<K, A> &&xs) override
-        {
-            return functor_multimap::fmap<K>(std::move(f), std::move(xs));
-        }
-    };
 } // namespace cat
 

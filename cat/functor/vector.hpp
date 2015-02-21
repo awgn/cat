@@ -40,46 +40,23 @@ namespace cat
     // vector instance:
     //
 
-    namespace functor_vector
+    template <typename Fun, typename Type>
+    struct FunctorInstance<std::vector, Fun, Type> final : Functor<std::vector>::
+    template _<Fun, Type>
     {
-        template <typename Fun, typename Functor>
-        static auto fmap(Fun f, Functor && xs)
+        using A = typename inner_type<std::decay_t<Type>>::type;
+        using B = typename std::result_of<Fun(A)>::type;
+
+        std::vector<B>
+        fmap(Fun f, Type xs) override
         {
-            std::vector< decltype(f( forward_as<Functor>(xs.front()) )) > out;
+            std::vector<B> out;
             out.reserve(xs.size());
 
             for(auto & x : xs)
-                out.push_back(f(forward_as<Functor>(x)));
+                out.push_back(f(forward_as<Type>(x)));
 
             return out;
-        }
-    };
-
-
-    template <typename Fun, typename A>
-    struct FunctorInstance<std::vector<A> const &, Fun> final : Functor<std::vector<A> const &>::
-    template _<Fun>
-    {
-        using B = typename std::result_of<Fun(A)>::type;
-
-        std::vector<B>
-        fmap(Fun f, std::vector<A> const & xs) override
-        {
-            return functor_vector::fmap(std::move(f), xs);
-        }
-    };
-
-
-    template <typename Fun, typename A>
-    struct FunctorInstance<std::vector<A> &&, Fun> final : Functor<std::vector<A> &&>::
-    template _<Fun>
-    {
-        using B = typename std::result_of<Fun(A)>::type;
-
-        std::vector<B>
-        fmap(Fun f, std::vector<A> && xs) override
-        {
-            return functor_vector::fmap(std::move(f), std::move(xs));
         }
     };
 
