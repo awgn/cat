@@ -15,7 +15,6 @@ Context(functor)
         static_assert(is_functor<F>::value, "F: not a functor!");
     }
 
-
     template <template <typename ...> class F, typename T>
     auto make_uniques(std::initializer_list<T> xs)
     {
@@ -24,6 +23,7 @@ Context(functor)
             out.push_back(std::make_unique<T>(std::move(x)));
         return out;
     }
+
     template <template <typename ...> class F, typename T>
     auto make_uniques_rev(std::initializer_list<T> xs)
     {
@@ -54,6 +54,7 @@ Context(functor)
     Test(functor_deque)
     {
         std::deque<std::string> vec { "one", "two", "three" };
+
         auto r = fmap([](const std::string &s) -> size_t { return s.size(); }, vec);
         Assert(r, is_equal_to(std::deque<size_t>{3, 3, 5}));
 
