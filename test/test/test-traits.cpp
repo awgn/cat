@@ -1,4 +1,4 @@
-#include <cat/utility/typeof.hpp>
+#include <cat/bits/typeof.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/functional.hpp>
 

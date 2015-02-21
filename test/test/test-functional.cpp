@@ -1,5 +1,6 @@
 #include <cat/functional.hpp>
-#include <cat/utility/constexpr.hpp>
+
+#include <cat/bits/constexpr.hpp>
 
 #include <algorithm>
 #include <string>

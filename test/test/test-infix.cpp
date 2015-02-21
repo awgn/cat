@@ -1,5 +1,5 @@
 #include <cat/infix.hpp>
-#include <cat/utility/constexpr.hpp>
+#include <cat/bits/constexpr.hpp>
 
 #include <type_traits>
 

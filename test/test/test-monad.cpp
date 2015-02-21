@@ -1,5 +1,5 @@
 #include <cat/monad.hpp>
-#include <cat/utility/typeof.hpp>
+#include <cat/bits/typeof.hpp>
 #include <yats.hpp>
 
 using namespace yats;
