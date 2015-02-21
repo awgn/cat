@@ -1,6 +1,6 @@
 #include <cat/applicative.hpp>
 #include <cat/functional.hpp>
-#include <cat/bits/typeof.hpp>
+#include <cat/bits/type.hpp>
 
 #include "yats.hpp"
 

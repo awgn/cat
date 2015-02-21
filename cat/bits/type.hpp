@@ -64,7 +64,6 @@ namespace cat
         return name;
     }
 
-
     //
     // get the demangled name of an expression
     //
@@ -87,5 +86,12 @@ namespace cat
 
         return name;
     }
+
+    //
+    // undefined
+    //
+
+    template <typename ...Ts> struct undefined;
+
 
 } // namespace cat

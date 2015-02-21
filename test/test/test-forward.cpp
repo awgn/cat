@@ -1,6 +1,6 @@
 #include <cat/utility.hpp>
 #include <cat/iterator.hpp>
-#include <cat/bits/typeof.hpp>
+#include <cat/bits/type.hpp>
 
 #include <vector>
 #include <iterator>
