@@ -36,7 +36,7 @@ namespace cat
     {
         return static_cast<
             std::conditional_t<
-                std::is_reference<T>::value,
+                std::is_lvalue_reference<T>::value,
                     std::remove_reference_t<V> &,
                     std::remove_reference_t<V> &&>>(value);
     }
