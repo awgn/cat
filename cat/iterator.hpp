@@ -30,12 +30,41 @@
 
 #include <iterator>
 
-//
-// similar to boost::transform_iterator
-//
-
 namespace cat
 {
+    //
+    // auto_iterator: const or  move_iterator,
+    // according to the L/R-valueness of the container.
+    //
+
+    template <typename C>
+    auto auto_begin(C &&cont)
+    {
+        return std::make_move_iterator(cont.begin());
+    }
+
+    template <typename C>
+    auto auto_end(C &&cont)
+    {
+        return std::make_move_iterator(cont.end());
+    }
+
+    template <typename C>
+    auto auto_begin(C const &cont)
+    {
+        return cont.cbegin();
+    }
+
+    template <typename C>
+    auto auto_end(C const &cont)
+    {
+        return cont.cend();
+    }
+
+    //
+    // map iterator: similar to boost::transform_iterator
+    //
+
     template <typename Fun, typename Iter>
     struct map_iterator_
     {
