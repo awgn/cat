@@ -32,6 +32,16 @@
 
 namespace cat
 {
+    //
+    // the mighty identity meta-function
+    //
+
+    template <typename T>
+    struct identity_type
+    {
+        using type = T;
+    };
+
 
 #define CAT_CLASS_HAS_TYPEDEF(typedef_) \
     template <typename T> \
@@ -76,7 +86,6 @@ namespace cat
         CAT_CLASS_HAS_TYPEDEF(function_type);
         CAT_CLASS_HAS_TYPEDEF(return_type);
         CAT_CLASS_HAS_MEMBER(arity_value);
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -593,8 +602,7 @@ namespace cat
     };
     template <size_t N, typename T, typename ...Ts>
     struct type_index<N, T, Ts...> : type_index<N-1, Ts...>
-    {
-    };
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
