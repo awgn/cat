@@ -577,6 +577,21 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // outer_type....
+    //
+
+    template <typename T> struct outer_type;
+
+    template <template <typename ...> class F, typename ...Ts>
+    struct outer_type< F<Ts...> >
+    {
+        template <typename ...Vs>
+        using type = F<Vs...>;
+    };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // inner_type....
     //
 
