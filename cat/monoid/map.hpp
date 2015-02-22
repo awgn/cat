@@ -36,20 +36,21 @@ namespace cat
     template <typename K, typename V>
     struct is_monoid<std::map<K,V>> : std::true_type { };
 
-    template <typename K, typename V, template <typename ...> class F>
-    struct MonoidInstance<std::map<K,V>, F> : Monoid<std::map<K,V>>::template Class<F>
+
+    template <typename F, typename M1, typename M2, typename K, typename V>
+    struct MonoidInstance<std::map<K, V>, F, M1, M2> final : Monoid<std::map<K, V>>::
+    template _<F, M1, M2>
     {
-        virtual std::map<K,V> mempty() final
+        virtual std::map<K,V> mempty() override
         {
             return std::map<K,V>{};
         }
 
-        virtual std::map<K,V> mappend(std::map<K,V> a, std::map<K,V> b) final
+        virtual std::map<K,V> mappend(M1 && a, M2 && b) override
         {
-            using iter_t = decltype(std::begin(b));
-
-            a.insert(std::move_iterator<iter_t>(std::begin(b)), std::move_iterator<iter_t>(std::end(b)));
-            return a;
+            auto ret = std::forward<M1>(a);
+            ret.insert(auto_begin(b), auto_end(b));
+            return ret;
         }
     };
 };

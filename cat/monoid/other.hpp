@@ -46,15 +46,17 @@ namespace cat
     template <>
     struct is_monoid<Any> : std::true_type { };
 
-    template <template <typename ...> class F>
-    struct MonoidInstance<Any, F> : Monoid<Any>::template Class<F>
+
+    template <typename F, typename M1, typename M2>
+    struct MonoidInstance<Any, F, M1, M2> final : Monoid<Any>::
+    template _<F, M1, M2>
     {
-        virtual Any mempty() final
+        virtual Any mempty() override
         {
             return Any{ false };
         }
 
-        virtual Any mappend(Any a, Any b) final
+        virtual Any mappend(M1 && a, M2 && b) override
         {
             return Any { a.value || b.value };
         }
@@ -75,15 +77,17 @@ namespace cat
     template <>
     struct is_monoid<All> : std::true_type { };
 
-    template <template <typename ...> class F>
-    struct MonoidInstance<All, F> : Monoid<All>::template Class<F>
+
+    template <typename F, typename M1, typename M2>
+    struct MonoidInstance<All, F, M1, M2> final : Monoid<All>::
+    template _<F, M1, M2>
     {
-        virtual All mempty() final
+        virtual All mempty() override
         {
             return All{ true };
         }
 
-        virtual All mappend(All a, All b) final
+        virtual All mappend(M1 && a, M2 && b) override
         {
             return All { a.value && b.value };
         }
@@ -111,17 +115,20 @@ namespace cat
     template <typename T>
     struct is_monoid<Sum<T>> : std::true_type { };
 
-    template <typename T, template <typename ...> class F>
-    struct MonoidInstance<Sum<T>, F> : Monoid<Sum<T>>::template Class<F>
+
+    template <typename T, typename F, typename M1, typename M2>
+    struct MonoidInstance<Sum<T>, F, M1, M2> final : Monoid<Sum<T>>::
+    template _<F, M1, M2>
     {
-        virtual Sum<T> mempty() final
+        virtual Sum<T> mempty() override
         {
             return Sum<T>{0};
         }
 
-        virtual Sum<T> mappend(Sum<T> a, Sum<T> b) final
+        virtual Sum<T> mappend(M1 && a, M2 && b) override
         {
-            return Sum<T>{ a.value + b.value };
+            return Sum<T>{ forward_as<M1>(a.value) +
+                           forward_as<M2>(b.value) };
         }
     };
 
@@ -147,17 +154,20 @@ namespace cat
     template <typename T>
     struct is_monoid<Product<T>> : std::true_type { };
 
-    template <typename T, template <typename ...> class F>
-    struct MonoidInstance<Product<T>, F> : Monoid<Product<T>>::template Class<F>
+
+    template <typename T, typename F, typename M1, typename M2>
+    struct MonoidInstance<Product<T>, F, M1, M2> final : Monoid<Product<T>>::
+    template _<F, M1, M2>
     {
-        virtual Product<T> mempty() final
+        virtual Product<T> mempty() override
         {
             return Product<T>{1};
         }
 
-        virtual Product<T> mappend(Product<T> a, Product<T> b) final
+        virtual Product<T> mappend(M1 && a, M2 && b) override
         {
-            return Product<T>{ a.value * b.value };
+            return Product<T>{ forward_as<M1>(a.value) *
+                               forward_as<M2>(b.value) };
         }
     };
 };

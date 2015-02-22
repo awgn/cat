@@ -28,27 +28,31 @@
 
 #include <deque>
 #include <cat/monoid/monoid.hpp>
+#include <cat/iterator.hpp>
 
 namespace cat
 {
     template <typename T>
     struct is_monoid<std::deque<T>> : std::true_type { };
 
-
-    template <typename T, template <typename ...> class F>
-    struct MonoidInstance<std::deque<T>, F> : Monoid<std::deque<T>>::template Class<F>
+    template <typename F, typename M1, typename M2, typename T>
+    struct MonoidInstance<std::deque<T>, F, M1, M2> final : Monoid<std::deque<T>>::
+    template _<F, M1, M2>
     {
-        virtual std::deque<T> mempty() final
+        virtual std::deque<T> mempty() override
         {
             return std::deque<T>{};
         }
 
-        virtual std::deque<T> mappend(std::deque<T> a, std::deque<T> b) final
+        virtual std::deque<T> mappend(M1 && a, M2 && b) override
         {
-            for(auto &x : b)
-                a.push_back(std::move(x));
+            auto ret = std::forward<M1>(a);
 
-            return a;
+            ret.insert(std::end(ret),
+                       auto_begin(b),
+                       auto_end(b));
+
+            return ret;
         }
     };
 

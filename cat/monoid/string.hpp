@@ -34,17 +34,19 @@ namespace cat
     template <>
     struct is_monoid<std::string> : std::true_type { };
 
-    template <template <typename ...> class F>
-    struct MonoidInstance<std::string, F> : Monoid<std::string>::template Class<F>
+
+    template <typename F, typename M1, typename M2>
+    struct MonoidInstance<std::string, F, M1, M2> final : Monoid<std::string>::
+    template _<F, M1, M2>
     {
-        virtual std::string mempty() final
+        virtual std::string mempty() override
         {
             return std::string{};
         }
 
-        virtual std::string mappend(std::string a, std::string b) final
+        virtual std::string mappend(M1 && a, M2 && b) override
         {
-            return std::move(a) + std::move(b);
+            return std::forward<M1>(a) + std::forward<M2>(b);
         }
     };
 };

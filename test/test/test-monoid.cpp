@@ -23,6 +23,7 @@ Context(monoid)
 
     }
 
+
     Test(monoid_string)
     {
         Assert( mempty<std::string>().empty() );
@@ -67,6 +68,18 @@ Context(monoid)
         auto l = std::deque<std::deque<int>>{ std::deque<int>{}, std::deque<int>{1}, std::deque<int>{2, 3} };
 
         Assert (mconcat(l) == std::deque<int>{1,2,3});
+    }
+
+    Test(monoid_optional)
+    {
+        auto a = Any{ true };
+        auto b = Any{ false };
+
+        Assert(mempty<std::experimental::optional<Any>>() == std::experimental::optional<Any>());
+
+        Assert(mappend(std::experimental::make_optional(a), std::experimental::optional<Any>()) == a);
+        Assert(mappend(std::experimental::optional<Any>(),  std::experimental::make_optional(b)) == b);
+        Assert(mappend(std::experimental::make_optional(a), std::experimental::make_optional(b)) == mappend(a,b));
     }
 
 
@@ -115,19 +128,6 @@ Context(monoid)
         Assert(mempty<Sum<int>>().value == 0);
         Assert(mappend(sum(1), sum(2)).value == 3);
         Assert(mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6);
-    }
-
-
-    Test(monoid_optional)
-    {
-        auto a = Any{ true };
-        auto b = Any{ false };
-
-        Assert(mempty<std::experimental::optional<Any>>() == std::experimental::optional<Any>());
-
-        Assert(mappend(std::experimental::make_optional(a), std::experimental::optional<Any>()) == a);
-        Assert(mappend(std::experimental::optional<Any>(),  std::experimental::make_optional(b)) == b);
-        Assert(mappend(std::experimental::make_optional(a), std::experimental::make_optional(b)) == mappend(a,b));
     }
 
 

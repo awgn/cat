@@ -34,22 +34,27 @@ namespace cat
     template <typename T>
     struct is_monoid<std::forward_list<T>> : std::true_type { };
 
-    template <typename T, template <typename ...> class F>
-    struct MonoidInstance<std::forward_list<T>, F> : Monoid<std::forward_list<T>>::template Class<F>
+    template <typename F, typename M1, typename M2, typename T>
+    struct MonoidInstance<std::forward_list<T>, F, M1, M2> final : Monoid<std::forward_list<T>>::
+    template _<F, M1, M2>
     {
-        virtual std::forward_list<T> mempty() final
+        virtual std::forward_list<T> mempty() override
         {
             return std::forward_list<T>{};
         }
 
-        virtual std::forward_list<T> mappend(std::forward_list<T> a, std::forward_list<T> b) final
+        virtual std::forward_list<T> mappend(M1 && a, M2 && b) override
         {
-            auto before_end = a.before_begin();
-            for(auto & e: a)
-                (void)e, ++before_end;
+            auto ret = std::forward<M1>(a);
 
-            a.insert_after(before_end, std::begin(b), std::end(b));
-            return a;
+            auto before_end = ret.before_begin();
+            for (auto& _ : ret)
+                (void)_, ++before_end;
+
+            ret.insert_after(before_end,
+                            auto_begin(b),
+                            auto_end(b));
+            return ret;
         }
     };
 

@@ -34,20 +34,19 @@ namespace cat
     template <typename T>
     struct is_monoid<std::experimental::optional<T>> : std::true_type { };
 
-    template <typename T, template <typename ...> class F>
-    struct MonoidInstance<std::experimental::optional<T>, F>
-        : Monoid<std::experimental::optional<T>>::template Class<F>
+    template <typename F, typename M1, typename M2, typename T>
+    struct MonoidInstance<std::experimental::optional<T>, F, M1, M2> final : Monoid<std::experimental::optional<T>>::
+    template _<F, M1, M2>
     {
         static_assert(is_monoid<T>::value, "optional<T>: T must be a monoid");
 
-        virtual std::experimental::optional<T> mempty() final
+        virtual std::experimental::optional<T> mempty() override
         {
             return std::experimental::optional<T>{};
         }
 
         virtual std::experimental::optional<T>
-        mappend(std::experimental::optional<T> a,
-                std::experimental::optional<T> b) final
+        mappend(M1 &&a, M2 &&b) override
         {
             if (!a && !b)
                 std::experimental::optional<T>{};
@@ -55,7 +54,8 @@ namespace cat
                 return a;
             if (!a && b)
                 return b;
-            return std::experimental::make_optional(cat::mappend(std::move(*a), std::move(*b)));
+            return std::experimental::make_optional(
+                cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)));
         }
     };
 };

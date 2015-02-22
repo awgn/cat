@@ -28,26 +28,31 @@
 
 #include <list>
 #include <cat/monoid/monoid.hpp>
+#include <cat/iterator.hpp>
 
 namespace cat
 {
     template <typename T>
     struct is_monoid<std::list<T>> : std::true_type { };
 
-    template <typename T, template <typename ...> class F>
-    struct MonoidInstance<std::list<T>, F> : Monoid<std::list<T>>::template Class<F>
+    template <typename F, typename M1, typename M2, typename T>
+    struct MonoidInstance<std::list<T>, F, M1, M2> final : Monoid<std::list<T>>::
+    template _<F, M1, M2>
     {
-        virtual std::list<T> mempty() final
+        virtual std::list<T> mempty() override
         {
             return std::list<T>{};
         }
 
-        virtual std::list<T> mappend(std::list<T> a, std::list<T> b) final
+        virtual std::list<T> mappend(M1 && a, M2 && b) override
         {
-            for(auto &x : b)
-                a.push_back(std::move(x));
+            auto ret = std::forward<M1>(a);
 
-            return a;
+            ret.insert(std::end(ret),
+                       auto_begin(b),
+                       auto_end(b));
+
+            return ret;
         }
     };
 
