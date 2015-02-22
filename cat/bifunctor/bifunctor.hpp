@@ -27,51 +27,63 @@
 #pragma once
 
 #include <utility>
+#include <cat/functional.hpp>
 #include <cat/type_traits.hpp>
 
 namespace cat
 {
     //
-    // class Bifunctor
+    // Type class Bifunctor
     //
 
     template <template <typename ...> class BF>
     struct Bifunctor
     {
-        template <typename F, typename G, typename A, typename B>
-        struct Class
+        template <typename F, typename G, typename Type>
+        struct _
         {
-            virtual auto bimap(F f, G g, BF<A, B> const & bf)
-                -> BF<decltype(f(std::declval<A>())),
-                      decltype(g(std::declval<B>()))> = 0;
+            virtual auto bimap(F f, G g, Type && bf)
+                -> map_result_of_t<std::decay_t<Type>, F, G> = 0;
 
-            virtual auto first(F f, BF<A, B> const & bf)
-                -> BF<decltype(f(std::declval<A>())), B> = 0;
+            virtual auto bifirst(F f, Type && bf)
+                -> map_result_of_t<std::decay_t<Type>, F, Identity> = 0;
 
-            virtual auto second(G g, BF<A, B> const & bf)
-                -> BF<A, decltype(g(std::declval<B>()))> = 0;
+            virtual auto bisecond(G g, Type && bf)
+                -> map_result_of_t<std::decay_t<Type>, Identity, G> = 0;
         };
     };
 
-    template <template <typename ...> class BF, typename ...> struct BifunctorInstance;
+    //
+    // Instance
+    //
 
-    template <template <typename ...> class BF, typename F, typename G, typename A, typename B>
-    auto bimap(F f, G g, BF<A,B> const &xs)
+    template <class Bifunctor, typename ...> struct BifunctorInstance;
+
+    //
+    // methods
+    //
+
+    template <typename F, typename G, typename Type>
+    auto bimap(F f, G g, Type && xs)
     {
-        return BifunctorInstance<BF, F, G, A, B>{}.bimap(f, g, xs);
+        return BifunctorInstance<outer_type_t<std::decay_t<Type>>, F, G, Type>{}.bimap(std::move(f), std::move(g), std::forward<Type>(xs));
     }
 
-    template <template <typename ...> class BF, typename F, typename A, typename B>
-    auto first(F f, BF<A,B> const &xs)
+    template <typename F, typename Type>
+    auto bifirst(F f, Type && xs)
     {
-        return BifunctorInstance<BF, F, F, A, B>{}.first(f, xs);
+        return BifunctorInstance<outer_type_t<std::decay_t<Type>>, F, Identity, Type>{}.bimap(std::move(f), identity, std::forward<Type>(xs));
     }
 
-    template <template <typename ...> class BF, typename G, typename A, typename B>
-    auto second(G g, BF<A,B> const &xs)
+    template <typename G, typename Type>
+    auto bisecond(G g, Type && xs)
     {
-        return BifunctorInstance<BF, G, G, A, B>{}.second(g, xs);
+        return BifunctorInstance<outer_type_t<std::decay_t<Type>>, Identity, G, Type>{}.bimap(identity, std::move(g), std::forward<Type>(xs));
     }
+
+    //
+    // trait for concept
+    //
 
     template <template <typename...> class BF>
     struct is_bifunctor : std::false_type

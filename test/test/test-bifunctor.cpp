@@ -26,8 +26,8 @@ Context(functor)
                        [](const std::string &s) -> size_t { return s.size(); },
                        p);
 
-        auto f = first ([](const std::string &s) -> size_t { return s.size(); }, p);
-        auto s = second([](const std::string &s) -> size_t { return s.size(); }, p);
+        auto f = bifirst ([](const std::string &s) -> size_t { return s.size(); }, p);
+        auto s = bisecond([](const std::string &s) -> size_t { return s.size(); }, p);
 
         Assert(b, is_equal_to(std::pair<size_t, size_t>{5, 6}));
         Assert(f, is_equal_to(std::pair<size_t, std::string>{5, "world!"}));

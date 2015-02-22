@@ -27,7 +27,9 @@
 #pragma once
 
 #include <tuple>
+
 #include <cat/bifunctor/bifunctor.hpp>
+#include <cat/utility.hpp>
 
 namespace cat
 {
@@ -39,28 +41,33 @@ namespace cat
     // std::pair instance:
     //
 
-    template <typename F, typename G, typename A, typename B>
-    struct BifunctorInstance<std::pair, F, G, A, B> : Bifunctor<std::pair>::Class<F, G, A, B>
+    template <typename F, typename G, typename Type>
+    struct BifunctorInstance<template_class<std::pair>, F, G, Type> final : Bifunctor<std::pair>::
+    template _ <F, G, Type>
     {
-        using C = decltype(std::declval<F>()(std::declval<A>()));
-        using D = decltype(std::declval<G>()(std::declval<B>()));
 
-        std::pair<C, D>
-        bimap(F f, G g, std::pair<A, B> const &xs) final
+        map_result_of_t< std::decay_t<Type>, F, G>
+        bimap(F f, G g, Type && xs) override
         {
-            return std::make_pair(f(xs.first), g(xs.second));
+            return std::make_pair(
+                    f(forward_as<Type>(xs.first)),
+                    g(forward_as<Type>(xs.second)));
         }
 
-        std::pair<C, B>
-        first(F f, std::pair<A, B> const &xs) final
+        map_result_of_t< std::decay_t<Type>, F, Identity>
+        bifirst(F f, Type && xs) override
         {
-            return std::make_pair(f(xs.first), xs.second);
+            return std::make_pair(
+                    f(forward_as<Type>(xs.first)),
+                    forward_as<Type>(xs.second));
         }
 
-        std::pair<A, D>
-        second(G g, std::pair<A, B> const &xs) final
+        map_result_of_t< std::decay_t<Type>, Identity, G>
+        bisecond(G g, Type && xs) override
         {
-            return std::make_pair(xs.first, g(xs.second));
+            return std::make_pair(
+                    forward_as<Type>(xs.first),
+                    g(forward_as<Type>(xs.second)));
         }
     };
 
