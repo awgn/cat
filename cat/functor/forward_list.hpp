@@ -43,14 +43,14 @@ namespace cat
     //
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::forward_list, Fun, Type> final : Functor<std::forward_list>::
+    struct FunctorInstance<template_class<std::forward_list>, Fun, Type> final : Functor<std::forward_list>::
     template _<Fun, Type>
     {
-        using A = typename inner_type<std::decay_t<Type>>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using A = inner_type_t<std::decay_t<Type>>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::forward_list<B>
-        fmap(Fun f, Type xs) override
+        fmap(Fun f, Type && xs) override
         {
             return std::forward_list<B>
             {

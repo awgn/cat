@@ -65,7 +65,7 @@ namespace cat
         template <typename Fun, typename Type, size_t Order = 0>
         struct _
         {
-            virtual auto fmap(Fun fun, Type fa) -> fmap_type_t<Fun, Type, Order> = 0;
+            virtual auto fmap(Fun fun, Type && fa) -> fmap_type_t<Fun, Type, Order> = 0;
         };
     };
 
@@ -73,24 +73,21 @@ namespace cat
     // Functor Instance
     //
 
-    template <template <typename ...> class Functor, typename ...> struct FunctorInstance;
+    template <class Functor, typename ...> struct FunctorInstance;
 
     //
     // fmap method
     //
 
-    template <template <typename ...> class F, typename Fun, typename ...A>
-    auto fmap(Fun f, F<A...> const &xs)
+    template <typename Fun, typename Type>
+    auto fmap(Fun f, Type && xs)
     {
-        return FunctorInstance<F, Fun, F<A...> const &>{}.fmap(std::move(f), xs);
+        return FunctorInstance<outer_type_t<std::decay_t<Type>>, Fun, Type>{}.fmap(std::move(f), std::forward<Type>(xs));
     }
 
-    template <template <typename ...> class F, typename Fun, typename ...A>
-    auto fmap(Fun f, F<A...> &&xs)
-    {
-        return FunctorInstance<F, Fun, F<A...> &&>{}.fmap(std::move(f), std::move(xs));
-    }
-
+    //
+    // trait for concept
+    //
 
     template <template <typename...> class F>
     struct is_functor : std::false_type

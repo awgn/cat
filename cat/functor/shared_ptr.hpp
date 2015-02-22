@@ -40,11 +40,11 @@ namespace cat
     //
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::shared_ptr, Fun, Type> final : Functor<std::shared_ptr>::
+    struct FunctorInstance<template_class<std::shared_ptr>, Fun, Type> final : Functor<std::shared_ptr>::
     template _<Fun, Type>
     {
-        using A = typename inner_type<std::decay_t<Type>>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using A = inner_type_t<std::decay_t<Type>>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::shared_ptr<B>
         fmap(Fun f, Type x) override

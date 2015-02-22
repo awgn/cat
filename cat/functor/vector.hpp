@@ -41,14 +41,14 @@ namespace cat
     //
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::vector, Fun, Type> final : Functor<std::vector>::
+    struct FunctorInstance<template_class<std::vector>, Fun, Type> final : Functor<std::vector>::
     template _<Fun, Type>
     {
-        using A = typename inner_type<std::decay_t<Type>>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using A = inner_type_t<std::decay_t<Type>>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::vector<B>
-        fmap(Fun f, Type xs) override
+        fmap(Fun f, Type && xs) override
         {
             std::vector<B> out;
             out.reserve(xs.size());

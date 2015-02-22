@@ -40,14 +40,14 @@ namespace cat
     //
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::experimental::optional, Fun, Type> final : Functor<std::experimental::optional>::
+    struct FunctorInstance<template_class<std::experimental::optional>, Fun, Type> final : Functor<std::experimental::optional>::
     template _<Fun, Type>
     {
-        using A = typename inner_type<std::decay_t<Type>>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using A = inner_type_t<std::decay_t<Type>>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::experimental::optional<B>
-        fmap(Fun f, Type x) override
+        fmap(Fun f, Type && x) override
         {
             if (x)
                 return std::experimental::make_optional(f(forward_as<Type>(*x)));

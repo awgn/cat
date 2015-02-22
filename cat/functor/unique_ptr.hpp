@@ -39,14 +39,14 @@ namespace cat
     // unique_ptr instance:
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::unique_ptr, Fun, Type> final : Functor<std::unique_ptr>::
+    struct FunctorInstance<template_class<std::unique_ptr>, Fun, Type> final : Functor<std::unique_ptr>::
     template _<Fun, Type>
     {
-        using A = typename inner_type<std::decay_t<Type>>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using A = inner_type_t<std::decay_t<Type>>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::unique_ptr<B>
-        fmap(Fun f, Type x) override
+        fmap(Fun f, Type && x) override
         {
             if (x)
                 return std::make_unique<B>(f(forward_as<Type>(*x)));

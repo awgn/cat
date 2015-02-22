@@ -40,15 +40,15 @@ namespace cat
     //
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::map, Fun, Type> final : Functor<std::map>::
+    struct FunctorInstance<template_class<std::map>, Fun, Type> final : Functor<std::map>::
     template _<Fun, Type, 1>
     {
-        using K = typename inner_type<std::decay_t<Type>, 0>::type;
-        using A = typename inner_type<std::decay_t<Type>, 1>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using K = inner_type_t<std::decay_t<Type>, 0>;
+        using A = inner_type_t<std::decay_t<Type>, 1>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::map<K, B>
-        fmap(Fun f, Type xs) override
+        fmap(Fun f, Type && xs) override
         {
             std::map<K, B> out;
 
@@ -69,15 +69,15 @@ namespace cat
     //
 
     template <typename Fun, typename Type>
-    struct FunctorInstance<std::multimap, Fun, Type> final : Functor<std::multimap>::
+    struct FunctorInstance<template_class<std::multimap>, Fun, Type> final : Functor<std::multimap>::
     template _<Fun, Type, 1>
     {
-        using K = typename inner_type<std::decay_t<Type>, 0>::type;
-        using A = typename inner_type<std::decay_t<Type>, 1>::type;
-        using B = typename std::result_of<Fun(A)>::type;
+        using K = inner_type_t<std::decay_t<Type>, 0>;
+        using A = inner_type_t<std::decay_t<Type>, 1>;
+        using B = std::result_of_t<Fun(A)>;
 
         std::multimap<K, B>
-        fmap(Fun f, Type xs) override
+        fmap(Fun f, Type && xs) override
         {
             std::multimap<K, B> out;
 
