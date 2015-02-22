@@ -41,7 +41,7 @@ namespace cat
 
     template <typename Fun, typename Type>
     struct FunctorInstance<template_class<std::pair>, Fun, Type> final : Functor<std::pair>::
-    template _<Fun, Type, 1>
+    template _2<Fun, Type>
     {
         using K = inner_type_t<std::decay_t<Type>, 0>;
         using A = inner_type_t<std::decay_t<Type>, 1>;

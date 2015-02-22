@@ -27,34 +27,11 @@
 #pragma once
 
 #include <utility>
+#include <cat/functional.hpp>
 #include <cat/type_traits.hpp>
 
 namespace cat
 {
-    namespace details
-    {
-        template <typename Fun, typename Functor, size_t N> struct fmap_type;
-
-        template <typename Fun, template <typename ...> class Functor, typename T0>
-        struct fmap_type<Fun, Functor<T0>, 0 >
-        {
-            using type = Functor< std::result_of_t<Fun(T0)> >;
-        };
-
-        template <typename Fun, template <typename ...> class Functor, typename T0, typename T1>
-        struct fmap_type<Fun, Functor<T0, T1>, 1 >
-        {
-            using type = Functor< T0, std::result_of_t<Fun(T1)>>;
-        };
-    }
-
-    //
-    // Map function Fun over Functor
-    //
-
-    template <typename Fun, typename Functor, size_t N = 0>
-    using fmap_type_t = typename details::fmap_type<Fun, std::decay_t<Functor>, N>::type;
-
     //
     // Type class Functor
     //
@@ -62,21 +39,27 @@ namespace cat
     template <template <typename ...> class F>
     struct Functor
     {
-        template <typename Fun, typename Type, size_t Order = 0>
+        template <typename Fun, typename Type>
         struct _
         {
-            virtual auto fmap(Fun fun, Type && fa) -> fmap_type_t<Fun, Type, Order> = 0;
+            virtual auto fmap(Fun fun, Type && fa) -> map_result_of_t<std::decay_t<Type>, Fun> = 0;
+        };
+
+        template <typename Fun, typename Type>
+        struct _2
+        {
+            virtual auto fmap(Fun fun, Type && fa) -> map_result_of_t<std::decay_t<Type>, Identity, Fun> = 0;
         };
     };
 
     //
-    // Functor Instance
+    // Instance
     //
 
     template <class Functor, typename ...> struct FunctorInstance;
 
     //
-    // fmap method
+    // method
     //
 
     template <typename Fun, typename Type>
