@@ -33,7 +33,7 @@
 namespace cat
 {
     //
-    // Type class Monoid
+    // type class Monoid
     //
 
     template <typename M1, typename M2>

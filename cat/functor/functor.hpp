@@ -33,7 +33,7 @@
 namespace cat
 {
     //
-    // Type class Functor
+    // type class functor
     //
 
     template <template <typename ...> class F>
@@ -53,13 +53,13 @@ namespace cat
     };
 
     //
-    // Instance
+    // instance
     //
 
     template <class Functor, typename ...> struct FunctorInstance;
 
     //
-    // method
+    // free function
     //
 
     template <typename Fun, typename Type>

@@ -33,7 +33,7 @@
 namespace cat
 {
     //
-    // Type class Bifunctor
+    // type class Bifunctor
     //
 
     template <template <typename ...> class BF>
@@ -54,13 +54,13 @@ namespace cat
     };
 
     //
-    // Instance
+    // instance
     //
 
     template <class Bifunctor, typename ...> struct BifunctorInstance;
 
     //
-    // methods
+    // free functions
     //
 
     template <typename F, typename G, typename Type>
