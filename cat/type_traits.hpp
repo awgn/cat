@@ -544,6 +544,43 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // map_result_of: apply functor over inner types and return a new type with
+    // each result_of
+    //
+
+
+    template <typename Type, typename ...Fs> struct map_result_of;
+
+    template <template <typename ...> class Functor,
+              typename T0, typename F>
+    struct map_result_of <Functor<T0>, F>
+    {
+        using type = Functor< typename std::result_of_t<F(T0)>>;
+    };
+    template <template <typename ...> class Functor,
+              typename T0, typename T1,
+              typename F0, typename F1>
+    struct map_result_of <Functor<T0, T1>, F0, F1>
+    {
+        using type = Functor< std::result_of_t<F0(T0)>,
+                                       std::result_of_t<F1(T1)>>;
+    };
+    template <template <typename ...> class Functor,
+              typename T0, typename T1, typename T2,
+              typename F0, typename F1, typename F2>
+    struct map_result_of <Functor<T0, T1, T2>, F0, F1, F2>
+    {
+        using type = Functor< std::result_of_t<F0(T0)>,
+                                        std::result_of_t<F1(T1)>,
+                                        std::result_of_t<F2(T2)> >;
+    };
+
+    template <typename Type, typename ...Fs>
+    using map_result_of_t = typename map_result_of<Type, Fs...>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // type_index
     //
 
