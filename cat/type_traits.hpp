@@ -30,19 +30,6 @@
 #include <memory>
 #include <type_traits>
 
-namespace cat
-{
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // the mighty identity meta-function
-    //
-
-    template <typename T>
-    struct identity_type
-    {
-        using type = T;
-    };
-
 
 #define CAT_CLASS_HAS_TYPEDEF(typedef_) \
     template <typename T> \
@@ -65,6 +52,44 @@ namespace cat
     \
         enum { value = noexcept(check<T>(0)) }; \
     };
+
+
+namespace cat
+{
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // the identity meta-function
+    //
+
+    template <typename T>
+    struct identity_type
+    {
+        using type = T;
+    };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // boolean type
+    //
+
+    template <bool value>
+    using bool_type = std::integral_constant<bool, value>;
+
+    template <typename Trait, bool V = Trait::value> struct not_type;
+
+    template <typename Trait>
+    struct not_type<Trait, false> : std::true_type { };
+
+    template <typename Trait>
+    struct not_type<Trait, true> : std::false_type { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // generic type traits...
+    //
 
     namespace details
     {
@@ -89,26 +114,6 @@ namespace cat
         CAT_CLASS_HAS_MEMBER(arity_value);
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // boolean type
-    //
-
-    template <bool value>
-    using bool_type = std::integral_constant<bool, value>;
-
-    template <typename Trait, bool V = Trait::value> struct not_type;
-
-    template <typename Trait>
-    struct not_type<Trait, false> : std::true_type { };
-
-    template <typename Trait>
-    struct not_type<Trait, true> : std::false_type { };
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // generic type traits...
-    //
 
     template <typename T>
     struct has_value_type
@@ -319,73 +324,6 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // has_rebind
-    //
-
-    namespace details
-    {
-        template <typename T>
-        class has_rebind
-        {
-            template <class C> static void check(typename C::template rebind<int>::other *) noexcept;
-            template <class C> static void check(...) noexcept(false);
-        public:
-
-            enum { value = noexcept(check<T>(nullptr)) };
-        };
-    }
-
-    template <typename T>
-    struct has_rebind
-        : bool_type<details::has_rebind<T>::value>
-    { };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // is_default_deleter
-    //
-
-    template <typename T>
-    struct is_default_deleter : std::false_type
-    { };
-
-    template <typename T>
-    struct is_default_deleter<std::default_delete<T>> : std::true_type
-    { };
-
-    template <typename T>
-    struct is_default_deleter<std::default_delete<T[]>> : std::true_type
-    { };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    //  generic rebind (for allocator, default deleter etc.)
-    //
-
-    template <typename T, typename To, typename = void>
-    struct rebind
-    {
-        using type = T;
-    };
-    template <typename T, typename To>
-    struct rebind<T, To, std::enable_if_t<is_default_deleter<T>::value>>
-    {
-        using type = std::default_delete<To>;
-    };
-    template <typename T, typename To>
-    struct rebind<T, To, std::enable_if_t<has_rebind<T>::value>>
-    {
-        using type = typename T::template rebind<To>::other;
-    };
-
-    template <typename ...Ts>
-    using rebind_t = typename rebind<Ts...>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
     // function_type
     //
 
@@ -441,7 +379,6 @@ namespace cat
         };
     }
 
-
     template <typename F>
     struct function_type
     {
@@ -452,9 +389,20 @@ namespace cat
     template <typename F>
     using function_type_t = typename function_type<F>::type;
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // function arity
+    //
+
     template <typename F>
     struct arity : details::arity< function_type_t<F> >
     { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // return type
+    //
 
     template <typename F>
     struct return_type : details::return_type< function_type_t<F> >
@@ -482,7 +430,6 @@ namespace cat
 
     }
 
-
     template <typename T>
     struct has_call_operator
         : bool_type< details::has_call_operator<T>::value >
@@ -502,7 +449,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // is_callable_with, is_callable_as....
+    // is_callable_with
     //
 
     namespace details
@@ -523,10 +470,15 @@ namespace cat
     { };
 
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_callable_as
+    //
+
     template <typename F> struct is_callable_as;
-    template <typename F, typename ...Ts>
-    struct is_callable_as<F(Ts...)>
-        : is_callable_with<F, Ts...> { };
+    template <typename F, typename ... Ts>
+    struct is_callable_as<F(Ts...)> : is_callable_with<F, Ts...>
+    { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
