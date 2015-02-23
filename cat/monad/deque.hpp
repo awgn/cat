@@ -63,5 +63,28 @@ namespace cat
 
     };
 
+    template <typename A, typename Ma_, typename Mb_>
+    struct MonadPlusInstance<std::deque<A>, Ma_, Mb_> final : MonadPlus<std::deque>::
+    template _<A, Ma_, Mb_>
+    {
+        std::deque<A>
+        mzero() override
+        {
+            return {};
+        }
+
+        std::deque<A>
+        mplus(Ma_ && a, Mb_ && b) override
+        {
+            auto r = std::forward<Ma_>(a);
+            r.insert(std::end(r),
+                     auto_begin(b),
+                     auto_end(b));
+            return r;
+        }
+    };
+
+
+
 } // namespace cat
 

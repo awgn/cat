@@ -61,5 +61,28 @@ namespace cat
         }
 
     };
+
+    template <typename A, typename Ma_, typename Mb_>
+    struct MonadPlusInstance<std::unique_ptr<A>, Ma_, Mb_> final : MonadPlus<std::unique_ptr>::
+    template _<A, Ma_, Mb_>
+    {
+        std::unique_ptr<A>
+        mzero() override
+        {
+            return {};
+        }
+
+        std::unique_ptr<A>
+        mplus(Ma_ && a, Mb_ && b) override
+        {
+            if (a)
+                return std::make_unique<A>(forward_as<Ma_>(*a));
+            if (b)
+                return std::make_unique<A>(forward_as<Mb_>(*b));
+            return {};
+        }
+    };
+
+
 } // namespace cat
 

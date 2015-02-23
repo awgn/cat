@@ -62,5 +62,28 @@ namespace cat
 
     };
 
+
+    template <typename A, typename Ma_, typename Mb_>
+    struct MonadPlusInstance<std::shared_ptr<A>, Ma_, Mb_> final : MonadPlus<std::shared_ptr>::
+    template _<A, Ma_, Mb_>
+    {
+        std::shared_ptr<A>
+        mzero() override
+        {
+            return {};
+        }
+
+        std::shared_ptr<A>
+        mplus(Ma_ && a, Mb_ && b) override
+        {
+            if (a)
+                return std::make_shared<A>(forward_as<Ma_>(*a));
+            if (b)
+                return std::make_shared<A>(forward_as<Mb_>(*b));
+            return {};
+        }
+    };
+
+
 } // namespace cat
 

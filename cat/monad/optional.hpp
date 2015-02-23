@@ -61,5 +61,25 @@ namespace cat
 
     };
 
+
+    template <typename A, typename Ma_, typename Mb_>
+    struct MonadPlusInstance<std::experimental::optional<A>, Ma_, Mb_> final : MonadPlus<std::experimental::optional>::
+    template _<A, Ma_, Mb_>
+    {
+        std::experimental::optional<A>
+        mzero() override
+        {
+            return std::experimental::nullopt;
+        }
+
+        std::experimental::optional<A>
+        mplus(Ma_ && a, Mb_ && b) override
+        {
+            if (a)
+                return std::forward<Mb_>(a);
+            return std::forward<Mb_>(b);
+        }
+    };
+
 } // namespace cat
 

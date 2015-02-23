@@ -67,10 +67,26 @@ namespace cat
     };
 
     //
-    // instance
+    // class Monad Plus
+    //
+
+    template <template <typename ...> class M>
+    struct MonadPlus : Monad<M>
+    {
+        template <typename A, typename Ma_, typename Mb_>
+        struct _
+        {
+            virtual M<A> mzero() = 0;
+            virtual M<A> mplus(Ma_ &&, Mb_ &&)  = 0;
+        };
+    };
+
+    //
+    // instances
     //
 
     template <typename Ma, typename ...> struct MonadInstance;
+    template <typename Ma, typename ...> struct MonadPlusInstance;
 
     //
     // free functions
@@ -85,7 +101,6 @@ namespace cat
          return MonadInstance<M<A>, typename Monad<M>::Identity, M<A>, A_>{}.mreturn(std::forward<A_>(a));
     }
 
-
     template <template <typename ...> class M, typename _, typename A>
     constexpr auto mreturn_to(M<_>, A && a)
     {
@@ -98,6 +113,24 @@ namespace cat
         using Ma = std::decay_t<Ma_>;
 
         return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
+    }
+
+    //
+    // monad plus
+    //
+
+
+    template <typename  Ma>
+    auto mzero()
+    {
+         return MonadPlusInstance<Ma, Ma, Ma>{}.mzero();
+    }
+
+    template <typename Ma_, typename Mb_>
+    auto mplus(Ma_ && a, Mb_ && b)
+    {
+         using MA = std::decay_t<Ma_>;
+         return MonadPlusInstance<MA, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
     }
 
     //
@@ -194,6 +227,16 @@ namespace cat
     };
 
     constexpr auto k = infix(kleisli_{});
+
+    //
+    // join
+    //
+
+    template <typename MMa>
+    auto join(MMa && x)
+    {
+        return  std::forward<MMa>(x) >>= identity;
+    }
 
     //
     // trait for concepts
