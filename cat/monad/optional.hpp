@@ -39,23 +39,24 @@ namespace cat
     // experimental::optional instance:
     //
 
-    template <typename A, typename Fun>
-    struct MonadInstance<std::experimental::optional, A, Fun> : Monad<std::experimental::optional>::Class<Fun, A>
+    template <typename A, typename Fun, typename Ma_, typename A_>
+    struct MonadInstance<std::experimental::optional<A>, Fun, Ma_, A_> final : Monad<std::experimental::optional>::
+    template _<Fun, A, Ma_, A_>
     {
-        using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
+        using B = inner_type_t<std::result_of_t<Fun(A)>>;
 
         std::experimental::optional<B>
-        mbind(std::experimental::optional<A> x, Fun f) final
+        mbind(Ma_ && x, Fun f) override
         {
             if (!x)
-                return std::experimental::optional<B>{};
-            return f(std::move(*x));
+                return {};
+            return f(forward_as<Ma_>(*x));
         }
 
         std::experimental::optional<A>
-        mreturn(A a) final
+        mreturn(A_ && a) override
         {
-            return {std::move(a)};
+            return {std::forward<A_>(a)};
         }
 
     };

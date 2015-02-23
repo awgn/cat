@@ -39,25 +39,26 @@ namespace cat
     // vector instance:
     //
 
-    template <typename A, typename Fun>
-    struct MonadInstance<std::vector, A, Fun> : Monad<std::vector>::Class<Fun, A>
+    template <typename A, typename Fun, typename Ma_, typename A_>
+    struct MonadInstance<std::vector<A>, Fun, Ma_, A_> final : Monad<std::vector>::
+    template _<Fun, A, Ma_, A_>
     {
-        using B = inner_type_t<decltype(std::declval<Fun>()(std::declval<A>()))>;
+        using B = inner_type_t<std::result_of_t<Fun(A)>>;
 
         std::vector<B>
-        mbind(std::vector<A> xs, Fun f) final
+        mbind(Ma_ && xs, Fun f) override
         {
             std::vector<B> ret;
             for(auto & x : xs)
-                for(auto & y : f(std::move(x)))
+                for(auto & y : f(forward_as<Ma_>(x)))
                     ret.push_back(std::move(y));
             return ret;
         }
 
         std::vector<A>
-        mreturn(A a) final
+        mreturn(A_ && a) override
         {
-            return {std::move(a)};
+            return {std::forward<A_>(a)};
         }
 
     };
