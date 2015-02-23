@@ -101,11 +101,18 @@ namespace cat
          return MonadInstance<M<A>, typename Monad<M>::Identity, M<A>, A_>{}.mreturn(std::forward<A_>(a));
     }
 
-    template <template <typename ...> class M, typename _, typename A>
-    constexpr auto mreturn_to(M<_>, A && a)
+
+    template <typename M_> struct in;
+    template <template <typename ...> class M, typename ..._>
+    struct in<M<_...>>
     {
-        return mreturn<M>(std::forward<A>(a));
-    }
+        template <typename A>
+        static auto mreturn(A && a)
+        {
+            return cat::mreturn<M>(std::forward<A>(a));
+        }
+    };
+
 
     template <typename Ma_, typename Fun>
     auto mbind(Ma_ && ma, Fun f)
@@ -209,7 +216,7 @@ namespace cat
         template <typename A>
         constexpr auto operator()(A && a) const
         {
-            return (mreturn_to(return_type_t<F>{}, std::forward<A>(a)) >>= f_ ) >>= g_;
+            return ( in<return_type_t<F>>::mreturn(std::forward<A>(a)) >>= f_ ) >>= g_;
         }
 
         F f_;
@@ -236,6 +243,40 @@ namespace cat
     auto join(MMa && x)
     {
         return  std::forward<MMa>(x) >>= identity;
+    }
+
+    //
+    // msum
+    //
+
+    template <template <typename ...> class F, typename Ma>
+    auto msum (F<Ma> && xs)
+    {
+        auto acc = mzero<Ma>();
+        for(auto & x : xs)
+            acc = mplus(std::move(acc), std::move(x));
+        return acc;
+    }
+
+    template <template <typename ...> class F, typename Ma>
+    auto msum (F<Ma> const & xs)
+    {
+        auto acc = mzero<Ma>();
+        for(auto & x : xs)
+            acc = mplus(std::move(acc), x);
+        return acc;
+    }
+
+    //
+    // guard
+    //
+
+    template <typename Ma>
+    auto guard(bool value)
+    {
+        if (value)
+            return in<Ma>::mreturn(0);
+        return mzero<Ma>();
     }
 
     //

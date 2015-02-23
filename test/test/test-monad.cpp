@@ -4,7 +4,9 @@
 
 using namespace yats;
 using namespace cat;
+using namespace std::literals;
 
+auto nullopt = std::experimental::nullopt;
 
 // Tests:
 //
@@ -131,11 +133,11 @@ Context(monad)
         std::list< std::experimental::optional<int> > l2 = { std::experimental::make_optional(1), std::experimental::make_optional(2) };
         Assert( sequence(l2) == std::experimental::make_optional(std::list<int>{1,2}) );
 
-        std::list< std::experimental::optional<int> > l3 = { std::experimental::nullopt, std::experimental::make_optional(2) };
-        Assert( sequence(l3) == std::experimental::nullopt );
+        std::list< std::experimental::optional<int> > l3 = { nullopt, std::experimental::make_optional(2) };
+        Assert( sequence(l3) == nullopt );
 
-        std::list< std::experimental::optional<int> > l4 = { std::experimental::make_optional(1), std::experimental::nullopt };
-        Assert( sequence(l4) == std::experimental::nullopt );
+        std::list< std::experimental::optional<int> > l4 = { std::experimental::make_optional(1), nullopt };
+        Assert( sequence(l4) == nullopt );
     }
 
 
@@ -189,7 +191,7 @@ Context(monad)
         auto x = mreturn<std::experimental::optional>(1);
         auto y = mreturn<std::experimental::optional>(2);
 
-        Assert ( n == std::experimental::nullopt);
+        Assert ( n == nullopt);
 
         Assert ( mplus (n, x) == 1 );
         Assert ( mplus (x, n) == 1 );
@@ -272,8 +274,13 @@ Context(monad)
     Test (other)
     {
         std::unique_ptr<std::unique_ptr<int>> p = std::make_unique< std::unique_ptr<int> >(std::make_unique<int>(42));
-
         Assert(*join(std::move(p)), is_equal_to(42));
+
+        std::list< std::vector<int> > list = { {}, {1}, {2,3} };
+        Assert( msum(list) == std::vector<int> {1,2,3});
+
+        Assert( (guard<std::experimental::optional<int>>(false) >> std::experimental::make_optional(1) ) == nullopt );
+        Assert( (guard<std::experimental::optional<int>>(true) >> std::experimental::make_optional("ok"s) ) == "ok"s );
     }
 }
 
