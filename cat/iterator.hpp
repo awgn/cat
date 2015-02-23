@@ -33,7 +33,7 @@
 namespace cat
 {
     //
-    // auto_iterator: const or  move_iterator,
+    // auto_iterator: const or move_iterator,
     // according to the L/R-valueness of the container.
     //
 

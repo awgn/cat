@@ -27,8 +27,8 @@
 #pragma once
 
 #include <cat/monad/optional.hpp>
+#include <cat/monad/shared_ptr.hpp>
+#include <cat/monad/unique_ptr.hpp>
 #include <cat/monad/vector.hpp>
 #include <cat/monad/deque.hpp>
 #include <cat/monad/list.hpp>
-#include <cat/monad/shared_ptr.hpp>
-#include <cat/monad/unique_ptr.hpp>

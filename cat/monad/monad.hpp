@@ -76,6 +76,7 @@ namespace cat
     // free functions
     //
 
+
     template <template <typename ...> class M, typename A_>
     auto mreturn(A_ && a)
     {
@@ -85,6 +86,12 @@ namespace cat
     }
 
 
+    template <template <typename ...> class M, typename _, typename A>
+    constexpr auto mreturn_to(M<_>, A && a)
+    {
+        return mreturn<M>(std::forward<A>(a));
+    }
+
     template <typename Ma_, typename Fun>
     auto mbind(Ma_ && ma, Fun f)
     {
@@ -93,6 +100,9 @@ namespace cat
         return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
     }
 
+    //
+    // operators
+    //
 
     template <template <typename ...> class M, typename Fun, typename A>
     auto operator>>=(M<A> && ma, Fun f)
@@ -116,7 +126,6 @@ namespace cat
     {
         return mbind(ma, constant(mb));
     }
-
 
     //
     // sequence
@@ -164,16 +173,10 @@ namespace cat
     template <typename F, typename G>
     struct Kleisli_
     {
-        template <template <typename ...> class M, typename _, typename A>
-        static constexpr auto return_to(M<_>, A a)
-        {
-            return mreturn<M>(std::move(a));
-        }
-
         template <typename A>
-        constexpr auto operator()(A a) const
+        constexpr auto operator()(A && a) const
         {
-            return ( return_to(return_type_t<F>{}, std::move(a)) >>= f_ ) >>= g_;
+            return (mreturn_to(return_type_t<F>{}, std::forward<A>(a)) >>= f_ ) >>= g_;
         }
 
         F f_;

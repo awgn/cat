@@ -25,6 +25,7 @@ Context(monad)
         auto h = [](int  ) { return std::experimental::optional<int>{}; };
 
         Assert( mbind(mreturn<std::experimental::optional>(10), f) == 10 );
+
         Assert( mbind( mbind(mreturn<std::experimental::optional>(10), f), g) == 12 );
 
         Assert( (mreturn<std::experimental::optional>(10) >>= f)  == 10 );
@@ -119,6 +120,7 @@ Context(monad)
         monad_constraint( std::list<std::string>  { "one", "two", "three" }); monad_constraint( std::make_shared<std::string>( "one" ));
         monad_constraint( std::make_unique<std::string>( "one" ));
     }
+
 
     Test(monad_sequence)
     {
