@@ -181,6 +181,27 @@ Context(traits)
         Assert(is_callable_as<Object(int)>::value);
         Assert(is_callable_as<Object(int,char)>::value);
     }
+
+
+    Test(others)
+    {
+        auto f = [](int n){ return n;};
+        Assert(has_call_operator<decltype(f)>::value);
+        Assert(not has_call_operator<int>::value);
+
+        Assert( std::is_same<int,  type_index<0, int, char>::type>::value );
+        Assert( std::is_same<char, type_index<1, int, char>::type>::value );
+
+        Assert( std::is_same<int,  arg_type<void(int,char), 0>::type>::value );
+        Assert( std::is_same<char, arg_type<void(int,char), 1>::type>::value );
+
+        Assert( std::is_same<int,  inner_type<std::vector<int>>::type >::value );
+        Assert( std::is_same<int,  inner_type<std::map<char, int>, 1>::type >::value );
+
+        Assert( std::is_same<std::vector<long>,  rebind_type<std::vector<int>, long>::type >::value );
+
+    }
+
 }
 
 
