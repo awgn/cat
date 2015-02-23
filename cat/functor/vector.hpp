@@ -40,20 +40,20 @@ namespace cat
     // vector instance:
     //
 
-    template <typename A, typename Fun, typename Type>
-    struct FunctorInstance<std::vector<A>, Fun, Type> final : Functor<std::vector>::
-    template _<A, Fun, Type>
+    template <typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::vector<A>, Fun, Fa_> final : Functor<std::vector>::
+    template _<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
         std::vector<B>
-        fmap(Fun f, Type && xs) override
+        fmap(Fun f, Fa_ && xs) override
         {
             std::vector<B> out;
             out.reserve(xs.size());
 
             for(auto & x : xs)
-                out.push_back(f(forward_as<Type>(x)));
+                out.push_back(f(forward_as<Fa_>(x)));
 
             return out;
         }

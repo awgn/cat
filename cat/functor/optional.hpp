@@ -39,17 +39,17 @@ namespace cat
     // experimental::optional instance:
     //
 
-    template <typename A, typename Fun, typename Type>
-    struct FunctorInstance<std::experimental::optional<A>, Fun, Type> final : Functor<std::experimental::optional>::
-    template _<A, Fun, Type>
+    template <typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::experimental::optional<A>, Fun, Fa_> final : Functor<std::experimental::optional>::
+    template _<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
         std::experimental::optional<B>
-        fmap(Fun f, Type && x) override
+        fmap(Fun f, Fa_ && x) override
         {
             if (x)
-                return std::experimental::make_optional(f(forward_as<Type>(*x)));
+                return std::experimental::make_optional(f(forward_as<Fa_>(*x)));
 
             return std::experimental::optional<B>();
         }

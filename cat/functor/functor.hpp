@@ -38,16 +38,16 @@ namespace cat
     template <template <typename ...> class F>
     struct Functor
     {
-        template <typename A, typename Fun, typename Type>
+        template <typename A, typename Fun, typename Fa_>
         struct _
         {
-            virtual auto fmap(Fun fun, Type && fa) -> F<std::result_of_t<Fun(A)>> = 0;
+            virtual auto fmap(Fun fun, Fa_ && fa) -> F<std::result_of_t<Fun(A)>> = 0;
         };
 
-        template <typename K, typename A, typename Fun, typename Type>
+        template <typename K, typename A, typename Fun, typename Fa_>
         struct _2
         {
-            virtual auto fmap(Fun fun, Type && fa) -> F<K, std::result_of_t<Fun(A)>> = 0;
+            virtual auto fmap(Fun fun, Fa_ && fa) -> F<K, std::result_of_t<Fun(A)>> = 0;
         };
 
     };
@@ -62,10 +62,10 @@ namespace cat
     // free function
     //
 
-    template <typename Fun, typename Type>
-    auto fmap(Fun f, Type && xs)
+    template <typename Fun, typename Fa_>
+    auto fmap(Fun f, Fa_ && xs)
     {
-        return FunctorInstance<std::decay_t<Type>, Fun, Type>{}.fmap(std::move(f), std::forward<Type>(xs));
+        return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
     }
 
     //

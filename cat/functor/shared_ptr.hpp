@@ -39,17 +39,17 @@ namespace cat
     // shared_ptr instance:
     //
 
-    template <typename A, typename Fun, typename Type>
-    struct FunctorInstance<std::shared_ptr<A>, Fun, Type> final : Functor<std::shared_ptr>::
-    template _<A, Fun, Type>
+    template <typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::shared_ptr<A>, Fun, Fa_> final : Functor<std::shared_ptr>::
+    template _<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
         std::shared_ptr<B>
-        fmap(Fun f, Type x) override
+        fmap(Fun f, Fa_ x) override
         {
             if (x)
-                return std::make_shared<B>(f(forward_as<Type>(*x)));
+                return std::make_shared<B>(f(forward_as<Fa_>(*x)));
 
             return std::shared_ptr<B>();
         }

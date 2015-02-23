@@ -39,19 +39,19 @@ namespace cat
     // map instance:
     //
 
-    template <typename K, typename A, typename Fun, typename Type>
-    struct FunctorInstance<std::map<K, A>, Fun, Type> final : Functor<std::map>::
-    template _2<K, A, Fun, Type>
+    template <typename K, typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::map<K, A>, Fun, Fa_> final : Functor<std::map>::
+    template _2<K, A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
         std::map<K, B>
-        fmap(Fun f, Type && xs) override
+        fmap(Fun f, Fa_ && xs) override
         {
             std::map<K, B> out;
 
             for(auto & x : xs)
-                out.insert(std::make_pair(x.first, f(forward_as<Type>(x.second))));
+                out.insert(std::make_pair(x.first, f(forward_as<Fa_>(x.second))));
 
             return out;
         }
@@ -66,19 +66,19 @@ namespace cat
     // multimap instance:
     //
 
-    template <typename K, typename A, typename Fun, typename Type>
-    struct FunctorInstance<std::multimap<K,A>, Fun, Type> final : Functor<std::multimap>::
-    template _2<K, A, Fun, Type>
+    template <typename K, typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::multimap<K,A>, Fun, Fa_> final : Functor<std::multimap>::
+    template _2<K, A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
         std::multimap<K, B>
-        fmap(Fun f, Type && xs) override
+        fmap(Fun f, Fa_ && xs) override
         {
             std::multimap<K, B> out;
 
             for(auto & x : xs)
-                out.insert(std::make_pair(x.first, f(forward_as<Type>(x.second))));
+                out.insert(std::make_pair(x.first, f(forward_as<Fa_>(x.second))));
 
             return out;
         }

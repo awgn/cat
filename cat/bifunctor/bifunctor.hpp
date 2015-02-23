@@ -39,10 +39,10 @@ namespace cat
     template <template <typename ...> class BF>
     struct Bifunctor
     {
-        template <typename A, typename B, typename F, typename G, typename Type>
+        template <typename A, typename B, typename F, typename G, typename Fab_>
         struct _
         {
-            virtual auto bimap(F f, G g, Type && bf)
+            virtual auto bimap(F f, G g, Fab_ && bf)
                 -> BF< std::result_of_t<F(A)>,
                        std::result_of_t<G(B)>> = 0;
         };
@@ -58,22 +58,22 @@ namespace cat
     // free functions
     //
 
-    template <typename F, typename G, typename Type>
-    auto bimap(F f, G g, Type && xs)
+    template <typename F, typename G, typename Fab_>
+    auto bimap(F f, G g, Fab_ && xs)
     {
-        return BifunctorInstance<std::decay_t<Type>, F, G, Type>{}.bimap(std::move(f), std::move(g), std::forward<Type>(xs));
+        return BifunctorInstance<std::decay_t<Fab_>, F, G, Fab_>{}.bimap(std::move(f), std::move(g), std::forward<Fab_>(xs));
     }
 
-    template <typename F, typename Type>
-    auto bifirst(F f, Type && xs)
+    template <typename F, typename Fab_>
+    auto bifirst(F f, Fab_ && xs)
     {
-        return BifunctorInstance<std::decay_t<Type>, F, Identity, Type>{}.bimap(std::move(f), identity, std::forward<Type>(xs));
+        return BifunctorInstance<std::decay_t<Fab_>, F, Identity, Fab_>{}.bimap(std::move(f), identity, std::forward<Fab_>(xs));
     }
 
-    template <typename G, typename Type>
-    auto bisecond(G g, Type && xs)
+    template <typename G, typename Fab_>
+    auto bisecond(G g, Fab_ && xs)
     {
-        return BifunctorInstance<std::decay_t<Type>, Identity, G, Type>{}.bimap(identity, std::move(g), std::forward<Type>(xs));
+        return BifunctorInstance<std::decay_t<Fab_>, Identity, G, Fab_>{}.bimap(identity, std::move(g), std::forward<Fab_>(xs));
     }
 
     //

@@ -40,19 +40,19 @@ namespace cat
     // deque instance:
     //
 
-    template <typename A, typename Fun, typename Type>
-    struct FunctorInstance<std::deque<A>, Fun, Type> final : Functor<std::deque>::
-    template _<A, Fun, Type>
+    template <typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::deque<A>, Fun, Fa_> final : Functor<std::deque>::
+    template _<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
         std::deque<B>
-        fmap(Fun f, Type && xs) override
+        fmap(Fun f, Fa_ && xs) override
         {
             std::deque<B> out;
 
             for(auto & x : xs)
-                out.push_back(f(forward_as<Type>(x)));
+                out.push_back(f(forward_as<Fa_>(x)));
 
             return out;
         }
