@@ -41,32 +41,15 @@ namespace cat
     // std::pair instance:
     //
 
-    template <typename F, typename G, typename Type>
-    struct BifunctorInstance<template_class<std::pair>, F, G, Type> final : Bifunctor<std::pair>::
-    template _ <F, G, Type>
+    template <typename A, typename B, typename F, typename G, typename Type>
+    struct BifunctorInstance<std::pair<A,B>, F, G, Type> final : Bifunctor<std::pair>::
+    template _ <A, B, F, G, Type>
     {
-
         map_result_of_t< std::decay_t<Type>, F, G>
         bimap(F f, G g, Type && xs) override
         {
             return std::make_pair(
                     f(forward_as<Type>(xs.first)),
-                    g(forward_as<Type>(xs.second)));
-        }
-
-        map_result_of_t< std::decay_t<Type>, F, Identity>
-        bifirst(F f, Type && xs) override
-        {
-            return std::make_pair(
-                    f(forward_as<Type>(xs.first)),
-                    forward_as<Type>(xs.second));
-        }
-
-        map_result_of_t< std::decay_t<Type>, Identity, G>
-        bisecond(G g, Type && xs) override
-        {
-            return std::make_pair(
-                    forward_as<Type>(xs.first),
                     g(forward_as<Type>(xs.second)));
         }
     };
