@@ -221,18 +221,24 @@ namespace cat
     // Callable_ with partial application support
     //
 
-    template <typename T>
+    //
+    // Decay on the basis of the callable signature.
+    //
+
+    template <typename F, size_t Idx, typename T>
     struct callable_decay
     {
+        using Tp = arg_type_t<F, Idx>;
+
         using type = typename std::conditional<
-                    std::is_lvalue_reference<T>::value && !std::is_const<std::remove_reference_t<T>>::value,
+                        std::is_lvalue_reference<Tp>::value && !std::is_const<std::remove_reference_t<T>>::value,
                         T,
                         std::decay_t<T>
                     >::type;
     };
 
-    template <typename T>
-    using callable_decay_t = typename callable_decay<T>::type;
+    template <typename F, size_t Idx, typename T>
+    using callable_decay_t = typename callable_decay<F, Idx, T>::type;
 
 
     template <typename F, typename ...Ts>
@@ -253,7 +259,7 @@ namespace cat
         {
             constexpr size_t N = arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
-            return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
+            return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
 
         template <typename ...Xs>
@@ -261,27 +267,27 @@ namespace cat
         {
             constexpr size_t N = arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
-            return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::forward<Xs>(xs)...);
+            return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
 
     private:
-        template <typename ...Xs>
-        auto eval_(std::integral_constant<size_t, 0>, Xs &&...xs) const
+        template <size_t ...N, typename ...Xs>
+        auto eval_(std::integral_constant<size_t, 0>, std::index_sequence<N...>, Xs &&...xs) const
         {
             return tuple_apply(fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
-        template <size_t I, typename ...Xs>
-        auto eval_(std::integral_constant<size_t, I>, Xs &&...xs) const
+        template <size_t I, size_t ...N, typename ...Xs>
+        auto eval_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., callable_decay_t<Xs>...>(
+            return Callable_<F, Ts..., callable_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
-        template <size_t I, typename ...Xs>
-        auto apply_(std::integral_constant<size_t, I>, Xs &&...xs) const
+        template <size_t I, size_t ...N, typename ...Xs>
+        auto apply_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., callable_decay_t<Xs>...>(
+            return Callable_<F, Ts..., callable_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
