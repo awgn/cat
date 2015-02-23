@@ -565,8 +565,8 @@ namespace cat
 
     template <typename F, size_t N> struct arg_type;
 
-    template <typename R, typename T0, size_t N, typename ...Ts>
-    struct arg_type<R(T0, Ts...), N> : type_index<N, Ts...>
+    template <typename R, typename ...Ts, size_t N>
+    struct arg_type<R(Ts...), N> : type_index<N, Ts...>
     { };
 
     template <typename T, size_t N>
