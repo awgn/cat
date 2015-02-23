@@ -40,11 +40,10 @@ namespace cat
     // vector instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::vector>, Fun, Type> final : Functor<std::vector>::
-    template _<Fun, Type>
+    template <typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::vector<A>, Fun, Type> final : Functor<std::vector>::
+    template _<A, Fun, Type>
     {
-        using A = inner_type_t<std::decay_t<Type>>;
         using B = std::result_of_t<Fun(A)>;
 
         std::vector<B>
@@ -59,7 +58,6 @@ namespace cat
             return out;
         }
     };
-
 
 } // namespace cat
 

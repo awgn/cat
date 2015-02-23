@@ -40,11 +40,10 @@ namespace cat
     // list instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::list>, Fun, Type> final : Functor<std::list>::
-    template _<Fun, Type>
+    template <typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::list<A>, Fun, Type> final : Functor<std::list>::
+    template _<A, Fun, Type>
     {
-        using A = inner_type_t<std::decay_t<Type>>;
         using B = std::result_of_t<Fun(A)>;
 
         std::list<B>

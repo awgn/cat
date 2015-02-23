@@ -42,19 +42,23 @@ namespace cat
     template <template <typename...> class F>
     struct Applicative
     {
-        template <typename Fun, typename A, typename ...Ts>
-        struct Class
+        template <typename A, typename FF, typename FA>
+        struct _
         {
-            virtual auto pure(A const &) -> F<A, Ts...> = 0; // lift a value.
-            virtual auto apply(F<Fun> const &, F<A, Ts...> const &) -> F<decltype(std::declval<Fun>()(std::declval<A>()))> = 0;
+            virtual auto pure(A &&) -> F<A, Ts...> = 0; // lift a value.
+            virtual auto apply(FF &&, FA &&) -> F<decltype(std::declval<Fun>()(std::declval<A>()))> = 0;
         };
     };
 
 
     template <template <typename ...> class F, typename ...> struct ApplicativeInstance;
 
+    //
+    // free functions
+    //
+
     template <template <typename ...> class F, typename A>
-    auto pure(A const &value)
+    auto pure(A && value)
     {
         return ApplicativeInstance<F, Identity, A>{}.pure(value);
     }

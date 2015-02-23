@@ -38,11 +38,10 @@ namespace cat
 
     // unique_ptr instance:
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::unique_ptr>, Fun, Type> final : Functor<std::unique_ptr>::
-    template _<Fun, Type>
+    template <typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::unique_ptr<A>, Fun, Type> final : Functor<std::unique_ptr>::
+    template _<A, Fun, Type>
     {
-        using A = inner_type_t<std::decay_t<Type>>;
         using B = std::result_of_t<Fun(A)>;
 
         std::unique_ptr<B>

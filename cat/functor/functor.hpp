@@ -26,8 +26,7 @@
 
 #pragma once
 
-#include <utility>
-#include <cat/functional.hpp>
+#include <cat/utility.hpp>
 #include <cat/type_traits.hpp>
 
 namespace cat
@@ -39,24 +38,25 @@ namespace cat
     template <template <typename ...> class F>
     struct Functor
     {
-        template <typename Fun, typename Type>
+        template <typename A, typename Fun, typename Type>
         struct _
         {
-            virtual auto fmap(Fun fun, Type && fa) -> map_result_of_t<std::decay_t<Type>, Fun> = 0;
+            virtual auto fmap(Fun fun, Type && fa) -> F<std::result_of_t<Fun(A)>> = 0;
         };
 
-        template <typename Fun, typename Type>
+        template <typename K, typename A, typename Fun, typename Type>
         struct _2
         {
-            virtual auto fmap(Fun fun, Type && fa) -> map_result_of_t<std::decay_t<Type>, Identity, Fun> = 0;
+            virtual auto fmap(Fun fun, Type && fa) -> F<K, std::result_of_t<Fun(A)>> = 0;
         };
+
     };
 
     //
     // instance
     //
 
-    template <class Functor, typename ...> struct FunctorInstance;
+    template <typename F, typename ...> struct FunctorInstance;
 
     //
     // free function
@@ -65,7 +65,7 @@ namespace cat
     template <typename Fun, typename Type>
     auto fmap(Fun f, Type && xs)
     {
-        return FunctorInstance<outer_type_t<std::decay_t<Type>>, Fun, Type>{}.fmap(std::move(f), std::forward<Type>(xs));
+        return FunctorInstance<std::decay_t<Type>, Fun, Type>{}.fmap(std::move(f), std::forward<Type>(xs));
     }
 
     //

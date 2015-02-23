@@ -39,11 +39,10 @@ namespace cat
     // experimental::optional instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::experimental::optional>, Fun, Type> final : Functor<std::experimental::optional>::
-    template _<Fun, Type>
+    template <typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::experimental::optional<A>, Fun, Type> final : Functor<std::experimental::optional>::
+    template _<A, Fun, Type>
     {
-        using A = inner_type_t<std::decay_t<Type>>;
         using B = std::result_of_t<Fun(A)>;
 
         std::experimental::optional<B>

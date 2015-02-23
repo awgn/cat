@@ -39,12 +39,10 @@ namespace cat
     // unordered_map instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::unordered_map>, Fun, Type> final : Functor<std::unordered_map>::
-    template _2<Fun, Type>
+    template <typename K, typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::unordered_map<K,A>, Fun, Type> final : Functor<std::unordered_map>::
+    template _2<K, A, Fun, Type>
     {
-        using K = inner_type_t<std::decay_t<Type>, 0>;
-        using A = inner_type_t<std::decay_t<Type>, 1>;
         using B = std::result_of_t<Fun(A)>;
 
         std::unordered_map<K, B>
@@ -68,12 +66,10 @@ namespace cat
     // unordered_multimap instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::unordered_multimap>, Fun, Type> final : Functor<std::unordered_multimap>::
-    template _2<Fun, Type>
+    template <typename K, typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::unordered_multimap<K,A>, Fun, Type> final : Functor<std::unordered_multimap>::
+    template _2<K, A, Fun, Type>
     {
-        using K = inner_type_t<std::decay_t<Type>, 0>;
-        using A = inner_type_t<std::decay_t<Type>, 1>;
         using B = std::result_of_t<Fun(A)>;
 
         std::unordered_multimap<K, B>

@@ -39,12 +39,10 @@ namespace cat
     // map instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::map>, Fun, Type> final : Functor<std::map>::
-    template _2<Fun, Type>
+    template <typename K, typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::map<K, A>, Fun, Type> final : Functor<std::map>::
+    template _2<K, A, Fun, Type>
     {
-        using K = inner_type_t<std::decay_t<Type>, 0>;
-        using A = inner_type_t<std::decay_t<Type>, 1>;
         using B = std::result_of_t<Fun(A)>;
 
         std::map<K, B>
@@ -68,12 +66,10 @@ namespace cat
     // multimap instance:
     //
 
-    template <typename Fun, typename Type>
-    struct FunctorInstance<template_class<std::multimap>, Fun, Type> final : Functor<std::multimap>::
-    template _2<Fun, Type>
+    template <typename K, typename A, typename Fun, typename Type>
+    struct FunctorInstance<std::multimap<K,A>, Fun, Type> final : Functor<std::multimap>::
+    template _2<K, A, Fun, Type>
     {
-        using K = inner_type_t<std::decay_t<Type>, 0>;
-        using A = inner_type_t<std::decay_t<Type>, 1>;
         using B = std::result_of_t<Fun(A)>;
 
         std::multimap<K, B>
