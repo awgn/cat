@@ -41,5 +41,4 @@ namespace cat
                     std::remove_reference_t<V> &&>>(value);
     }
 
-
 } // namespace cat
