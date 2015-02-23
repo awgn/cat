@@ -39,25 +39,27 @@ namespace cat
     // experimental::optional instance:
     //
 
-    template <typename Fun, typename A, typename ...Ts>
-    struct ApplicativeInstance<std::experimental::optional, Fun, A, Ts...> : Applicative<std::experimental::optional>::Class<Fun, A, Ts...>
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::experimental::optional<F>, std::experimental::optional<A>, Ff_, Fa_, A_>  final : Applicative<std::experimental::optional>::
+    template _<F, A, Ff_, Fa_, A_>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = std::result_of_t<F(A_)>;
 
         std::experimental::optional<A>
-        pure(A const &elem)
+        pure(A_ &&elem) override
         {
-            return std::experimental::make_optional(elem);
+            return std::experimental::make_optional(std::forward<A_>(elem));
         }
 
         std::experimental::optional<B>
-        apply(std::experimental::optional<Fun> const &f, std::experimental::optional<A> const &x) final
+        apply(Ff_ && f, Fa_ &&x) override
         {
             if (f && x)
-                return std::experimental::make_optional((*f)(*x));
+                return std::experimental::make_optional<B>(forward_as<Ff_>(*f)(forward_as<Fa_>(*x)));
 
-            return std::experimental::optional<B>();
+            return {};
         }
+
     };
 
 } // namespace cat

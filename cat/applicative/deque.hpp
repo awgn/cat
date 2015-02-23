@@ -39,29 +39,26 @@ namespace cat
     // deque instance:
     //
 
-    template <typename Fun, typename A, typename ...Ts>
-    struct ApplicativeInstance<std::deque, Fun, A, Ts...> : Applicative<std::deque>::Class<Fun, A, Ts...>
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::deque<F>, std::deque<A>, Ff_, Fa_, A_>  final : Applicative<std::deque>::
+    template _<F, A, Ff_, Fa_, A_>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = std::result_of_t<F(A_)>;
 
         std::deque<A>
-        pure(A const &elem) final
+        pure(A_ &&elem) override
         {
-            return std::deque<A>{ elem };
+            return { std::forward<A_>(elem) };
         }
 
         std::deque<B>
-        apply(std::deque<Fun> const &fs, std::deque<A, Ts...> const &xs) final
+        apply(Ff_ && fs, Fa_ && xs) override
         {
             std::deque<B> out;
 
-            for(auto const &f : fs)
-            {
-                for(auto const &x : xs)
-                {
-                    out.push_back(f(x));
-                }
-            }
+            for(auto &f : std::forward<Ff_>(fs))
+                for(auto &x : std::forward<Fa_>(xs))
+                    out.push_back(forward_as<Ff_>(f)(forward_as<Fa_>(x)));
 
             return out;
         }

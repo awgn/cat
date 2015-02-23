@@ -39,24 +39,25 @@ namespace cat
     // shared_ptr instance:
     //
 
-    template <typename Fun, typename A, typename ...Ts>
-    struct ApplicativeInstance<std::shared_ptr, Fun, A, Ts...> : Applicative<std::shared_ptr>::Class<Fun, A, Ts...>
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::shared_ptr<F>, std::shared_ptr<A>, Ff_, Fa_, A_>  final : Applicative<std::shared_ptr>::
+    template _<F, A, Ff_, Fa_, A_>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = std::result_of_t<F(A_)>;
 
         std::shared_ptr<A>
-        pure(A const &elem) final
+        pure(A_ &&elem) override
         {
-            return std::make_shared<A>(elem);
+            return std::make_shared<A>(std::forward<A_>(elem));
         }
 
         std::shared_ptr<B>
-        apply(std::shared_ptr<Fun> const &f, std::shared_ptr<A> const &x) final
+        apply(Ff_ && f, Fa_ &&x) override
         {
             if (f && x)
-                return std::make_shared<B>((*f)(*x));
+                return std::make_shared<B>((forward_as<Ff_>(*f))(forward_as<Fa_>(*x)));
 
-            return std::shared_ptr<B>{};
+            return {};
         }
     };
 

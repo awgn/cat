@@ -39,31 +39,27 @@ namespace cat
     // vector instance:
     //
 
-    template <typename Fun, typename A, typename ...Ts>
-    struct ApplicativeInstance<std::vector, Fun, A, Ts...> : Applicative<std::vector>::Class<Fun, A, Ts...>
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::vector<F>, std::vector<A>, Ff_, Fa_, A_>  final : Applicative<std::vector>::
+    template _<F, A, Ff_, Fa_, A_>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
-
+        using B = std::result_of_t<F(A_)>;
 
         std::vector<A>
-        pure(A const &elem) final
+        pure(A_ &&elem) override
         {
-            return std::vector<A>{ elem };
+            return { std::forward<A_>(elem) };
         }
 
         std::vector<B>
-        apply(std::vector<Fun> const &fs, std::vector<A, Ts...> const &xs) final
+        apply(Ff_ && fs, Fa_ &&xs) override
         {
             std::vector<B> out;
             out.reserve(fs.size() * xs.size());
 
-            for(auto const &f : fs)
-            {
-                for(auto const &x : xs)
-                {
-                    out.push_back(f(x));
-                }
-            }
+            for(auto &f : std::forward<Ff_>(fs))
+                for(auto &x : std::forward<Fa_>(xs))
+                    out.push_back(forward_as<Ff_>(f)(forward_as<Fa_>(x)));
 
             return out;
         }

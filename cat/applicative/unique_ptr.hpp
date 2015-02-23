@@ -39,24 +39,25 @@ namespace cat
     // unique_ptr instance:
     //
 
-    template <typename Fun, typename A, typename ...Ts>
-    struct ApplicativeInstance<std::unique_ptr, Fun, A, Ts...> : Applicative<std::unique_ptr>::Class<Fun, A, Ts...>
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::unique_ptr<F>, std::unique_ptr<A>, Ff_, Fa_, A_>  final : Applicative<std::unique_ptr>::
+    template _<F, A, Ff_, Fa_, A_>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = std::result_of_t<F(A_)>;
 
         std::unique_ptr<A>
-        pure(A const &elem) final
+        pure(A_ &&elem) override
         {
-            return std::make_unique<A>(elem);
+            return std::make_unique<A>(std::forward<A_>(elem));
         }
 
         std::unique_ptr<B>
-        apply(std::unique_ptr<Fun> const &f, std::unique_ptr<A, Ts...> const &x) final
+        apply(Ff_ && f, Fa_ &&x) override
         {
             if (f && x)
-                return std::make_unique<B>((*f)(*x));
+                return std::make_unique<B>((forward_as<Ff_>(*f))(forward_as<Fa_>(*x)));
 
-            return std::unique_ptr<B>{};
+            return {};
         }
     };
 

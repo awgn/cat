@@ -39,33 +39,31 @@ namespace cat
     // forward_list instance:
     //
 
-    template <typename Fun, typename A, typename ...Ts>
-    struct ApplicativeInstance<std::forward_list, Fun, A, Ts...> : Applicative<std::forward_list>::Class<Fun, A, Ts...>
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::forward_list<F>, std::forward_list<A>, Ff_, Fa_, A_>  final : Applicative<std::forward_list>::
+    template _<F, A, Ff_, Fa_, A_>
     {
-        using B = decltype(std::declval<Fun>()(std::declval<A>()));
+        using B = std::result_of_t<F(A_)>;
 
         std::forward_list<A>
-        pure(A const &elem) final
+        pure(A_ &&elem) override
         {
-            return std::forward_list<A>{ elem };
+            return { std::forward<A_>(elem) };
         }
 
         std::forward_list<B>
-        apply(std::forward_list<Fun> const &fs, std::forward_list<A> const &xs) final
+        apply(Ff_ && fs, Fa_ &&xs) override
         {
             std::forward_list<B> out;
 
-            for(auto const &f : fs)
-            {
-                for(auto const &x : xs)
-                {
-                    out.push_front(f(x));
-                }
-            }
+            for(auto &f : std::forward<Ff_>(fs))
+                for(auto &x : std::forward<Fa_>(xs))
+                    out.push_front(forward_as<Ff_>(f)(forward_as<Fa_>(x)));
 
             out.reverse();
             return out;
         }
+
     };
 
 } // namespace cat
