@@ -26,59 +26,23 @@
 
 #pragma once
 
-#include <cat/utility.hpp>
-#include <cat/type_traits.hpp>
-#include <cat/placeholders.hpp>
 
 namespace cat
 {
-    using namespace placeholders;
-
-    //
-    // class functor
-    //
-
-    template <template <typename ...> class F>
-    struct Functor
+    namespace placeholders
     {
-        template <typename A, typename Fun, typename Fa_>
-        struct _
-        {
-            virtual auto fmap(Fun fun, Fa_ && fa) -> F<std::result_of_t<Fun(A)>> = 0;
-        };
+        struct unspec { };
 
-        template <typename K, typename A, typename Fun, typename Fa_>
-        struct _2
-        {
-            virtual auto fmap(Fun fun, Fa_ && fa) -> F<K, std::result_of_t<Fun(A)>> = 0;
-        };
+        struct _a { };
+        struct _b { };
+        struct _c { };
+        struct _d { };
+        struct _e { };
+        struct _f { };
 
+        template <typename T> struct _F { };
+        template <typename T> struct _M { };
     };
-
-    //
-    // instance
-    //
-
-    template <typename F, typename ...> struct FunctorInstance;
-
-    //
-    // free function
-    //
-
-    template <typename Fun, typename Fa_>
-    auto fmap(Fun f, Fa_ && xs)
-    {
-        return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
-    }
-
-    //
-    // trait for concept
-    //
-
-    template <template <typename...> class F>
-    struct is_functor : std::false_type
-    { };
-
 
 } // namespace cat
 

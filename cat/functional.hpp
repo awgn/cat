@@ -31,21 +31,12 @@
 #include <functional>
 
 #include <cat/tuple.hpp>
+#include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/infix.hpp>
 
 namespace cat
 {
-    namespace placeholders
-    {
-        struct unspec { };
-
-        struct A_  { } constexpr a_ = A_ { };
-        struct B_  { } constexpr b_ = B_ { };
-        struct C_  { } constexpr c_ = C_ { };
-    };
-
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // identity function
