@@ -78,7 +78,6 @@ Context(monad)
         auto g = [](int n) { return mreturn<std::shared_ptr>(n+2); };
         auto h = [](int  ) { return std::shared_ptr<int>{}; };
 
-
         Assert( *mbind(mreturn<std::shared_ptr>(10), f) == 10 );
         Assert( *mbind( mbind(mreturn<std::shared_ptr>(10), f), g) == 12 );
 
@@ -179,6 +178,102 @@ Context(monad)
                 { "1!", "2" },
                 { "1!", "2!" }
        });
+    }
+
+    /////////////////////// Monad Plus
+
+    Test(monadplus_optional)
+    {
+        auto n = mzero<std::experimental::optional<int>>();
+
+        auto x = mreturn<std::experimental::optional>(1);
+        auto y = mreturn<std::experimental::optional>(2);
+
+        Assert ( n == std::experimental::nullopt);
+
+        Assert ( mplus (n, x) == 1 );
+        Assert ( mplus (x, n) == 1 );
+        Assert ( mplus (x, y) == 1 );
+        Assert ( mplus (y, x) == 2 );
+    }
+
+    Test(monadplus_shared_ptr)
+    {
+        auto n = mzero<std::shared_ptr<int>>();
+
+        auto x = mreturn<std::shared_ptr>(1);
+        auto y = mreturn<std::shared_ptr>(2);
+
+        Assert ( not n );
+
+        Assert ( * mplus (n, x) == 1 );
+        Assert ( * mplus (x, n) == 1 );
+        Assert ( * mplus (x, y) == 1 );
+        Assert ( * mplus (y, x) == 2 );
+    }
+
+    Test(monadplus_unique_ptr)
+    {
+        auto n = mzero<std::unique_ptr<int>>();
+
+        auto x = mreturn<std::unique_ptr>(1);
+        auto y = mreturn<std::unique_ptr>(2);
+
+        Assert ( not n );
+
+        Assert ( * mplus (n, x) == 1 );
+        Assert ( * mplus (x, n) == 1 );
+        Assert ( * mplus (x, y) == 1 );
+
+        Assert ( * mplus (std::move(y), std::move(x)) == 2 );
+    }
+
+
+    Test(monadplus_vector)
+    {
+        auto n = mzero<std::vector<int>>();
+        auto x = std::vector<int> {1, 2, 3};
+        auto y = std::vector<int> {4, 5, 6};
+
+        Assert( mplus(n, n) == mzero<std::vector<int>>());
+        Assert( mplus(n, x) == std::vector<int>{1, 2, 3});
+        Assert( mplus(x, n) == std::vector<int>{1, 2, 3});
+        Assert( mplus(x, y) == std::vector<int>{1, 2, 3, 4, 5, 6});
+        Assert( mplus(y, x) == std::vector<int>{4, 5, 6, 1, 2, 3});
+    }
+
+    Test(monadplus_deque)
+    {
+        auto n = mzero<std::deque<int>>();
+        auto x = std::deque<int> {1, 2, 3};
+        auto y = std::deque<int> {4, 5, 6};
+
+        Assert( mplus(n, n) == mzero<std::deque<int>>());
+        Assert( mplus(n, x) == std::deque<int>{1, 2, 3});
+        Assert( mplus(x, n) == std::deque<int>{1, 2, 3});
+        Assert( mplus(x, y) == std::deque<int>{1, 2, 3, 4, 5, 6});
+        Assert( mplus(y, x) == std::deque<int>{4, 5, 6, 1, 2, 3});
+    }
+
+    Test(monadplus_list)
+    {
+        auto n = mzero<std::list<int>>();
+        auto x = std::list<int> {1, 2, 3};
+        auto y = std::list<int> {4, 5, 6};
+
+        Assert( mplus(n, n) == mzero<std::list<int>>());
+        Assert( mplus(n, x) == std::list<int>{1, 2, 3});
+        Assert( mplus(x, n) == std::list<int>{1, 2, 3});
+        Assert( mplus(x, y) == std::list<int>{1, 2, 3, 4, 5, 6});
+        Assert( mplus(y, x) == std::list<int>{4, 5, 6, 1, 2, 3});
+    }
+
+
+    Test (other)
+    {
+        std::unique_ptr<std::unique_ptr<int>> p = std::make_unique< std::unique_ptr<int> >(std::make_unique<int>(42));
+
+        Assert(*join(std::move(p)), is_equal_to(42));
     }
 }
 
