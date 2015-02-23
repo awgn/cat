@@ -32,7 +32,7 @@
 namespace cat
 {
     //
-    // type class functor
+    // class functor
     //
 
     template <template <typename ...> class F>
