@@ -510,7 +510,6 @@ namespace cat
     // each result_of
     //
 
-
     template <typename Type, typename ...Fs> struct map_result_of;
 
     template <template <typename ...> class Functor,
@@ -553,6 +552,7 @@ namespace cat
     {
         using type = T;
     };
+
     template <size_t N, typename T, typename ...Ts>
     struct type_index<N, T, Ts...> : type_index<N-1, Ts...>
     { };
@@ -611,6 +611,23 @@ namespace cat
 
     template <typename T, size_t N = 0>
     using inner_type_t = typename inner_type<T, N>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // rebind_type ....
+    //
+
+    template <typename F, typename V> struct rebind_type;
+
+    template <template <typename ...> class F, typename V, typename ...Ts>
+    struct rebind_type<F<Ts...>, V>
+    {
+        using type = F<V>;
+    };
+
+    template <typename T, typename V>
+    using rebind_type_t = typename rebind_type<T, V>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////
