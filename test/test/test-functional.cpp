@@ -223,6 +223,68 @@ Context(currying_test)
         Assert( foldl1( [](int a, int b) { return a - b;}, std::vector<int>{1,2,3}) , is_equal_to(-4) );
         Assert( foldr1( [](int a, int b) { return a - b;}, std::vector<int>{1,2,3}) , is_equal_to( 2) );
     }
+
+
+    Test(currying_noncopyable)
+    {
+        auto p1 = std::make_unique<int>(42);
+        auto p2 = std::make_unique<int>(42);
+
+        auto f0 = [](std::unique_ptr<int> &&)      { return 0; };
+        auto f1 = [](std::unique_ptr<int> const &) { return 0; };
+        auto f2 = [](std::unique_ptr<int>)         { return 0; };
+
+        f0(std::move(p1));
+        f1(p1);
+        f2(std::move(p1));
+
+        currying(f0)(std::move(p2));
+        currying(f1)(p2);
+        currying(f2)(std::move(p2));
+    }
+
+    Test(currying_advanced)
+    {
+        auto f1 = [](int n)        { return n; };
+        auto f2 = [](int &n)       { n+=1; return n; };
+        auto f3 = [](int const &n) { return n; };
+        auto f4 = [](int &&n)      { n+=2; return n; };
+
+        int a = 1, b = 1;
+
+        Assert( f1(a) == currying(f1)(b) );
+        Assert( f2(a) == currying(f2)(b) );
+        Assert( f3(a) == currying(f3)(b) );
+
+        Assert(a, is_equal_to(b));
+
+        Assert( f1(std::move(a)) == currying(f1)(std::move(b)) );
+        Assert( f3(std::move(a)) == currying(f3)(std::move(b)) );
+        Assert( f4(std::move(a)) == currying(f4)(std::move(b)) );
+
+        Assert(a, is_equal_to(b));
+
+        // non copyable...
+        //
+
+        auto g1 = [](std::unique_ptr<int> const &n) { return *n; };
+        auto g2 = [](std::unique_ptr<int> &n)       { (*n)++; return *n; };
+        auto g3 = [](std::unique_ptr<int> && n)     { (*n)++; return *n; };
+        auto g4 = [](std::unique_ptr<int> n)        { return *n; };
+
+        auto x = std::make_unique<int>(42);
+        auto y = std::make_unique<int>(42);
+
+        Assert (g1(x)  == currying(g1)(y));
+        Assert (g2(x)  == currying(g2)(y));
+        Assert (g3(std::move(x)) == currying(g3)(std::move(y)));
+
+        Assert (*x == *y);
+
+        Assert (g4(std::move(x)) == currying(g4)(std::move(y)));
+        Assert(!x and !y);
+    }
+
 }
 
 
