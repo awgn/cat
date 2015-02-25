@@ -39,7 +39,7 @@
         template <class C> static void check(...) noexcept(false); \
     public: \
     \
-        enum { value = noexcept(check<T>(0)) }; \
+        enum { value = noexcept(check<T>(nullptr)) }; \
     };
 
 #define CAT_CLASS_HAS_MEMBER(member) \
@@ -50,7 +50,7 @@
         template <class C> static void check(...) noexcept(false); \
     public: \
     \
-        enum { value = noexcept(check<T>(0)) }; \
+        enum { value = noexcept(check<T>(nullptr)) }; \
     };
 
 
@@ -259,7 +259,7 @@ namespace cat
             template <typename C> static void test(std::remove_reference_t<decltype((std::cout << std::declval<C>())) > *) noexcept;
             template <typename C> static void test(...) noexcept(false);
         public:
-            enum { value = noexcept(test<T>(0)) };
+            enum { value = noexcept(test<T>(nullptr)) };
         };
 
     }
@@ -283,7 +283,7 @@ namespace cat
             template <typename C> static void test(std::remove_reference_t<decltype((std::cin >> std::declval<C &>())) > *) noexcept;
             template <typename C> static void test(...) noexcept(false);
         public:
-            enum { value = noexcept(test<T>(0)) };
+            enum { value = noexcept(test<T>(nullptr)) };
         };
 
     }
@@ -660,6 +660,29 @@ namespace cat
     struct on_outer_type;
     template < template <template <typename ...> class> class Trait, template <typename ...> class Outer, typename ...Ts>
     struct on_outer_type<Trait, Outer<Ts...>> : Trait<Outer> { };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // has_specialization: e.g. has_specialization<ShowInstance, T>
+    //
+
+    namespace details
+    {
+        template <template <typename > class Instance, typename T>
+        class has_specialization
+        {
+            template <typename C> static void test(typename Instance<C>::non_specialized *) noexcept(false);
+            template <typename C> static void test(...) noexcept;
+        public:
+            enum { value = noexcept(test<T>(nullptr)) };
+        };
+    }
+
+    template <template <typename T> class Instance, typename T>
+    struct has_specialization:
+        bool_type<details::has_specialization<Instance, T>::value>
+    { };
 
 
 } // namespace cat
