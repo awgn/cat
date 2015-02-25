@@ -651,4 +651,15 @@ namespace cat
     using partial_function_type_t = typename partial_function_type<F, N>::type;
 
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // apply a meta-predicate on the outer type (e.g. functor, monad) of the given type
+    //
+
+    template < template <template <typename ...> class> class Trait, typename T>
+    struct on_outer_type;
+    template < template <template <typename ...> class> class Trait, template <typename ...> class Outer, typename ...Ts>
+    struct on_outer_type<Trait, Outer<Ts...>> : Trait<Outer> { };
+
+
 } // namespace cat
