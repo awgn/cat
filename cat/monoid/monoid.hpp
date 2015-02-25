@@ -33,6 +33,13 @@
 
 namespace cat
 {
+    //
+    // trait for concepts
+    //
+
+    template <typename M>
+    struct is_monoid : std::false_type
+    { };
 
     //
     // instance
@@ -47,6 +54,7 @@ namespace cat
     template <typename M>
     auto mempty()
     {
+        static_assert(is_monoid<std::decay_t<M>>::value, "Type not a monoid!");
         return MonoidInstance<M, std::vector<M>, M, M>{}.mempty();
     }
 
@@ -61,6 +69,9 @@ namespace cat
             template <typename M1, typename M2>
             auto operator()(M1 && a, M2 && b) const
             {
+                static_assert(is_monoid<std::decay_t<M1>>::value, "Type not a monoid!");
+                static_assert(is_monoid<std::decay_t<M2>>::value, "Type not a monoid!");
+
                 using M = std::decay_t<M1>;
 
                 return MonoidInstance<
@@ -79,9 +90,10 @@ namespace cat
             {
                 using M = inner_type_t<std::decay_t<F>>;
 
-                return MonoidInstance<
-                M, F, M, M >{}.
-                mconcat(std::forward<F>(f));
+                static_assert(is_monoid<std::decay_t<M>>::value, "Type not a monoid!");
+
+                return MonoidInstance<M, F, M, M >{}.
+                        mconcat(std::forward<F>(f));
             }
         };
     }
@@ -112,15 +124,6 @@ namespace cat
             };
         };
     };
-
-    //
-    // trait for concept
-    //
-
-    template <typename M>
-    struct is_monoid : std::false_type
-    { };
-
 
 } // namespace cat
 
