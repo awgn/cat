@@ -48,14 +48,11 @@ namespace cat
         virtual std::experimental::optional<T>
         mappend(M1 &&a, M2 &&b) override
         {
-            if (!a && !b)
-                std::experimental::optional<T>{};
-            if (a  && !b)
-                return a;
-            if (!a && b)
-                return b;
-            return std::experimental::make_optional(
-                cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)));
+            if (a) {
+                return b ? std::experimental::make_optional(cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)))
+                         : a;
+            }
+            return b;
         }
     };
 };
