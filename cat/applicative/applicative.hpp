@@ -64,7 +64,7 @@ namespace cat
 
         struct pure_
         {
-            using function_type = _F<_a>(_a &&);
+            using function_type = _F<_a>(_a);
 
             template <template <typename ...> class F, typename A_>
             auto in(A_ && value) const

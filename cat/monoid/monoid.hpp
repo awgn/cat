@@ -56,7 +56,7 @@ namespace cat
 
         struct mappend_
         {
-            using function_type = _m(_m &&, _m &&);
+            using function_type = _m(_m, _m);
 
             template <typename M1, typename M2>
             auto operator()(M1 && a, M2 && b) const
@@ -72,7 +72,7 @@ namespace cat
 
         struct mconcat_
         {
-            using function_type = _m(_C<_m> &&);
+            using function_type = _m(_C<_m>);
 
             template <typename F>
             auto operator()(F && f) const

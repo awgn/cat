@@ -64,7 +64,7 @@ namespace cat
 
         struct bimap_
         {
-            using function_type = _B<_c,_d>(_<_c(_a)>, _<_d(_b)>, _B<_a, _b> &&);
+            using function_type = _B<_c,_d>(_<_c(_a)>, _<_d(_b)>, _B<_a, _b>);
 
             template <typename F, typename G, typename B_>
             auto operator()(F f, G g, B_ && xs) const
@@ -76,7 +76,7 @@ namespace cat
 
         struct bifirst_
         {
-            using function_type = _B<_c,_b>(_<_c(_a)>, _B<_a, _b> &&);
+            using function_type = _B<_c,_b>(_<_c(_a)>, _B<_a, _b>);
 
             template <typename F, typename B_>
             auto operator()(F f, B_ && xs) const
@@ -88,7 +88,7 @@ namespace cat
 
         struct bisecond_
         {
-            using function_type = _B<_a,_d>(_<_d(_b)>, _B<_a, _b> &&);
+            using function_type = _B<_a,_d>(_<_d(_b)>, _B<_a, _b>);
 
             template <typename G, typename B_>
             auto operator()(G g, B_ && xs) const
