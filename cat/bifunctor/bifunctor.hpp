@@ -33,6 +33,14 @@
 namespace cat
 {
     //
+    // trait for concepts
+    //
+
+    template <template <typename...> class BF>
+    struct is_bifunctor : std::false_type
+    { };
+
+    //
     // type class Bifunctor
     //
 
@@ -69,9 +77,9 @@ namespace cat
             template <typename F, typename G, typename B_>
             auto operator()(F f, G g, B_ && xs) const
             {
+                static_assert(on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
                 return BifunctorInstance<std::decay_t<B_>, F, G, B_>{}.bimap(std::move(f), std::move(g), std::forward<B_>(xs));
             }
-
         };
 
         struct bifirst_
@@ -81,9 +89,9 @@ namespace cat
             template <typename F, typename B_>
             auto operator()(F f, B_ && xs) const
             {
+                static_assert(on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
                 return BifunctorInstance<std::decay_t<B_>, F, Identity, B_>{}.bimap(std::move(f), identity, std::forward<B_>(xs));
             }
-
         };
 
         struct bisecond_
@@ -93,23 +101,15 @@ namespace cat
             template <typename G, typename B_>
             auto operator()(G g, B_ && xs) const
             {
+                static_assert(on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
                 return BifunctorInstance<std::decay_t<B_>, Identity, G, B_>{}.bimap(identity, std::move(g), std::forward<B_>(xs));
             }
-
         };
     }
 
     constexpr auto bimap = details::bimap_{};
     constexpr auto bifirst = details::bifirst_ {};
     constexpr auto bisecond = details::bisecond_{};
-
-    //
-    // trait for concept
-    //
-
-    template <template <typename...> class BF>
-    struct is_bifunctor : std::false_type
-    { };
 
 } // namespace cat
 
