@@ -137,75 +137,92 @@ namespace cat
     // foldl, foldl1
     //
 
-    struct Foldl_
+    namespace details
     {
-        template <typename F, typename A, template <typename ...> class C, typename ...Ts>
-        auto operator()(F f, A acc, C<Ts...> const &xs) const
+        using namespace placeholders;
+
+        struct Foldl_
         {
-            for(auto it = xs.cbegin(); it != xs.cend(); ++it)
-                acc = f(std::move(acc), *it);
+            using function_type = _a(_<_a(_a, _b)>, _a, _C<_b> const &);
 
-            return acc;
-        }
+            template <typename F, typename A, template <typename ...> class C, typename ...Ts>
+            auto operator()(F f, A acc, C<Ts...> const &xs) const
+            {
+                for(auto it = xs.cbegin(); it != xs.cend(); ++it)
+                    acc = f(std::move(acc), *it);
 
-    } constexpr foldl = Foldl_{ };
+                return acc;
+            }
+        };
 
-    struct Foldl1_
-    {
-        template <typename F, template <typename ...> class C, typename ...Ts>
-        auto operator()(F f, C<Ts...> const &xs) const
+        struct Foldl1_
         {
-            if (xs.empty())
-                throw std::runtime_error("foldl1: empty container");
+            using function_type = _a(_<_a(_a, _a)>, _C<_b> const &);
 
-            auto acc = xs.front();
+            template <typename F, template <typename ...> class C, typename ...Ts>
+            auto operator()(F f, C<Ts...> const &xs) const
+            {
+                if (xs.empty())
+                    throw std::runtime_error("foldl1: empty container");
 
-            for(auto it = std::next(xs.cbegin()); it != xs.cend(); ++it)
-                acc = f(std::move(acc), *it);
+                auto acc = xs.front();
 
-            return acc;
-        }
+                for(auto it = std::next(xs.cbegin()); it != xs.cend(); ++it)
+                    acc = f(std::move(acc), *it);
 
-    } constexpr foldl1 = Foldl1_{ };
+                return acc;
+            }
+        };
+    }
 
+    constexpr auto foldl = details::Foldl_{};
+    constexpr auto foldl1 = details::Foldl1_{};
 
     //////////////////////////////////////////////////////////////////////////////////
     //
     // foldr, foldr1
     //
 
-    struct Foldr_
+    namespace details
     {
-        template <typename F, typename A, template <typename ...> class C, typename ...Ts>
-        auto operator()(F f, A acc, C<Ts...> const &xs) const
+        using namespace placeholders;
+
+        struct Foldr_
         {
-            for(auto it = xs.crbegin(); it != xs.crend(); ++it)
-                acc = f(*it, std::move(acc));
+            using function_type = _b(_<_b(_a, _b)>, _b, _C<_a> const &);
 
-            return acc;
-        }
+            template <typename F, typename A, template <typename ...> class C, typename ...Ts>
+            auto operator()(F f, A acc, C<Ts...> const &xs) const
+            {
+                for(auto it = xs.crbegin(); it != xs.crend(); ++it)
+                    acc = f(*it, std::move(acc));
 
-    } constexpr foldr = Foldr_{ };
+                return acc;
+            }
+        };
 
-
-    struct Foldr1_
-    {
-        template <typename F, template <typename ...> class C, typename ...Ts>
-        auto operator()(F f, C<Ts...> const &xs) const
+        struct Foldr1_
         {
-            if (xs.empty())
-                throw std::runtime_error("foldr1: empty container");
+            using function_type = _a(_<_a(_a, _a)>, _C<_a> const &);
 
-            auto acc = xs.back();
+            template <typename F, template <typename ...> class C, typename ...Ts>
+            auto operator()(F f, C<Ts...> const &xs) const
+            {
+                if (xs.empty())
+                    throw std::runtime_error("foldr1: empty container");
 
-            for(auto it = std::next(xs.crbegin()); it != xs.crend(); ++it)
-                acc = f(*it, std::move(acc));
+                auto acc = xs.back();
 
-            return acc;
-        }
+                for(auto it = std::next(xs.crbegin()); it != xs.crend(); ++it)
+                    acc = f(*it, std::move(acc));
 
-    } constexpr foldr1 = Foldr1_{ };
+                return acc;
+            }
+        };
+    }
 
+    constexpr auto foldr = details::Foldr_{};
+    constexpr auto foldr1 = details::Foldr1_{ };
 
     //////////////////////////////////////////////////////////////////////////////////
     //
