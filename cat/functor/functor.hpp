@@ -62,17 +62,23 @@ namespace cat
     template <typename F, typename ...> struct FunctorInstance;
 
     //
-    // free function
+    // function: fmap
     //
 
-    template <typename Fun, typename Fa_>
-    auto fmap(Fun f, Fa_ && xs)
+    struct fmap_
     {
-        return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
-    }
+        using function_type = _F<_b>(_<_b(_a)>, _F<_a> &&);
+
+        template <typename Fun, typename Fa_>
+        auto operator()(Fun f, Fa_ && xs) const
+        {
+            return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
+        }
+
+    } constexpr fmap = fmap_{};
 
     //
-    // trait for concept
+    // trait for concepts
     //
 
     template <template <typename...> class F>
