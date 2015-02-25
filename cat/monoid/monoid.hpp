@@ -33,8 +33,6 @@
 
 namespace cat
 {
-    using namespace placeholders;
-
 
     //
     // instance
@@ -52,39 +50,44 @@ namespace cat
         return MonoidInstance<M, std::vector<M>, M, M>{}.mempty();
     }
 
-    struct mappend_
+    namespace details
     {
-        using function_type = _m(_m &&, _m &&);
+        using namespace placeholders;
 
-        template <typename M1, typename M2>
-        auto operator()(M1 && a, M2 && b) const
+        struct mappend_
         {
-            using M = std::decay_t<M1>;
+            using function_type = _m(_m &&, _m &&);
 
-            return MonoidInstance<
-                    M, std::vector<M>, M1, M2>{}.
-                    mappend(std::forward<M1>(a),
-                            std::forward<M2>(b));
-        }
+            template <typename M1, typename M2>
+            auto operator()(M1 && a, M2 && b) const
+            {
+                using M = std::decay_t<M1>;
 
-    } constexpr mappend = mappend_{};
+                return MonoidInstance<
+                        M, std::vector<M>, M1, M2>{}.
+                        mappend(std::forward<M1>(a),
+                                std::forward<M2>(b));
+            }
+        };
 
-
-    struct mconcat_
-    {
-        using function_type = _m(_C<_m> &&);
-
-        template <typename F>
-        auto operator()(F && f) const
+        struct mconcat_
         {
-            using M = inner_type_t<std::decay_t<F>>;
+            using function_type = _m(_C<_m> &&);
 
-            return MonoidInstance<
-                    M, F, M, M >{}.
-                    mconcat(std::forward<F>(f));
-        }
+            template <typename F>
+            auto operator()(F && f) const
+            {
+                using M = inner_type_t<std::decay_t<F>>;
 
-    } constexpr mconcat = mconcat_ { };
+                return MonoidInstance<
+                M, F, M, M >{}.
+                mconcat(std::forward<F>(f));
+            }
+        };
+    }
+
+    constexpr auto mappend = details::mappend_{};
+    constexpr auto mconcat = details::mconcat_{};
 
     //
     // type class Monoid

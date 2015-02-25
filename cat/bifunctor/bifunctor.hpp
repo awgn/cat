@@ -32,8 +32,6 @@
 
 namespace cat
 {
-    using namespace placeholders;
-
     //
     // type class Bifunctor
     //
@@ -60,41 +58,50 @@ namespace cat
     // free functions
     //
 
-    struct bimap_
+    namespace details
     {
-        using function_type = _B<_c,_d>(_<_c(_a)>, _<_d(_b)>, _B<_a, _b> &&);
+        using namespace placeholders;
 
-        template <typename F, typename G, typename B_>
-        auto operator()(F f, G g, B_ && xs) const
+        struct bimap_
         {
-            return BifunctorInstance<std::decay_t<B_>, F, G, B_>{}.bimap(std::move(f), std::move(g), std::forward<B_>(xs));
-        }
+            using function_type = _B<_c,_d>(_<_c(_a)>, _<_d(_b)>, _B<_a, _b> &&);
 
-    } constexpr bimap = bimap_{};
+            template <typename F, typename G, typename B_>
+            auto operator()(F f, G g, B_ && xs) const
+            {
+                return BifunctorInstance<std::decay_t<B_>, F, G, B_>{}.bimap(std::move(f), std::move(g), std::forward<B_>(xs));
+            }
 
-    struct bifirst_
-    {
-        using function_type = _B<_c,_b>(_<_c(_a)>, _B<_a, _b> &&);
+        };
 
-        template <typename F, typename B_>
-        auto operator()(F f, B_ && xs) const
+        struct bifirst_
         {
-            return BifunctorInstance<std::decay_t<B_>, F, Identity, B_>{}.bimap(std::move(f), identity, std::forward<B_>(xs));
-        }
+            using function_type = _B<_c,_b>(_<_c(_a)>, _B<_a, _b> &&);
 
-    } constexpr bifirst = bifirst_ {};
+            template <typename F, typename B_>
+            auto operator()(F f, B_ && xs) const
+            {
+                return BifunctorInstance<std::decay_t<B_>, F, Identity, B_>{}.bimap(std::move(f), identity, std::forward<B_>(xs));
+            }
 
-    struct bisecond_
-    {
-        using function_type = _B<_a,_d>(_<_d(_b)>, _B<_a, _b> &&);
+        };
 
-        template <typename G, typename B_>
-        auto operator()(G g, B_ && xs) const
+        struct bisecond_
         {
-            return BifunctorInstance<std::decay_t<B_>, Identity, G, B_>{}.bimap(identity, std::move(g), std::forward<B_>(xs));
-        }
+            using function_type = _B<_a,_d>(_<_d(_b)>, _B<_a, _b> &&);
 
-    } constexpr bisecond = bisecond_{};
+            template <typename G, typename B_>
+            auto operator()(G g, B_ && xs) const
+            {
+                return BifunctorInstance<std::decay_t<B_>, Identity, G, B_>{}.bimap(identity, std::move(g), std::forward<B_>(xs));
+            }
+
+        };
+    }
+
+    constexpr auto bimap = details::bimap_{};
+    constexpr auto bifirst = details::bifirst_ {};
+    constexpr auto bisecond = details::bisecond_{};
 
     //
     // trait for concept

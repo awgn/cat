@@ -32,9 +32,6 @@
 
 namespace cat
 {
-    using namespace placeholders;
-
-    //
     // class functor
     //
 
@@ -65,17 +62,23 @@ namespace cat
     // function: fmap
     //
 
-    struct fmap_
+    namespace details
     {
-        using function_type = _F<_b>(_<_b(_a)>, _F<_a> &&);
+        using namespace placeholders;
 
-        template <typename Fun, typename Fa_>
-        auto operator()(Fun f, Fa_ && xs) const
+        struct fmap_
         {
-            return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
-        }
+            using function_type = _F<_b>(_<_b(_a)>, _F<_a> &&);
 
-    } constexpr fmap = fmap_{};
+            template <typename Fun, typename Fa_>
+            auto operator()(Fun f, Fa_ && xs) const
+            {
+                return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
+            }
+        };
+    }
+
+    constexpr auto fmap = details::fmap_{};
 
     //
     // trait for concepts

@@ -148,7 +148,7 @@ Context(monad)
 
         Assert( *((mreturn.in<std::unique_ptr>(10) >>= f) >>= g) == 12 );
 
-        auto h = callable(f) <k> g;
+        auto h = callable(f) <kleisli> g;
 
         Assert( *(mreturn.in<std::unique_ptr>(10) >>= h) == 12 );
     }

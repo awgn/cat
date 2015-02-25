@@ -71,38 +71,42 @@ namespace cat
     // free functions
     //
 
-    struct mreturn_
+    namespace details
     {
-        template <template <typename ...> class M, typename A_>
-        auto in(A_ && a) const
+        using namespace placeholders;
+
+        struct mreturn_
         {
-             using A = std::decay_t<A_>;
-             return MonadInstance<M<A>, details::Mreturn<M>, M<A>, A_>{}.mreturn(std::forward<A_>(a));
-        }
+            template <template <typename ...> class M, typename A_>
+            auto in(A_ && a) const
+            {
+                 using A = std::decay_t<A_>;
+                 return MonadInstance<M<A>, details::Mreturn<M>, M<A>, A_>{}.mreturn(std::forward<A_>(a));
+            }
 
-        template <typename Mx, typename A_>
-        auto as (A_ && a) const
+            template <typename Mx, typename A_>
+            auto as (A_ && a) const
+            {
+                using Ma = rebind_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
+                return MonadInstance<Ma, details::MreturnAs<Ma>, Ma, A_>{}.mreturn(std::forward<A_>(a));
+            }
+        };
+
+        struct mbind_
         {
-            using Ma = rebind_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
-            return MonadInstance<Ma, details::MreturnAs<Ma>, Ma, A_>{}.mreturn(std::forward<A_>(a));
-        }
+            using function_type = _M<_b>(_M<_a> &&, _<_M<_b>(_a)>);
 
-    } constexpr mreturn = mreturn_{};
+            template <typename Ma_, typename Fun>
+            auto operator()(Ma_ && ma, Fun f) const
+            {
+                using Ma = std::decay_t<Ma_>;
+                return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
+            }
+        };
+    }
 
-
-    struct mbind_
-    {
-        using function_type = _M<_b>(_M<_a> &&, _<_M<_b>(_a)>);
-
-        template <typename Ma_, typename Fun>
-        auto operator()(Ma_ && ma, Fun f) const
-        {
-            using Ma = std::decay_t<Ma_>;
-
-            return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
-        }
-
-    } constexpr mbind = mbind_ {};
+    constexpr auto mreturn = details::mreturn_{};
+    constexpr auto mbind = details::mbind_ {};
 
     //
     // monad plus
@@ -114,18 +118,25 @@ namespace cat
          return MonadPlusInstance<Ma, Ma, Ma>{}.mzero();
     }
 
-    struct mplus_
+    namespace details
     {
-        using function_type = _M<_a>(_M<_a> &&, _M<_a> &&);
+        using namespace placeholders;
 
-        template <typename Ma_, typename Mb_>
-        auto operator()(Ma_ && a, Mb_ && b) const
+        struct mplus_
         {
-             using MA = std::decay_t<Ma_>;
-             return MonadPlusInstance<MA, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
-        }
+            using function_type = _M<_a>(_M<_a> &&, _M<_a> &&);
 
-    } constexpr mplus = mplus_ {};
+            template <typename Ma_, typename Mb_>
+            auto operator()(Ma_ && a, Mb_ && b) const
+            {
+                 using MA = std::decay_t<Ma_>;
+                 return MonadPlusInstance<MA, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
+            }
+
+        };
+    }
+
+    constexpr auto mplus = details::mplus_ {};
 
     //
     // class Monad
@@ -226,30 +237,32 @@ namespace cat
     // Kelisli composition
     //
 
-    template <typename F, typename G>
-    struct Kleisli_
-    {
-        template <typename A>
-        constexpr auto operator()(A && a) const
-        {
-            return ( mreturn.as<return_type_t<F>>(std::forward<A>(a)) >>= f_ ) >>= g_;
-        }
-
-        F f_;
-        G g_;
-    };
-
-
-    struct kleisli_
+    namespace details
     {
         template <typename F, typename G>
-        constexpr auto operator()(F f, G g) const
+        struct Kleisli_
         {
-            return Kleisli_<F,G>{ std::move(f), std::move(g) };
-        }
-    };
+            template <typename A>
+            constexpr auto operator()(A && a) const
+            {
+                return ( mreturn.as<return_type_t<F>>(std::forward<A>(a)) >>= f_ ) >>= g_;
+            }
 
-    constexpr auto k = infix(kleisli_{});
+            F f_;
+            G g_;
+        };
+
+        struct kleisli_
+        {
+            template <typename F, typename G>
+            constexpr auto operator()(F f, G g) const
+            {
+                return Kleisli_<F,G>{ std::move(f), std::move(g) };
+            }
+        };
+    }
+
+    constexpr auto kleisli = infix(details::kleisli_{});
 
     //
     // join
