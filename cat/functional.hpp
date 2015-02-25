@@ -34,6 +34,8 @@
 #include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/infix.hpp>
+#include <cat/utility.hpp>
+#include <cat/missing.hpp>
 
 namespace cat
 {
@@ -145,11 +147,11 @@ namespace cat
         {
             using function_type = _a(_<_a(_a, _b)>, _a, _C<_b> const &);
 
-            template <typename F, typename A, template <typename ...> class C, typename ...Ts>
-            auto operator()(F f, A acc, C<Ts...> const &xs) const
+            template <typename F, typename A, typename Cont>
+            auto operator()(F f, A acc, Cont &&xs) const
             {
-                for(auto it = xs.cbegin(); it != xs.cend(); ++it)
-                    acc = f(std::move(acc), *it);
+                for(auto it = std::begin(xs); it != std::end(xs); ++it)
+                    acc = f(std::move(acc), forward_as<Cont>(*it));
 
                 return acc;
             }
@@ -159,16 +161,16 @@ namespace cat
         {
             using function_type = _a(_<_a(_a, _a)>, _C<_b> const &);
 
-            template <typename F, template <typename ...> class C, typename ...Ts>
-            auto operator()(F f, C<Ts...> const &xs) const
+            template <typename F, typename Cont>
+            auto operator()(F f, Cont &&xs) const
             {
                 if (xs.empty())
                     throw std::runtime_error("foldl1: empty container");
 
                 auto acc = xs.front();
 
-                for(auto it = std::next(xs.cbegin()); it != xs.cend(); ++it)
-                    acc = f(std::move(acc), *it);
+                for(auto it = std::next(std::begin(xs)); it != std::end(xs); ++it)
+                    acc = f(std::move(acc), forward_as<Cont>(*it));
 
                 return acc;
             }
@@ -191,11 +193,11 @@ namespace cat
         {
             using function_type = _b(_<_b(_a, _b)>, _b, _C<_a> const &);
 
-            template <typename F, typename A, template <typename ...> class C, typename ...Ts>
-            auto operator()(F f, A acc, C<Ts...> const &xs) const
+            template <typename F, typename A, typename Cont>
+            auto operator()(F f, A acc, Cont &&xs) const
             {
-                for(auto it = xs.crbegin(); it != xs.crend(); ++it)
-                    acc = f(*it, std::move(acc));
+                for(auto it = std::rbegin(xs); it != std::rend(xs); ++it)
+                    acc = f(forward_as<Cont>(*it), std::move(acc));
 
                 return acc;
             }
@@ -205,16 +207,16 @@ namespace cat
         {
             using function_type = _a(_<_a(_a, _a)>, _C<_a> const &);
 
-            template <typename F, template <typename ...> class C, typename ...Ts>
-            auto operator()(F f, C<Ts...> const &xs) const
+            template <typename F, typename Cont>
+            auto operator()(F f, Cont &&xs) const
             {
                 if (xs.empty())
                     throw std::runtime_error("foldr1: empty container");
 
                 auto acc = xs.back();
 
-                for(auto it = std::next(xs.crbegin()); it != xs.crend(); ++it)
-                    acc = f(*it, std::move(acc));
+                for(auto it = std::next(std::rbegin(xs)); it != std::rend(xs); ++it)
+                    acc = f(forward_as<Cont>(*it), std::move(acc));
 
                 return acc;
             }
@@ -226,7 +228,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // Callable_ with partial application support
+    // Currying_ with partial application support
     //
 
     //
@@ -250,14 +252,14 @@ namespace cat
 
 
     template <typename F, typename ...Ts>
-    struct Callable_
+    struct Currying_
     {
         using function_type =
             typename partial_function_type<
                 typename function_type<F>::type, sizeof...(Ts)>::type;
 
         template <typename ...Xs>
-        constexpr explicit Callable_(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        constexpr explicit Currying_(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
         , args_(std::move(args))
         { }
@@ -288,14 +290,14 @@ namespace cat
         template <size_t I, size_t ...N, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
+            return Currying_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, size_t ...N, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
+            return Currying_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -306,7 +308,7 @@ namespace cat
     template<typename F>
     constexpr auto currying(F f)
     {
-        return Callable_<F>(std::move(f));
+        return Currying_<F>(std::move(f));
     }
 
     //////////////////////////////////////////////////////////////////////////////////
