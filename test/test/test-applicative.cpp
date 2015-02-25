@@ -77,8 +77,8 @@ Context(applicative)
 
     Test(applicative_simple)
     {
-        auto f = pure<std::vector>(std::function<int(int)>([](int n) { return n+1; }));
-        auto x = pure<std::vector>(10);
+        auto f = pure.in<std::vector>(std::function<int(int)>([](int n) { return n+1; }));
+        auto x = pure.in<std::vector>(10);
 
         auto y = f * x;
         Assert(x, is_equal_to(std::vector<int>{10}));
@@ -96,17 +96,15 @@ Context(applicative)
         auto ys = fs * xs;
 
         auto zs = [](int n) { return n+1; } <$> xs;
-        auto ks = liftA([](int n) { return n+1; }, xs);
 
         Assert(ys, is_equal_to(std::vector<int>{2,3,2,4}));
-        Assert(ks, is_equal_to(std::vector<int>{2,3}));
         Assert(zs, is_equal_to(std::vector<int>{2,3}));
     }
 
 
     Test(applicative_vector)
     {
-        auto x = pure<std::vector>(42);
+        auto x = pure.in<std::vector>(42);
 
         auto fs = std::vector<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::vector<int>{1,2};
@@ -120,7 +118,7 @@ Context(applicative)
 
     Test(applicative_deque)
     {
-        auto x = pure<std::deque>(42);
+        auto x = pure.in<std::deque>(42);
 
         auto fs = std::deque<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::deque<int>{1,2};
@@ -134,7 +132,7 @@ Context(applicative)
 
     Test(applicative_list)
     {
-        auto x = pure<std::list>(42);
+        auto x = pure.in<std::list>(42);
 
         auto fs = std::list<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::list<int>{1,2};
@@ -148,7 +146,7 @@ Context(applicative)
 
     Test(applicative_forward_list)
     {
-        auto x  = pure<std::forward_list>(42);
+        auto x  = pure.in<std::forward_list>(42);
         auto fs = std::forward_list<std::function<int(int)>> { [](int n) { return n+1; }, [](int n) { return n*2; }};
         auto xs = std::forward_list<int>{1,2};
 
@@ -161,7 +159,7 @@ Context(applicative)
 
     Test(applicative_shared_ptr)
     {
-        auto z = pure<std::shared_ptr>(42);
+        auto z = pure.in<std::shared_ptr>(42);
 
         auto f  = std::make_shared<std::function<int(int)>> ([](int n) { return n+1; });
         auto f_ = std::shared_ptr<std::function<int(int)>>();
@@ -189,7 +187,7 @@ Context(applicative)
 
     Test(applicative_unique_ptr)
     {
-        auto z  = pure<std::unique_ptr>(42);
+        auto z  = pure.in<std::unique_ptr>(42);
         auto f  = std::make_unique<std::function<int(int)>> ([](int n) { return n+1; });
         auto f_ = std::unique_ptr<std::function<int(int)>>();
         auto x  = std::make_unique<int>(41);
@@ -214,7 +212,7 @@ Context(applicative)
 
     Test(applicative_optional)
     {
-        auto z  = pure<std::experimental::optional>(42);
+        auto z  = pure.in<std::experimental::optional>(42);
 
         auto f  = std::experimental::make_optional<std::function<int(int)>> ([](int n) { return n+1; });
         auto f_ = std::experimental::optional<std::function<int(int)>>();

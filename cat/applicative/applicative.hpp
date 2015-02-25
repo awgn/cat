@@ -36,6 +36,8 @@
 
 namespace cat
 {
+    using namespace placeholders;
+
     //
     // class applicative:
     //
@@ -59,33 +61,50 @@ namespace cat
     template <typename FF, typename FA, typename ...> struct ApplicativeInstance;
 
     //
-    // free functions
+    // functions: pure and apply
     //
 
-    template <template <typename ...> class F, typename A_>
-    auto pure(A_ && value)
+    struct pure_
     {
-        using Fa = F<std::decay_t<A_>>;
-        return ApplicativeInstance< F<Identity>, Fa, F<Identity>, Fa, A_>{}.pure(std::forward<A_>(value));
-    }
+        using function_type = _F<_a>(_a &&);
 
-    template <typename Fx, typename A_>
-    auto pure(A_ && value)
+        template <template <typename ...> class F, typename A_>
+        auto in(A_ && value) const
+        {
+            using Fa = F<std::decay_t<A_>>;
+            return ApplicativeInstance< F<Identity>, Fa, F<Identity>, Fa, A_>{}.pure(std::forward<A_>(value));
+        }
+
+        template <typename Fx, typename A_>
+        auto as(A_ && value) const
+        {
+            using Fa = rebind_type_t<std::decay_t<Fx>, std::decay_t<A_>>;
+            using Ff = rebind_type_t<std::decay_t<Fx>, Identity>;
+
+            return ApplicativeInstance<Ff, Fa, Ff, Fa, A_>{}.pure(std::forward<A_>(value));
+        }
+
+    } constexpr pure = pure_ {};
+
+
+    struct apply_
     {
-        using Fa = rebind_type_t<std::decay_t<Fx>, std::decay_t<A_>>;
-        using Ff = rebind_type_t<std::decay_t<Fx>, Identity>;
+        using function_type = _F<_b>( _F<_<_b(_a)>>, _F<_a>);
 
-        return ApplicativeInstance< Ff, Fa, Ff, Fa, A_>{}.pure(std::forward<A_>(value));
-    }
+        template <typename Ff_, typename Fa_>
+        auto operator()(Ff_ && fs, Fa_ &&xs) const
+        {
+            using Ff = std::decay_t<Ff_>;
+            using Fa = std::decay_t<Fa_>;
 
-    template <typename Ff_, typename Fa_>
-    auto apply(Ff_ && fs, Fa_ &&xs)
-    {
-        using Ff = std::decay_t<Ff_>;
-        using Fa = std::decay_t<Fa_>;
+            return ApplicativeInstance<Ff, Fa, Ff_, Fa_, int>{}.apply(std::forward<Ff_>(fs), std::forward<Fa_>(xs));
+        }
 
-        return ApplicativeInstance<Ff, Fa, Ff_, Fa_, int>{}.apply(std::forward<Ff_>(fs), std::forward<Fa_>(xs));
-    }
+    } constexpr apply = apply_ {};
+
+    //
+    // operator *
+    //
 
     template <template <typename ...> class F, typename Fun, typename Fa_>
     auto operator*(F<Fun> const &fs, Fa_ &&xs)
@@ -98,31 +117,26 @@ namespace cat
         return apply(std::move(fs), std::forward<Fa_>(xs));
     }
 
-    namespace
+    //
+    // infix operator: f <$>
+    //
+
+    struct fapply_
     {
-        struct app
+        using function_type = _F<_b>(_<_b(_a)>, _F<_a>);
+
+        template <typename F, typename Fa>
+        auto operator()(F && f, Fa && xs) const
         {
-            template <typename F, typename Fa>
-            auto operator()(F && f, Fa && xs) const
-            {
-                return apply(pure<std::decay_t<Fa>>(std::forward<F>(f)), std::forward<Fa>(xs));
-            }
-        };
+            return apply(pure.as<std::decay_t<Fa>>(std::forward<F>(f)), std::forward<Fa>(xs));
+        }
+    };
 
-        constexpr infix_adaptor<app> $;
-    }
+    constexpr infix_adaptor<fapply_> $;
 
     //
-    // lift...
+    // trait for concepts
     //
-
-    template <template <typename ...> class F, typename Fun, typename A, typename ...Ts>
-    auto liftA(Fun const &f, F<A, Ts...> const &xs)
-    {
-        std::function< decltype(f(std::declval<A>()))(A) > f_(f);
-        return pure<F>(f_) * xs;
-    }
-
 
     template <template <typename ...> class A>
     struct is_applicative : std::false_type
