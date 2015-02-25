@@ -27,17 +27,68 @@
 #pragma once
 
 #include <vector>
+#include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/utility.hpp>
 
 namespace cat
 {
+    using namespace placeholders;
+
+
+    //
+    // instance
+    //
+
+    template <typename M, typename F, typename M1, typename M2> struct MonoidInstance;
+
+    //
+    // free (callable) functions:
+    //
+
+    template <typename M>
+    auto mempty()
+    {
+        return MonoidInstance<M, std::vector<M>, M, M>{}.mempty();
+    }
+
+    struct mappend_
+    {
+        using function_type = _m(_m &&, _m &&);
+
+        template <typename M1, typename M2>
+        auto operator()(M1 && a, M2 && b) const
+        {
+            using M = std::decay_t<M1>;
+
+            return MonoidInstance<
+                    M, std::vector<M>, M1, M2>{}.
+                    mappend(std::forward<M1>(a),
+                            std::forward<M2>(b));
+        }
+
+    } constexpr mappend = mappend_{};
+
+
+    struct mconcat_
+    {
+        using function_type = _m(_C<_m> &&);
+
+        template <typename F>
+        auto operator()(F && f) const
+        {
+            using M = inner_type_t<std::decay_t<F>>;
+
+            return MonoidInstance<
+                    M, F, M, M >{}.
+                    mconcat(std::forward<F>(f));
+        }
+
+    } constexpr mconcat = mconcat_ { };
+
     //
     // type class Monoid
     //
-
-    template <typename M1, typename M2>
-    auto mappend(M1 && a, M2 && b);
 
     template <typename M>
     struct Monoid
@@ -58,44 +109,6 @@ namespace cat
             };
         };
     };
-
-    //
-    // instance
-    //
-
-    template <typename M, typename F, typename M1, typename M2> struct MonoidInstance;
-
-    //
-    // free functions:
-    //
-
-    template <typename M>
-    auto mempty()
-    {
-        return MonoidInstance<M, std::vector<M>, M, M>{}.mempty();
-    }
-
-    template <typename M1, typename M2>
-    auto mappend(M1 && a, M2 && b)
-    {
-        using M = std::decay_t<M1>;
-
-        return MonoidInstance<
-                M, std::vector<M>, M1, M2>{}.
-                mappend(std::forward<M1>(a),
-                        std::forward<M2>(b));
-    }
-
-    template <typename F>
-    auto mconcat(F && f)
-    {
-        using M = inner_type_t<std::decay_t<F>>;
-
-        return MonoidInstance<
-                M, F, M, M >{}.
-                mconcat(std::forward<F>(f));
-    }
-
 
     //
     // trait for concept
