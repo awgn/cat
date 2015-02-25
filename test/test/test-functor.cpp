@@ -39,7 +39,7 @@ Context(functor)
         std::vector<std::string> vec { "one", "two", "three" };
         auto size_ = [](const std::string &s) -> size_t { return s.size(); };
 
-        Assert( callable(fmap)(size_)(vec), is_equal_to(std::vector<size_t>{3, 3, 5}));
+        Assert( currying(fmap)(size_)(vec), is_equal_to(std::vector<size_t>{3, 3, 5}));
     }
 
 

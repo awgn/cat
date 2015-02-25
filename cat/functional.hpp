@@ -234,7 +234,7 @@ namespace cat
     //
 
     template <typename F, size_t Idx, typename T>
-    struct callable_decay
+    struct currying_decay
     {
         using Tp = arg_type_t<F, Idx>;
 
@@ -246,7 +246,7 @@ namespace cat
     };
 
     template <typename F, size_t Idx, typename T>
-    using callable_decay_t = typename callable_decay<F, Idx, T>::type;
+    using currying_decay_t = typename currying_decay<F, Idx, T>::type;
 
 
     template <typename F, typename ...Ts>
@@ -288,14 +288,14 @@ namespace cat
         template <size_t I, size_t ...N, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., callable_decay_t<function_type, N, Xs>...>(
+            return Callable_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, size_t ...N, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Callable_<F, Ts..., callable_decay_t<function_type, N, Xs>...>(
+            return Callable_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -304,7 +304,7 @@ namespace cat
     };
 
     template<typename F>
-    constexpr auto callable(F f)
+    constexpr auto currying(F f)
     {
         return Callable_<F>(std::move(f));
     }
@@ -336,7 +336,7 @@ namespace cat
     template <typename Fun, typename F>
     constexpr auto generic(F f)
     {
-        return callable(Generic_<Fun, F>(std::move(f)));
+        return currying(Generic_<Fun, F>(std::move(f)));
     };
 
     //////////////////////////////////////////////////////////////////////////////////

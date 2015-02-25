@@ -240,9 +240,9 @@ Context(applicative)
     int sum_f(int a, int b) { return a + b; };
 
 
-    Test(applicative_callable)
+    Test(applicative_currying)
     {
-        auto sum = callable(sum_f);
+        auto sum = currying(sum_f);
 
         std::cout << type_of(sum) << std::endl;
 

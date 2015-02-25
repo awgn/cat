@@ -14,7 +14,7 @@ using namespace yats;
 using namespace cat;
 
 
-Context(callable_test)
+Context(currying_test)
 {
     int f0(int, std::string, char, bool)
     {
@@ -31,31 +31,31 @@ Context(callable_test)
         return a+b;
     }
 
-    Test(basic_callable)
+    Test(basic_currying)
     {
-        auto val = callable(negate)(1);
+        auto val = currying(negate)(1);
         Assert(val, is_equal_to(-1));
     }
 
 
-    Test(simple_callable)
+    Test(simple_currying)
     {
-        auto add_ = callable(add)(1);
+        auto add_ = currying(add)(1);
         Assert(add_(2), is_equal_to(3));
     }
 
 
-    Test(mixed_callable)
+    Test(mixed_currying)
     {
-        auto f1 = callable(f0)(42, "hello");
+        auto f1 = currying(f0)(42, "hello");
         auto f2 = f1('x');
 
         Assert(f2(true), is_equal_to(42));
     }
 
-    Test(total_callable)
+    Test(total_currying)
     {
-        Assert(callable(f0)(42)("hello")('x')(true), is_equal_to(42));
+        Assert(currying(f0)(42)("hello")('x')(true), is_equal_to(42));
     }
 
 
@@ -67,7 +67,7 @@ Context(callable_test)
     Test(lvalue)
     {
         int a = 0;
-        callable(increment)(a);
+        currying(increment)(a);
         Assert(a, is_equal_to(1));
     }
 
@@ -80,13 +80,13 @@ Context(callable_test)
     {
         int a = 0;
 
-        callable(temporary)(std::move(a));
+        currying(temporary)(std::move(a));
         Assert(a, is_equal_to(1));
     }
 
     Test(apply)
     {
-        auto f = callable(f0);
+        auto f = currying(f0);
         auto f1 = f.apply(0);
         auto f2 = f1.apply("hello",'x');
         auto f3 = f2.apply(true);
@@ -115,7 +115,7 @@ Context(callable_test)
         constexpr auto diff = Diff{};
 
         assert_constexpr(identity);
-        assert_constexpr(callable(identity));
+        assert_constexpr(currying(identity));
         assert_constexpr(generic<int(int)>(identity));
         assert_constexpr(compose(identity, identity));
         assert_constexpr(flip(diff));
@@ -137,16 +137,16 @@ Context(callable_test)
     Test(composition)
     {
         auto h1 = compose(sum,next);
-        auto h2 = compose(callable(sum),next);
-        auto h3 = compose(sum,callable(next));
-        auto h4 = compose(callable(sum),callable(next));
+        auto h2 = compose(currying(sum),next);
+        auto h3 = compose(sum,currying(next));
+        auto h4 = compose(currying(sum),currying(next));
 
         Assert(h1(10,1)  == 10);
         Assert(h2(10)(1) == 10);
         Assert(h3(10,1)  == 10);
         Assert(h4(10)(1)  == 10);
 
-        auto l1 = compose(callable(sum), [](int n) { return n+1; });
+        auto l1 = compose(currying(sum), [](int n) { return n+1; });
         auto l2 = l1(10);
 
         Assert( l2(1) == 10);
@@ -154,7 +154,7 @@ Context(callable_test)
         auto x1 = compose(sum, constant);
         Assert(x1(1) == 41);
 
-        auto x2 = callable(sum) ^ (constant);
+        auto x2 = currying(sum) ^ (constant);
         Assert(x2(1) == 41);
     }
 
