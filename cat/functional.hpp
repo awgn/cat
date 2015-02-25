@@ -241,10 +241,9 @@ namespace cat
         using Tp = arg_type_t<F, Idx>;
 
         using type = typename std::conditional<
-                        std::is_lvalue_reference<Tp>::value && !std::is_const<std::remove_reference_t<T>>::value,
-                        T,
-                        std::decay_t<T>
-                    >::type;
+                        std::is_rvalue_reference<Tp>::value,
+                        std::decay<T>,
+                        T>::type;
     };
 
     template <typename F, size_t Idx, typename T>
@@ -284,7 +283,7 @@ namespace cat
         template <size_t ...N, typename ...Xs>
         auto eval_(std::integral_constant<size_t, 0>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return tuple_apply(fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
+            return tuple_apply(fun_, std::tuple_cat(std::move(args_), std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, size_t ...N, typename ...Xs>
