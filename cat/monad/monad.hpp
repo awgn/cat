@@ -37,9 +37,95 @@
 
 namespace cat
 {
+    //
+    // instances
+    //
 
-    template <template <typename ...> class M, typename A_>
-    auto mreturn(A_ && a);
+    template <typename Ma, typename ...> struct MonadInstance;
+    template <typename Ma, typename ...> struct MonadPlusInstance;
+
+
+    namespace details
+    {
+        //
+        // callable version of mreturn...
+        //
+
+        template <template <typename ...> class M>
+        struct Mreturn
+        {
+            template <typename T>
+            M<T> operator()(T && value) const;
+        };
+
+        template <class Mx>
+        struct MreturnAs
+        {
+            template <typename T>
+            auto operator()(T && value) const -> rebind_type_t<std::decay_t<Mx>, std::decay_t<T>>;
+        };
+    }
+
+
+    //
+    // free functions
+    //
+
+    struct mreturn_
+    {
+        template <template <typename ...> class M, typename A_>
+        auto in(A_ && a) const
+        {
+             using A = std::decay_t<A_>;
+             return MonadInstance<M<A>, details::Mreturn<M>, M<A>, A_>{}.mreturn(std::forward<A_>(a));
+        }
+
+        template <typename Mx, typename A_>
+        auto as (A_ && a) const
+        {
+            using Ma = rebind_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
+            return MonadInstance<Ma, details::MreturnAs<Ma>, Ma, A_>{}.mreturn(std::forward<A_>(a));
+        }
+
+    } constexpr mreturn = mreturn_{};
+
+
+    struct mbind_
+    {
+        using function_type = _M<_b>(_M<_a> &&, _<_M<_b>(_a)>);
+
+        template <typename Ma_, typename Fun>
+        auto operator()(Ma_ && ma, Fun f) const
+        {
+            using Ma = std::decay_t<Ma_>;
+
+            return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
+        }
+
+    } constexpr mbind = mbind_ {};
+
+    //
+    // monad plus
+    //
+
+    template <typename  Ma>
+    auto mzero()
+    {
+         return MonadPlusInstance<Ma, Ma, Ma>{}.mzero();
+    }
+
+    struct mplus_
+    {
+        using function_type = _M<_a>(_M<_a> &&, _M<_a> &&);
+
+        template <typename Ma_, typename Mb_>
+        auto operator()(Ma_ && a, Mb_ && b) const
+        {
+             using MA = std::decay_t<Ma_>;
+             return MonadPlusInstance<MA, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
+        }
+
+    } constexpr mplus = mplus_ {};
 
     //
     // class Monad
@@ -48,15 +134,6 @@ namespace cat
     template <template <typename ...> class M>
     struct Monad
     {
-        struct Identity
-        {
-            template <typename T>
-            M<T> operator()(T && value) const
-            {
-                return cat::mreturn<M>(std::forward<T>(value));
-            }
-        };
-
         template <typename Fun, typename A, typename Ma_, typename A_>
         struct _
         {
@@ -80,65 +157,6 @@ namespace cat
             virtual M<A> mplus(Ma_ &&, Mb_ &&)  = 0;
         };
     };
-
-    //
-    // instances
-    //
-
-    template <typename Ma, typename ...> struct MonadInstance;
-    template <typename Ma, typename ...> struct MonadPlusInstance;
-
-    //
-    // free functions
-    //
-
-
-    template <template <typename ...> class M, typename A_>
-    auto mreturn(A_ && a)
-    {
-         using A = std::decay_t<A_>;
-
-         return MonadInstance<M<A>, typename Monad<M>::Identity, M<A>, A_>{}.mreturn(std::forward<A_>(a));
-    }
-
-
-    template <typename M_> struct in;
-    template <template <typename ...> class M, typename ..._>
-    struct in<M<_...>>
-    {
-        template <typename A>
-        static auto mreturn(A && a)
-        {
-            return cat::mreturn<M>(std::forward<A>(a));
-        }
-    };
-
-
-    template <typename Ma_, typename Fun>
-    auto mbind(Ma_ && ma, Fun f)
-    {
-        using Ma = std::decay_t<Ma_>;
-
-        return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
-    }
-
-    //
-    // monad plus
-    //
-
-
-    template <typename  Ma>
-    auto mzero()
-    {
-         return MonadPlusInstance<Ma, Ma, Ma>{}.mzero();
-    }
-
-    template <typename Ma_, typename Mb_>
-    auto mplus(Ma_ && a, Mb_ && b)
-    {
-         using MA = std::decay_t<Ma_>;
-         return MonadPlusInstance<MA, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
-    }
 
     //
     // operators
@@ -178,16 +196,14 @@ namespace cat
         {
             return (m >>= [&](auto x) {
                     return (ms >>= [&] (auto xs) {
-
                             std::list<A> l{x};
-
                             l.insert(l.end(), std::begin(xs), std::end(xs));
-                            return mreturn<M>(std::move(l));
+                            return mreturn.in<M>(std::move(l));
                             });
                     });
         };
 
-        return foldr(k, mreturn<M>( std::list<A>{} ), ms);
+        return foldr(k, mreturn.in<M>( std::list<A>{} ), ms);
     }
 
     //
@@ -216,7 +232,7 @@ namespace cat
         template <typename A>
         constexpr auto operator()(A && a) const
         {
-            return ( in<return_type_t<F>>::mreturn(std::forward<A>(a)) >>= f_ ) >>= g_;
+            return ( mreturn.as<return_type_t<F>>(std::forward<A>(a)) >>= f_ ) >>= g_;
         }
 
         F f_;
@@ -275,7 +291,7 @@ namespace cat
     auto guard(bool value)
     {
         if (value)
-            return in<Ma>::mreturn(0);
+            return mreturn.as<Ma>(0);
         return mzero<Ma>();
     }
 
@@ -287,6 +303,23 @@ namespace cat
     struct is_monad : std::false_type
     { };
 
+    namespace details
+    {
+        template <template <typename ...> class M>
+        template <typename T>
+        M<T> Mreturn<M>::operator()(T && value) const
+        {
+            return mreturn.in<M>(std::forward<T>(value));
+        };
+
+        template <class Mx>
+        template <typename T>
+        auto MreturnAs<Mx>::operator()(T && value) const -> rebind_type_t<std::decay_t<Mx>, std::decay_t<T>>
+        {
+            return mreturn.as<Mx>(std::forward<T>(value));
+        };
+
+    } // namespace details
 
 } // namespace cat
 

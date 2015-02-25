@@ -22,20 +22,20 @@ Context(monad)
 
     Test(monad_optional)
     {
-        auto f = [](int n) { return mreturn<std::experimental::optional>(n); };
-        auto g = [](int n) { return mreturn<std::experimental::optional>(n+2); };
+        auto f = [](int n) { return mreturn.in<std::experimental::optional>(n); };
+        auto g = [](int n) { return mreturn.in<std::experimental::optional>(n+2); };
         auto h = [](int  ) { return std::experimental::optional<int>{}; };
 
-        Assert( mbind(mreturn<std::experimental::optional>(10), f) == 10 );
+        Assert( mbind(mreturn.in<std::experimental::optional>(10), f) == 10 );
 
-        Assert( mbind( mbind(mreturn<std::experimental::optional>(10), f), g) == 12 );
+        Assert( mbind( mbind(mreturn.in<std::experimental::optional>(10), f), g) == 12 );
 
-        Assert( (mreturn<std::experimental::optional>(10) >>= f)  == 10 );
+        Assert( (mreturn.in<std::experimental::optional>(10) >>= f)  == 10 );
 
-        Assert( ((mreturn<std::experimental::optional>(10)
+        Assert( ((mreturn.in<std::experimental::optional>(10)
                  >>= f) >>= g) == 12 );
 
-        Assert( ((mreturn<std::experimental::optional>(10)
+        Assert( ((mreturn.in<std::experimental::optional>(10)
                  >>= h) >>= g).value_or(42) == 42 );
     }
 
@@ -76,39 +76,39 @@ Context(monad)
 
     Test(monad_shared_ptr)
     {
-        auto f = [](int n) { return mreturn<std::shared_ptr>(n); };
-        auto g = [](int n) { return mreturn<std::shared_ptr>(n+2); };
+        auto f = [](int n) { return mreturn.in<std::shared_ptr>(n); };
+        auto g = [](int n) { return mreturn.in<std::shared_ptr>(n+2); };
         auto h = [](int  ) { return std::shared_ptr<int>{}; };
 
-        Assert( *mbind(mreturn<std::shared_ptr>(10), f) == 10 );
-        Assert( *mbind( mbind(mreturn<std::shared_ptr>(10), f), g) == 12 );
+        Assert( *mbind(mreturn.in<std::shared_ptr>(10), f) == 10 );
+        Assert( *mbind( mbind(mreturn.in<std::shared_ptr>(10), f), g) == 12 );
 
-        Assert( *(mreturn<std::shared_ptr>(10) >>= f)  == 10 );
+        Assert( *(mreturn.in<std::shared_ptr>(10) >>= f)  == 10 );
 
-        Assert( *((mreturn<std::shared_ptr>(10)
+        Assert( *((mreturn.in<std::shared_ptr>(10)
                  >>= f) >>= g) == 12 );
 
-        Assert( not ((mreturn<std::shared_ptr>(10)
+        Assert( not ((mreturn.in<std::shared_ptr>(10)
                  >>= h) >>= g) );
     }
 
 
     Test(monad_unique_ptr)
     {
-        auto f = [](int n) { return mreturn<std::unique_ptr>(n); };
-        auto g = [](int n) { return mreturn<std::unique_ptr>(n+2); };
+        auto f = [](int n) { return mreturn.in<std::unique_ptr>(n); };
+        auto g = [](int n) { return mreturn.in<std::unique_ptr>(n+2); };
         auto h = [](int  ) { return std::unique_ptr<int>{}; };
 
 
-        Assert( *mbind(mreturn<std::unique_ptr>(10), f) == 10 );
-        Assert( *mbind( mbind(mreturn<std::unique_ptr>(10), f), g) == 12 );
+        Assert( *mbind(mreturn.in<std::unique_ptr>(10), f) == 10 );
+        Assert( *mbind( mbind(mreturn.in<std::unique_ptr>(10), f), g) == 12 );
 
-        Assert( *(mreturn<std::unique_ptr>(10) >>= f)  == 10 );
+        Assert( *(mreturn.in<std::unique_ptr>(10) >>= f)  == 10 );
 
-        Assert( *((mreturn<std::unique_ptr>(10)
+        Assert( *((mreturn.in<std::unique_ptr>(10)
                  >>= f) >>= g) == 12 );
 
-        Assert( not ((mreturn<std::unique_ptr>(10)
+        Assert( not ((mreturn.in<std::unique_ptr>(10)
                  >>= h) >>= g) );
     }
 
@@ -143,14 +143,14 @@ Context(monad)
 
     Test(kleisli)
     {
-        auto f = [](int n) { return mreturn<std::unique_ptr>(n); };
-        auto g = [](int n) { return mreturn<std::unique_ptr>(n+2); };
+        auto f = [](int n) { return mreturn.in<std::unique_ptr>(n); };
+        auto g = [](int n) { return mreturn.in<std::unique_ptr>(n+2); };
 
-        Assert( *((mreturn<std::unique_ptr>(10) >>= f) >>= g) == 12 );
+        Assert( *((mreturn.in<std::unique_ptr>(10) >>= f) >>= g) == 12 );
 
         auto h = callable(f) <k> g;
 
-        Assert( *(mreturn<std::unique_ptr>(10) >>= h) == 12 );
+        Assert( *(mreturn.in<std::unique_ptr>(10) >>= h) == 12 );
     }
 
 
@@ -162,7 +162,7 @@ Context(monad)
         Assert( mapM(f, xs) == std::vector< std::list<std::string> >{{"1", "2", "3" }} );
 
         auto r = forM(xs, []( int n) {
-             return mreturn<std::vector>( std::to_string(n) );
+             return mreturn.in<std::vector>( std::to_string(n) );
         });
 
         Assert( r == std::vector< std::list<std::string> >{{"1", "2", "3" }} );
@@ -188,8 +188,8 @@ Context(monad)
     {
         auto n = mzero<std::experimental::optional<int>>();
 
-        auto x = mreturn<std::experimental::optional>(1);
-        auto y = mreturn<std::experimental::optional>(2);
+        auto x = mreturn.in<std::experimental::optional>(1);
+        auto y = mreturn.in<std::experimental::optional>(2);
 
         Assert ( n == nullopt);
 
@@ -203,8 +203,8 @@ Context(monad)
     {
         auto n = mzero<std::shared_ptr<int>>();
 
-        auto x = mreturn<std::shared_ptr>(1);
-        auto y = mreturn<std::shared_ptr>(2);
+        auto x = mreturn.in<std::shared_ptr>(1);
+        auto y = mreturn.in<std::shared_ptr>(2);
 
         Assert ( not n );
 
@@ -218,8 +218,8 @@ Context(monad)
     {
         auto n = mzero<std::unique_ptr<int>>();
 
-        auto x = mreturn<std::unique_ptr>(1);
-        auto y = mreturn<std::unique_ptr>(2);
+        auto x = mreturn.in<std::unique_ptr>(1);
+        auto y = mreturn.in<std::unique_ptr>(2);
 
         Assert ( not n );
 
