@@ -31,7 +31,7 @@
 
 namespace cat
 {
-    // optional is a monad:
+    // unique_ptr is a monad:
     //
 
     template <> struct is_monad<std::unique_ptr> : std::true_type { };
@@ -61,6 +61,14 @@ namespace cat
         }
 
     };
+
+    // unique_ptr is a monad:
+    //
+
+    template <> struct is_monad_plus<std::unique_ptr> : std::true_type { };
+
+    // unique_ptr instance:
+    //
 
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::unique_ptr<A>, Ma_, Mb_> final : MonadPlus<std::unique_ptr>::

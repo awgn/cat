@@ -63,6 +63,14 @@ namespace cat
 
     };
 
+    // deque is a monad_plus:
+    //
+
+    template <> struct is_monad_plus<std::deque> : std::true_type { };
+
+    // deque instance:
+    //
+
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::deque<A>, Ma_, Mb_> final : MonadPlus<std::deque>::
     template _<A, Ma_, Mb_>

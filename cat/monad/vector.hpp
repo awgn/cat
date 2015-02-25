@@ -62,6 +62,14 @@ namespace cat
         }
     };
 
+    // vector is a monad_plus:
+    //
+
+    template <> struct is_monad_plus<std::vector> : std::true_type { };
+
+    // vector instance:
+    //
+
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::vector<A>, Ma_, Mb_> final : MonadPlus<std::vector>::
     template _<A, Ma_, Mb_>

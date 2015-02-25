@@ -31,7 +31,7 @@
 
 namespace cat
 {
-    // optional is a monad:
+    // shared_ptr is a monad:
     //
 
     template <> struct is_monad<std::shared_ptr> : std::true_type { };
@@ -62,6 +62,13 @@ namespace cat
 
     };
 
+    // shared_ptr is a monad:
+    //
+
+    template <> struct is_monad_plus<std::shared_ptr> : std::true_type { };
+
+    // shared_ptr instance:
+    //
 
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::shared_ptr<A>, Ma_, Mb_> final : MonadPlus<std::shared_ptr>::

@@ -63,6 +63,14 @@ namespace cat
 
     };
 
+    // list is a monad_plus:
+    //
+
+    template <> struct is_monad_plus<std::list> : std::true_type { };
+
+    // list instance:
+    //
+
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::list<A>, Ma_, Mb_> final : MonadPlus<std::list>::
     template _<A, Ma_, Mb_>

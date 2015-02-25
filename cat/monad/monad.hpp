@@ -38,6 +38,18 @@
 namespace cat
 {
     //
+    // trait for concepts
+    //
+
+    template <template <typename...> class F>
+    struct is_monad : std::false_type
+    { };
+
+    template <template <typename...> class F>
+    struct is_monad_plus : std::false_type
+    { };
+
+    //
     // instances
     //
 
@@ -80,6 +92,7 @@ namespace cat
             template <template <typename ...> class M, typename A_>
             auto in(A_ && a) const
             {
+                 static_assert(is_monad<M>::value, "Type M not a monad!");
                  using A = std::decay_t<A_>;
                  return MonadInstance<M<A>, details::Mreturn<M>, M<A>, A_>{}.mreturn(std::forward<A_>(a));
             }
@@ -87,6 +100,8 @@ namespace cat
             template <typename Mx, typename A_>
             auto as (A_ && a) const
             {
+                static_assert(on_outer_type<is_monad,std::decay_t<Mx>>::value, "Type M not a monad!");
+
                 using Ma = rebind_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
                 return MonadInstance<Ma, details::MreturnAs<Ma>, Ma, A_>{}.mreturn(std::forward<A_>(a));
             }
@@ -100,6 +115,8 @@ namespace cat
             auto operator()(Ma_ && ma, Fun f) const
             {
                 using Ma = std::decay_t<Ma_>;
+                static_assert(on_outer_type<is_monad,std::decay_t<Ma>>::value, "Type M not a monad!");
+
                 return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
             }
         };
@@ -115,6 +132,7 @@ namespace cat
     template <typename  Ma>
     auto mzero()
     {
+         static_assert(on_outer_type<is_monad_plus,std::decay_t<Ma>>::value, "Type M not a monad plus!");
          return MonadPlusInstance<Ma, Ma, Ma>{}.mzero();
     }
 
@@ -129,10 +147,11 @@ namespace cat
             template <typename Ma_, typename Mb_>
             auto operator()(Ma_ && a, Mb_ && b) const
             {
-                 using MA = std::decay_t<Ma_>;
-                 return MonadPlusInstance<MA, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
-            }
+                 using Ma = std::decay_t<Ma_>;
 
+                 static_assert(on_outer_type<is_monad_plus, Ma>::value, "Type M not a monad plus!");
+                 return MonadPlusInstance<Ma, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
+            }
         };
     }
 
@@ -245,7 +264,7 @@ namespace cat
             template <typename A>
             constexpr auto operator()(A && a) const
             {
-                return ( mreturn.as<return_type_t<F>>(std::forward<A>(a)) >>= f_ ) >>= g_;
+                return (mreturn.as<return_type_t<F>>(std::forward<A>(a)) >>= f_ ) >>= g_;
             }
 
             F f_;
@@ -307,14 +326,6 @@ namespace cat
             return mreturn.as<Ma>(0);
         return mzero<Ma>();
     }
-
-    //
-    // trait for concepts
-    //
-
-    template <template <typename...> class F>
-    struct is_monad : std::false_type
-    { };
 
     namespace details
     {

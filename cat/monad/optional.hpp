@@ -61,6 +61,13 @@ namespace cat
 
     };
 
+    // optional is a monad_plus:
+    //
+
+    template <> struct is_monad_plus<std::experimental::optional> : std::true_type { };
+
+    // experimental::optional instance:
+    //
 
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::experimental::optional<A>, Ma_, Mb_> final : MonadPlus<std::experimental::optional>::
