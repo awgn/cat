@@ -241,9 +241,9 @@ namespace cat
         using Tp = arg_type_t<F, Idx>;
 
         using type = typename std::conditional<
-                        std::is_rvalue_reference<Tp>::value,
-                        std::decay<T>,
-                        T>::type;
+                        std::is_lvalue_reference<Tp>::value,
+                        T, std::decay_t<T>
+                        >::type;
     };
 
     template <typename F, size_t Idx, typename T>
