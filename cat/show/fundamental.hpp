@@ -130,7 +130,7 @@ namespace cat
         std::string
         show(std::integral_constant<T, value> const &)
         {
-            return cat::show(value) + "_" + type_name<T>();
+            return type_name<T>() + ":" + cat::show(value);
         }
     };
 
