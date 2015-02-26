@@ -183,6 +183,12 @@ Context(traits)
     }
 
 
+    template <typename T> struct test_spec;
+
+    template <>
+    struct test_spec<int> { };
+
+
     Test(others)
     {
         auto f = [](int n){ return n;};
@@ -200,6 +206,8 @@ Context(traits)
 
         Assert( std::is_same<std::vector<long>,  rebind_type<std::vector<int>, long>::type >::value );
 
+        Assert( has_specialization<test_spec, int>::value );
+        Assert( ! has_specialization<test_spec, char>::value );
     }
 
 }
