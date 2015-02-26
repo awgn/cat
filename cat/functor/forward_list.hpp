@@ -53,8 +53,8 @@ namespace cat
         {
             return std::forward_list<B>
             {
-                map_iterator( auto_begin(xs), f ),
-                map_iterator( auto_end(xs), f )
+                map_iterator( forward_iterator<Fa_>(std::begin(xs)), f ),
+                map_iterator( forward_iterator<Fa_>(std::end(xs)), f )
             };
         }
     };

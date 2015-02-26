@@ -52,8 +52,8 @@ namespace cat
                 (void)_, ++before_end;
 
             ret.insert_after(before_end,
-                            auto_begin(b),
-                            auto_end(b));
+                             forward_iterator<M2>(std::begin(b)),
+                             forward_iterator<M2>(std::end(b)));
             return ret;
         }
     };

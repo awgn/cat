@@ -86,8 +86,8 @@ namespace cat
         {
             auto r = std::forward<Ma_>(a);
             r.insert(std::end(r),
-                     auto_begin(b),
-                     auto_end(b));
+                     forward_iterator<Mb_>(std::begin(b)),
+                     forward_iterator<Mb_>(std::end(b)));
             return r;
         }
     };

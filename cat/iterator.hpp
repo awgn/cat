@@ -33,32 +33,26 @@
 namespace cat
 {
     //
-    // auto_iterator: const or move_iterator,
-    // according to the L/R-valueness of the container.
+    // conditionally make move_iterator, according
+    // to the L/R valueness of the of container.
     //
 
-    template <typename C>
-    auto auto_begin(C &&cont)
+    template <typename Iter>
+    auto forward_iterator_lvalue(Iter it, std::true_type)
     {
-        return std::make_move_iterator(cont.begin());
+        return it;
     }
 
-    template <typename C>
-    auto auto_end(C &&cont)
+    template <typename Iter>
+    auto forward_iterator_lvalue(Iter it, std::false_type)
     {
-        return std::make_move_iterator(cont.end());
+        return std::make_move_iterator(it);
     }
 
-    template <typename C>
-    auto auto_begin(C const &cont)
+    template <typename Ref, typename Iter>
+    auto forward_iterator(Iter it)
     {
-        return cont.cbegin();
-    }
-
-    template <typename C>
-    auto auto_end(C const &cont)
-    {
-        return cont.cend();
+        return forward_iterator_lvalue(std::move(it), std::is_lvalue_reference<Ref>{});
     }
 
     //

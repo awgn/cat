@@ -49,8 +49,8 @@ namespace cat
             auto ret = std::forward<M1>(a);
 
             ret.insert(std::end(ret),
-                       auto_begin(b),
-                       auto_end(b));
+                       forward_iterator<M2>(std::begin(b)),
+                       forward_iterator<M2>(std::end(b)));
 
             return ret;
         }

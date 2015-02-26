@@ -49,7 +49,8 @@ namespace cat
         virtual std::map<K,V> mappend(M1 && a, M2 && b) override
         {
             auto ret = std::forward<M1>(a);
-            ret.insert(auto_begin(b), auto_end(b));
+            ret.insert(forward_iterator<M2>(std::begin(b)),
+                       forward_iterator<M2>(std::end(b)));
             return ret;
         }
     };
