@@ -5,48 +5,82 @@
 #include <vector>
 #include <iterator>
 
+#include <yats.hpp>
 
 using namespace cat;
+using namespace yats;
 
 
-template <typename T>
-void function_impl(T && x)
+Context(test_forward)
 {
-    for(auto && elem : x)
+    template <typename T>
+    void assert_lvalue(const char *_test_name, T && x)
     {
-        std::cout << type_of(forward_as<T>(elem)) << std::endl;
+        std::cout << "L-VALUE (" << type_name<T>() << "):" << std::endl;
+
+        std::cout << "forward_as<T>:" << std::endl;
+
+        for(auto && elem : x)
+        {
+            std::cout << type_of(forward_as<T>(elem)) << std::endl;
+
+            Assert(std::is_same<int &, decltype(forward_as<T>(elem))>::value);
+        }
+
+        std::cout << "forward_iterator<T>:" << std::endl;
+
+        auto it = forward_iterator<T>(std::begin(x));
+        for(; it != forward_iterator<T>(std::end(x)); ++it)
+        {
+            std::cout << type_of(*it) << std::endl;
+
+            Assert(std::is_same<int &, decltype(*it)>::value);
+        }
     }
 
-    auto it = auto_begin(std::forward<T>(x));
-    for(; it != auto_end(std::forward<T>(x)); ++it)
+
+    template <typename T>
+    void assert_rvalue(const char *_test_name, T && x)
     {
-        std::cout << type_of(*it) << std::endl;
+        std::cout << "R-VALUE (" << type_name<T>() << "):" << std::endl;
+
+        std::cout << "forward_as<T>:" << std::endl;
+
+        for(auto && elem : x)
+        {
+            std::cout << type_of(forward_as<T>(elem)) << std::endl;
+
+            Assert(std::is_same<int &&, decltype(forward_as<T>(elem))>::value);
+        }
+
+        std::cout << "forward_iterator<T>:" << std::endl;
+
+        auto it = forward_iterator<T>(std::begin(x));
+        for(; it != forward_iterator<T>(std::end(x)); ++it)
+        {
+            std::cout << type_of(*it) << std::endl;
+
+            Assert(std::is_same<int &&, decltype(*it)>::value);
+        }
     }
-}
 
+    Test(lvalue)
+    {
+        std::vector<int> v{42};
+        assert_lvalue(_test_name, v);
+    }
 
-void function(std::vector<int> && x)
-{
-     function_impl(std::move(x));
-}
-
-void function(std::vector<int> const &x)
-{
-     function_impl(x);
+    Test(rvalue)
+    {
+        std::vector<int> v{42};
+        assert_rvalue(_test_name, std::move(v));
+    }
 }
 
 
 int
-main(int, char *[])
+main(int argc, char*  argv[])
 {
-    std::vector<int> v {1,2,3};
-
-    std::cout << "LVALUE:" << std::endl;
-    function(v);
-
-    std::cout << "RVALUE:" << std::endl;
-    function(std::move(v));
-
-    return 0;
+    return yats::run(argc, argv);
 }
 
