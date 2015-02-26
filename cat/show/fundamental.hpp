@@ -134,4 +134,28 @@ namespace cat
         }
     };
 
+    template <typename T, T ... Ints>
+    struct ShowInstance<std::integer_sequence<T, Ints...>> final : Show<std::integer_sequence<T, Ints...>>
+    {
+        std::string
+        show(std::integer_sequence<T, Ints...> const &)
+        {
+            std::string out = "{" + type_name<T>() + ": ";
+            if (sizeof...(Ints))
+            {
+                size_t n = 0;
+                do {
+                    out += std::to_string(n);
+                }
+                while ([&]() -> bool {
+                    auto cont = ++n < sizeof...(Ints);
+                    if (cont)
+                        out += ", ";
+                    return cont;
+                }());
+            }
+            return out + " }";
+        }
+    };
+
 }

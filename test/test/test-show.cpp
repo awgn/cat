@@ -52,9 +52,6 @@ Context(test_show)
         print(std::chrono::seconds(1));
         print(std::chrono::system_clock::now());
 
-        print(std::integral_constant<int, 42>());
-        print(std::integral_constant<bool, true>());
-
         print(std::initializer_list<int>{1,2,3});
         print(std::array<int, 3>{{1,2,3}});
         print(std::vector<int>{1,2,3});
@@ -73,6 +70,10 @@ Context(test_show)
         print(std::unordered_multimap<int, std::string>{{42, "hello"},{42,"world"}});
 
         print(nullptr);
+
+        print(std::integral_constant<int, 42>());
+        print(std::integral_constant<bool, true>());
+        print(std::make_integer_sequence<int, 10>{});
     }
 }
 
