@@ -82,7 +82,7 @@ namespace cat
 
 
     //
-    // tuple_foreach: polymorphic actions over tuple (like mapM_)
+    // tuple_foreach: polymorphic actions over tuple
     //
 
     template <typename Fun, typename TupleT>
