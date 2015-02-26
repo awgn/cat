@@ -35,7 +35,10 @@ Context(test_show)
         print(42.0l);
 
         print(std::string("Hello World"));
+
         print('f');
+        print(static_cast<unsigned char>('x'));
+
         print(true);
         print((const char *)"Hello world");
         print((const int *)0xbadbee);

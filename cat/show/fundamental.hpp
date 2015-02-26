@@ -104,6 +104,12 @@ namespace cat
     };
 
     template <>
+    struct ShowInstance<unsigned char> final : Show<unsigned char>
+    {
+        std::string show(unsigned char const &c) { return std::to_string(c); }
+    };
+
+    template <>
     struct ShowInstance<bool> final : Show<bool>
     {
         std::string show(bool const &v) { return v ? "true" : "false"; }
