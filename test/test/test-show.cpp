@@ -35,6 +35,7 @@ Context(test_show)
         print(42.0l);
 
         print(std::string("Hello World"));
+        print(std::experimental::string_view("Hello World"));
 
         print('f');
         print(static_cast<unsigned char>('x'));
@@ -44,14 +45,12 @@ Context(test_show)
         print((const int *)0xbadbee);
         print(std::make_unique<int>(42));
         print(std::make_shared<int>(42));
+
         print(std::make_pair('c', "is a char"));
-
-
         print(std::make_tuple(1, "is", true));
 
         print(std::chrono::seconds(1));
         print(std::chrono::system_clock::now());
-
 
         print(std::integral_constant<int, 42>());
         print(std::integral_constant<bool, true>());

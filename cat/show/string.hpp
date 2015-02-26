@@ -30,6 +30,7 @@
 #include <cat/type_traits.hpp>
 
 #include <string>
+#include <experimental/string_view>
 
 namespace cat
 {
@@ -43,6 +44,15 @@ namespace cat
         std::string show(std::string const &v)
         {
             return '"' + v + '"';
+        }
+    };
+
+    template <>
+    struct ShowInstance<std::experimental::string_view> final : Show<std::experimental::string_view>
+    {
+        std::string show(std::experimental::string_view const &v)
+        {
+            return '"' + v.to_string() + '"';
         }
     };
 
