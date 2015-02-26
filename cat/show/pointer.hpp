@@ -26,9 +26,48 @@
 
 #pragma once
 
-#include <cat/show/chrono.hpp>
-#include <cat/show/container.hpp>
-#include <cat/show/fundamental.hpp>
-#include <cat/show/pointer.hpp>
-#include <cat/show/tuple.hpp>
-#include <cat/show/string.hpp>
+#include <cat/show/show.hpp>
+#include <cat/type_traits.hpp>
+
+#include <sstream>
+#include <memory>
+
+namespace cat
+{
+    //
+    // Instances...
+    //
+
+    template <typename T>
+    struct ShowInstance<T *> final : Show<T *>
+    {
+        std::string show(T * const &p)
+        {
+            std::ostringstream out;
+            out << static_cast<const void *>(p);
+            return out.str();
+        }
+    };
+
+    template <typename T>
+    struct ShowInstance<std::unique_ptr<T>> final : Show<std::unique_ptr<T>>
+    {
+        std::string show(std::unique_ptr<T> const &p)
+        {
+            std::ostringstream out;
+            out << static_cast<const void *>(p.get()) << "_up";
+            return out.str();
+        }
+    };
+
+    template <typename T>
+    struct ShowInstance<std::shared_ptr<T>> final : Show<std::shared_ptr<T>>
+    {
+        std::string show(std::shared_ptr<T> const &p)
+        {
+            std::ostringstream out;
+            out << static_cast<const void *>(p.get()) << "_sp" << p.use_count();
+            return out.str();
+        }
+    };
+}

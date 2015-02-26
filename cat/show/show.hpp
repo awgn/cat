@@ -26,9 +26,45 @@
 
 #pragma once
 
-#include <cat/show/chrono.hpp>
-#include <cat/show/container.hpp>
-#include <cat/show/fundamental.hpp>
-#include <cat/show/pointer.hpp>
-#include <cat/show/tuple.hpp>
-#include <cat/show/string.hpp>
+#include <cat/show/show.hpp>
+#include <cat/type_traits.hpp>
+
+#include <string>
+
+namespace cat
+{
+    //
+    // instance
+    //
+
+    template <typename T> struct ShowInstance;
+
+    //
+    // trait for concepts
+    //
+
+    template <typename T>
+    struct is_showable : has_specialization<ShowInstance, T>
+    { };
+
+    //
+    // free function
+    //
+
+    template <typename T>
+    std::string show(T const &v)
+    {
+        static_assert(is_showable<T>::value, "T is not showable!");
+        return ShowInstance<T>{}.show(v);
+    }
+
+    //
+    // type class Show
+    //
+
+    template <typename T>
+    struct Show
+    {
+        virtual std::string show(T const &) = 0;
+    };
+}

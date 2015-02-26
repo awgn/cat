@@ -26,9 +26,41 @@
 
 #pragma once
 
-#include <cat/show/chrono.hpp>
-#include <cat/show/container.hpp>
-#include <cat/show/fundamental.hpp>
-#include <cat/show/pointer.hpp>
-#include <cat/show/tuple.hpp>
-#include <cat/show/string.hpp>
+#include <cat/show/show.hpp>
+#include <cat/bits/type.hpp>
+#include <cat/type_traits.hpp>
+#include <cat/tuple.hpp>
+
+namespace cat
+{
+    //
+    // Instances...
+    //
+
+    template <typename T, typename V>
+    struct ShowInstance<std::pair<T, V>> final : Show<std::pair<T,V>>
+    {
+        std::string
+        show(const std::pair<T,V> &p)
+        {
+            return  '(' + cat::show(p.first) + ' ' + cat::show(p.second) + ')';
+        }
+    };
+
+
+    template <typename ...Ts>
+    struct ShowInstance<std::tuple<Ts...>> final : Show<std::tuple<Ts...>>
+    {
+        std::string
+        show(const std::tuple<Ts...> &t)
+        {
+            std::string out("(");
+
+            tuple_foreach([&](auto const &elem) {
+                                out += ' ' + cat::show(elem);
+                          }, t);
+
+            return std::move(out) + " )";
+        }
+    };
+}

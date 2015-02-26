@@ -26,9 +26,34 @@
 
 #pragma once
 
-#include <cat/show/chrono.hpp>
-#include <cat/show/container.hpp>
-#include <cat/show/fundamental.hpp>
-#include <cat/show/pointer.hpp>
-#include <cat/show/tuple.hpp>
-#include <cat/show/string.hpp>
+#include <cat/show/show.hpp>
+#include <cat/type_traits.hpp>
+
+#include <string>
+
+namespace cat
+{
+    //
+    // Instances...
+    //
+
+    template <>
+    struct ShowInstance<std::string> final : Show<std::string>
+    {
+        std::string show(std::string const &v)
+        {
+            return '"' + v + '"';
+        }
+    };
+
+    template <>
+    struct ShowInstance<const char *> final : Show<const char *>
+    {
+        std::string show(const char * const & s)
+        {
+            if (s)
+                return '"' + std::string(s) + '"';
+            return "NULL";
+        }
+    };
+}
