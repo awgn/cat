@@ -24,7 +24,7 @@ Context(test_forward)
         {
             std::cout << type_of(forward_as<T>(elem)) << std::endl;
 
-            Assert(std::is_same<int &, decltype(forward_as<T>(elem))>::value);
+            Assert(std::is_lvalue_reference<decltype(forward_as<T>(elem))>::value);
         }
 
         std::cout << "forward_iterator<T>:" << std::endl;
@@ -34,7 +34,7 @@ Context(test_forward)
         {
             std::cout << type_of(*it) << std::endl;
 
-            Assert(std::is_same<int &, decltype(*it)>::value);
+            Assert(std::is_lvalue_reference<decltype(*it)>::value);
         }
     }
 
@@ -50,7 +50,7 @@ Context(test_forward)
         {
             std::cout << type_of(forward_as<T>(elem)) << std::endl;
 
-            Assert(std::is_same<int &&, decltype(forward_as<T>(elem))>::value);
+            Assert(std::is_rvalue_reference<decltype(forward_as<T>(elem))>::value);
         }
 
         std::cout << "forward_iterator<T>:" << std::endl;
@@ -60,7 +60,7 @@ Context(test_forward)
         {
             std::cout << type_of(*it) << std::endl;
 
-            Assert(std::is_same<int &&, decltype(*it)>::value);
+            Assert(std::is_rvalue_reference<decltype(*it)>::value);
         }
     }
 
@@ -68,6 +68,9 @@ Context(test_forward)
     {
         std::vector<int> v{42};
         assert_lvalue(_test_name, v);
+
+        std::vector<int> const c { 11 };
+        assert_lvalue(_test_name, c);
     }
 
     Test(rvalue)
