@@ -69,6 +69,8 @@ Context(test_show)
         print(std::unordered_map<int, std::string>{{1, "hello"},{2,"world"}});
         print(std::multimap<int, std::string>{{42, "hello"},{42,"world"}});
         print(std::unordered_multimap<int, std::string>{{42, "hello"},{42,"world"}});
+
+        print(nullptr);
     }
 }
 

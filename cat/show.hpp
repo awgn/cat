@@ -52,10 +52,7 @@ namespace cat
     // instance
     //
 
-    template <typename T> struct ShowInstance
-    {
-        using non_specialized = int;
-    };
+    template <typename T> struct ShowInstance;
 
     //
     // trait for concepts
@@ -178,6 +175,15 @@ namespace cat
         {
             if (s)
                 return '"' + std::string(s) + '"';
+            return "NULL";
+        }
+    };
+
+    template <>
+    struct ShowInstance<std::nullptr_t> final : Show<std::nullptr_t>
+    {
+        std::string show(std::nullptr_t const &)
+        {
             return "nullptr";
         }
     };
