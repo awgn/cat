@@ -669,19 +669,19 @@ namespace cat
 
     namespace details
     {
-        template <template <typename > class Class, typename T>
+        template <template <typename...> class Class, typename ...Ts>
         class has_specialization
         {
-            template <typename C> static void test(std::integral_constant<size_t, sizeof(Class<C>)> *) noexcept;
-            template <typename C> static void test(...) noexcept(false);
+            template <typename ...Cs> static void test(std::integral_constant<size_t, sizeof(Class<Cs...>)> *) noexcept;
+            template <typename ...Cs> static void test(...) noexcept(false);
         public:
-            enum { value = noexcept(test<T>(nullptr)) };
+            enum { value = noexcept(test<Ts...>(nullptr)) };
         };
     }
 
-    template <template <typename T> class Class, typename T>
+    template <template <typename...>  class Class, typename ...Ts>
     struct has_specialization:
-        bool_type<details::has_specialization<Class, T>::value>
+        bool_type<details::has_specialization<Class, Ts...>::value>
     { };
 
 
