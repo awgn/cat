@@ -1,3 +1,3 @@
-Cats: a C++14 type-class library
-================================
+Cat: C++14 type classes library
+===============================
 
