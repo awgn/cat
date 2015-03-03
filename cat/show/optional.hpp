@@ -26,10 +26,35 @@
 
 #pragma once
 
-#include <cat/show/chrono.hpp>
-#include <cat/show/container.hpp>
-#include <cat/show/fundamental.hpp>
-#include <cat/show/pointer.hpp>
-#include <cat/show/tuple.hpp>
-#include <cat/show/string.hpp>
-#include <cat/show/optional.hpp>
+#include <cat/show/show.hpp>
+
+#include <experimental/optional>
+
+namespace cat
+{
+    //
+    // Instances...
+    //
+
+    template <typename T>
+    struct ShowInstance<std::experimental::optional<T>> final : Show<std::experimental::optional<T>>
+    {
+        std::string
+        show(const std::experimental::optional<T> &t)
+        {
+            if (t)
+                return std::string(1, '(') + cat::show(t.value()) + ')';
+            return "()";
+        }
+    };
+
+    template <>
+    struct ShowInstance<std::experimental::nullopt_t> final : Show<std::experimental::nullopt_t>
+    {
+        std::string
+        show(const std::experimental::nullopt_t &)
+        {
+            return "()";
+        }
+    };
+}

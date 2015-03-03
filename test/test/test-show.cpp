@@ -74,6 +74,10 @@ Context(test_show)
         print(std::integral_constant<int, 42>());
         print(std::integral_constant<bool, true>());
         print(std::make_integer_sequence<int, 10>{});
+
+        print(std::experimental::make_optional(42));
+        print(std::experimental::optional<int>());
+        print(std::experimental::nullopt);
     }
 }
 
