@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <cat/read/read.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/bits/type.hpp>
 #include <cat/string_view.hpp>
@@ -64,21 +63,55 @@ namespace cat
     //
 
     template <typename T>
-    T read(std::string const &str)
+    T read(string_view str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
-
-        auto r = ReadInstance<T>{}.reads(string_view(str));
+        auto r = ReadInstance<T>{}.reads(str);
         if (!r)
             throw std::runtime_error(type_name<T>() + ": read error!");
         return r.value().first;
     }
 
     template <typename T>
+    T read(std::string const &str)
+    {
+        static_assert(is_readable<T>::value, "T is not readable!");
+        return read<T>(string_view(str));
+    }
+
+    template <typename T>
+    T read(const char *str)
+    {
+        static_assert(is_readable<T>::value, "T is not readable!");
+        return read<T>(string_view(str));
+    }
+
+    //
+    // reads
+    //
+
+    template <typename T>
     std::experimental::optional<std::pair<T, string_view>>
-    read_opt(std::string const &str)
+    reads(std::string const &str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
         return ReadInstance<T>{}.reads(string_view(str));
     }
+
+    template <typename T>
+    std::experimental::optional<std::pair<T, string_view>>
+    reads(string_view str)
+    {
+        static_assert(is_readable<T>::value, "T is not readable!");
+        return ReadInstance<T>{}.reads(str);
+    }
+
+    template <typename T>
+    std::experimental::optional<std::pair<T, string_view>>
+    reads(const char *str)
+    {
+        static_assert(is_readable<T>::value, "T is not readable!");
+        return ReadInstance<T>{}.reads(string_view{str});
+    }
+
 }
