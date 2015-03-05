@@ -31,72 +31,10 @@
 
 #include <sstream>
 #include <cstdlib>
-#include <cstring>
-#include <cctype>
-#include <limits>
 #include <utility>
 
 namespace cat
 {
-    namespace details
-    {
-        // numbers...
-        //
-
-        template <typename T, typename V> void check_limits(V value)
-        {
-            if (value > std::numeric_limits<T>::max() ||
-                value < std::numeric_limits<T>::min())
-                throw std::runtime_error("to_number: " + type_name<T>());
-        }
-
-        template <typename T>
-        T to_number(const char *str, char **end, int base, std::false_type, std::true_type)
-        {
-            long long n = std::strtoll(str, end, base);
-            if (str != *end)
-                check_limits<T>(n);
-            return n;
-        }
-
-        template <typename T>
-        T to_number(const char *str, char **end, int base, std::false_type, std::false_type)
-        {
-            unsigned long long n = std::strtoull(str, end, base);
-            if (str != *end)
-                check_limits<T>(n);
-            return n;
-        }
-
-        template <typename T>
-        T to_number(const char *str, char **end, int, std::true_type, std::true_type)
-        {
-            long double n = std::strtold(str, end);
-            if (str != *end)
-                check_limits<T>(n);
-            return n;
-        }
-
-        //
-        // to_number: takes a string_view, return a pair<T, string_view>
-        //
-
-        template <typename T>
-        std::pair<T, string_view>
-        to_number(string_view v, int base = 10)
-        {
-            auto size = v.size();
-            char str[size+1];
-            str[size] = '\0';
-            memcpy(str, v.data(), size);
-
-            char *end;
-            T r = to_number<T>(str, &end, base, std::is_floating_point<T>{}, std::is_signed<T>{});
-            v.remove_prefix(end - str);
-            return { r, v };
-        }
-    }
-
     //
     // Instances...
     //
@@ -106,7 +44,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<short,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<short>(v);
+            auto ret = to_number<short>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -118,7 +56,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<int,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<int>(v);
+            auto ret = to_number<int>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -130,7 +68,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<long int,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<long int>(v);
+            auto ret = to_number<long int>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -142,7 +80,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<long long int,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<long long int>(v);
+            auto ret = to_number<long long int>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -154,7 +92,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<unsigned short,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<unsigned short>(v);
+            auto ret = to_number<unsigned short>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -166,7 +104,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<unsigned,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<unsigned>(v);
+            auto ret = to_number<unsigned>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -178,7 +116,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<long unsigned,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<long unsigned>(v);
+            auto ret = to_number<long unsigned>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -190,7 +128,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<long long unsigned,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<long long unsigned>(v);
+            auto ret = to_number<long long unsigned>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -202,7 +140,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<float,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<float>(v);
+            auto ret = to_number<float>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -214,7 +152,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<double,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<double>(v);
+            auto ret = to_number<double>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -226,7 +164,7 @@ namespace cat
     {
         std::experimental::optional<std::pair<long double,string_view>> reads(string_view v)
         {
-            auto ret = details::to_number<long double>(v);
+            auto ret = to_number<long double>(v);
             if (ret.second == v)
                 return std::experimental::nullopt;
             return ret;
@@ -239,16 +177,12 @@ namespace cat
     {
         std::experimental::optional<std::pair<char,string_view>> reads(string_view v)
         {
-            auto it = std::begin(v);
-            for(; it != std::end(v); ++it)
-                if (!std::isspace(*it))
-                    break;
-
-            if (it == std::end(v))
+            auto v1 = cat::skipws(v);
+            if (v1.empty())
                 return std::experimental::nullopt;
 
-            v.remove_prefix(1 + std::distance(std::begin(v), it));
-            return std::make_pair(*it, v);
+            auto c = v1.front(); v1.remove_prefix(1);
+            return std::make_pair(c, v1);
         }
     };
 
@@ -257,16 +191,12 @@ namespace cat
     {
         std::experimental::optional<std::pair<unsigned char,string_view>> reads(string_view v)
         {
-            auto it = std::begin(v);
-            for(; it != std::end(v); ++it)
-                if (!std::isspace(*it))
-                    break;
-
-            if (it == std::end(v))
+            auto v1 = cat::skipws(v);
+            if (v1.empty())
                 return std::experimental::nullopt;
 
-            v.remove_prefix(1 + std::distance(std::begin(v), it));
-            return std::make_pair(static_cast<unsigned char>(*it), v);
+            auto c = v1.front(); v1.remove_prefix(1);
+            return std::make_pair(static_cast<unsigned char>(c), v1);
         }
     };
 

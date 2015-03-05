@@ -29,14 +29,12 @@
 #include <cat/read/read.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/bits/type.hpp>
+#include <cat/string_view.hpp>
 
 #include <experimental/optional>
-#include <experimental/string_view>
 
 namespace cat
 {
-    using std::experimental::string_view;
-
     //
     // instance
     //
