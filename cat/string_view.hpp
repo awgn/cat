@@ -26,12 +26,16 @@
 
 #pragma once
 
+#include <cat/bits/type.hpp>
 #include <type_traits>
+
 #include <experimental/string_view>
+#include <experimental/optional>
 
 #include <cctype>
 #include <limits>
 #include <cstring>
+#include <stdexcept>
 
 namespace cat
 {
@@ -78,7 +82,6 @@ namespace cat
 
     }
 
-
     //
     // to_number: takes a string_view, return a pair<Number, string_view>
     //
@@ -109,6 +112,55 @@ namespace cat
               std::isspace(s.front()))
             s.remove_prefix(1);
         return s;
+    }
+
+    //
+    // consume the given char, return nullopt
+    // otherwise
+    //
+
+    inline std::experimental::optional<string_view>
+    consume(const char c, string_view s)
+    {
+        auto s1 = skipws(s);
+        if (!s1.empty() && s1.front() == c)
+        {
+            s1.remove_prefix(1);
+            return s1;
+        }
+        return std::experimental::nullopt;
+    }
+
+    //
+    // consume the given string, return nullopt
+    // otherwise
+    //
+
+    inline std::experimental::optional<string_view>
+    consume(const char *str, string_view s)
+    {
+        auto size = std::strlen(str);
+        auto s1 = skipws(s);
+        if (s1.compare(0, size, str))
+            return std::experimental::nullopt;
+        s1.remove_prefix(size);
+        return s1;
+    }
+
+    //
+    // trim
+    //
+
+    inline string_view
+    trim(string_view str)
+    {
+        auto b = str.find_first_not_of(" \n\r\t");
+        auto e = str.find_last_not_of(" \n\r\t");
+
+        b = b == string_view::npos ? 0 : b;
+        e = e == string_view::npos ? 0 : (e + 1 - b);
+
+        return str.substr(b, e);
     }
 
 

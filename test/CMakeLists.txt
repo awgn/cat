@@ -13,6 +13,7 @@ add_executable(test-tuple test/test-tuple.cpp)
 add_executable(test-functional test/test-functional.cpp)
 add_executable(test-iterator test/test-iterator.cpp)
 add_executable(test-forward test/test-forward.cpp)
+add_executable(test-string_view test/test-string_view.cpp)
 
 add_executable(test-functor test/test-functor.cpp)
 add_executable(test-bifunctor test/test-bifunctor.cpp)
