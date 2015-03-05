@@ -145,8 +145,8 @@ Context(functor)
 
     Test(functor_optional)
     {
-        auto x = std::experimental::make_optional<std::string>("one");
-        auto y = std::experimental::optional<std::string>();
+        auto x = make_optional<std::string>("one");
+        auto y = optional<std::string>();
 
         auto r1 = fmap([](const std::string &s) { return s.size(); }, x);
         auto r2 = fmap([](const std::string &s) { return s.size(); }, y);
@@ -263,7 +263,7 @@ Context(functor)
         functor_constraint( std::forward_list<std::string>  { "one", "two", "three" });
         functor_constraint( std::make_shared<std::string>( "one" ));
         functor_constraint( std::make_unique<std::string>( "one" ));
-        functor_constraint( std::experimental::make_optional<std::string>( "one" ));
+        functor_constraint( make_optional<std::string>( "one" ));
         functor_constraint( std::map<std::string, int>{} );
         functor_constraint( std::unordered_map<std::string, int>{} );
         functor_constraint( std::multimap<std::string, int>{} );

@@ -15,12 +15,12 @@ Context(test_read)
         string_view spaces("    ");
         string_view s(" hello world ");
 
-        Assert( cat::consume('x', spaces) == std::experimental::nullopt);
-        Assert( cat::consume('x', s) == std::experimental::nullopt);
+        Assert( cat::consume('x', spaces) == nullopt);
+        Assert( cat::consume('x', s) == nullopt);
         Assert( cat::consume('h', s).value() == string_view{"ello world "});
 
-        Assert( cat::consume("ciao", spaces) == std::experimental::nullopt);
-        Assert( cat::consume("ciao", s) == std::experimental::nullopt);
+        Assert( cat::consume("ciao", spaces) == nullopt);
+        Assert( cat::consume("ciao", s) == nullopt);
         Assert( cat::consume("hello", s).value() == string_view{" world "});
     }
 

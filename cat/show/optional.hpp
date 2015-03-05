@@ -28,7 +28,7 @@
 
 #include <cat/show/show.hpp>
 
-#include <experimental/optional>
+#include <cat/optional.hpp>
 
 namespace cat
 {
@@ -37,10 +37,10 @@ namespace cat
     //
 
     template <typename T>
-    struct ShowInstance<std::experimental::optional<T>> final : Show<std::experimental::optional<T>>
+    struct ShowInstance<optional<T>> final : Show<optional<T>>
     {
         std::string
-        show(const std::experimental::optional<T> &t)
+        show(const optional<T> &t)
         {
             if (t)
                 return std::string(1, '(') + cat::show(t.value()) + ')';
@@ -49,10 +49,10 @@ namespace cat
     };
 
     template <>
-    struct ShowInstance<std::experimental::nullopt_t> final : Show<std::experimental::nullopt_t>
+    struct ShowInstance<nullopt_t> final : Show<nullopt_t>
     {
         std::string
-        show(const std::experimental::nullopt_t &)
+        show(const nullopt_t &)
         {
             return "()";
         }

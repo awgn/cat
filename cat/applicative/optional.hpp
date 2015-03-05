@@ -26,36 +26,36 @@
 
 #pragma once
 
-#include <experimental/optional>
+#include <cat/optional.hpp>
 #include <cat/applicative/applicative.hpp>
 
 namespace cat
 {
-    // experimental::optional is an applicative instance:
+    // optional is an applicative instance:
     //
 
-    template <> struct is_applicative<std::experimental::optional> : std::true_type { };
+    template <> struct is_applicative<optional> : std::true_type { };
 
-    // experimental::optional instance:
+    // optional instance:
     //
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
-    struct ApplicativeInstance<std::experimental::optional<F>, std::experimental::optional<A>, Ff_, Fa_, A_>  final : Applicative<std::experimental::optional>::
+    struct ApplicativeInstance<optional<F>, optional<A>, Ff_, Fa_, A_>  final : Applicative<optional>::
     template _<F, A, Ff_, Fa_, A_>
     {
         using B = std::result_of_t<F(A_)>;
 
-        std::experimental::optional<A>
+        optional<A>
         pure(A_ &&elem) override
         {
-            return std::experimental::make_optional(std::forward<A_>(elem));
+            return make_optional(std::forward<A_>(elem));
         }
 
-        std::experimental::optional<B>
+        optional<B>
         apply(Ff_ && f, Fa_ &&x) override
         {
             if (f && x)
-                return std::experimental::make_optional<B>(forward_as<Ff_>(*f)(forward_as<Fa_>(*x)));
+                return make_optional<B>(forward_as<Ff_>(*f)(forward_as<Fa_>(*x)));
 
             return {};
         }

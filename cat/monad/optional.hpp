@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <experimental/optional>
+#include <cat/optional.hpp>
 #include <cat/monad/monad.hpp>
 
 namespace cat
@@ -34,18 +34,18 @@ namespace cat
     // optional is a monad:
     //
 
-    template <> struct is_monad<std::experimental::optional> : std::true_type { };
+    template <> struct is_monad<optional> : std::true_type { };
 
-    // experimental::optional instance:
+    // optional instance:
     //
 
     template <typename A, typename Fun, typename Ma_, typename A_>
-    struct MonadInstance<std::experimental::optional<A>, Fun, Ma_, A_> final : Monad<std::experimental::optional>::
+    struct MonadInstance<optional<A>, Fun, Ma_, A_> final : Monad<optional>::
     template _<Fun, A, Ma_, A_>
     {
         using B = inner_type_t<std::result_of_t<Fun(A)>>;
 
-        std::experimental::optional<B>
+        optional<B>
         mbind(Ma_ && x, Fun f) override
         {
             if (!x)
@@ -53,7 +53,7 @@ namespace cat
             return f(forward_as<Ma_>(*x));
         }
 
-        std::experimental::optional<A>
+        optional<A>
         mreturn(A_ && a) override
         {
             return {std::forward<A_>(a)};
@@ -64,22 +64,22 @@ namespace cat
     // optional is a monad_plus:
     //
 
-    template <> struct is_monad_plus<std::experimental::optional> : std::true_type { };
+    template <> struct is_monad_plus<optional> : std::true_type { };
 
-    // experimental::optional instance:
+    // optional instance:
     //
 
     template <typename A, typename Ma_, typename Mb_>
-    struct MonadPlusInstance<std::experimental::optional<A>, Ma_, Mb_> final : MonadPlus<std::experimental::optional>::
+    struct MonadPlusInstance<optional<A>, Ma_, Mb_> final : MonadPlus<optional>::
     template _<A, Ma_, Mb_>
     {
-        std::experimental::optional<A>
+        optional<A>
         mzero() override
         {
-            return std::experimental::nullopt;
+            return nullopt;
         }
 
-        std::experimental::optional<A>
+        optional<A>
         mplus(Ma_ && a, Mb_ && b) override
         {
             if (a)

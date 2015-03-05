@@ -27,7 +27,6 @@
 #pragma once
 
 #include <cat/read/read.hpp>
-#include <cat/read/fundamental.hpp>
 #include <cat/monad/optional.hpp>
 
 #include <cat/tuple.hpp>
@@ -42,7 +41,7 @@ namespace cat
     template <typename T1, typename T2>
     struct ReadInstance<std::pair<T1,T2>> final : Read<std::pair<T1, T2>>
     {
-        std::experimental::optional<std::pair<std::pair<T1,T2>,string_view>>
+        optional<std::pair<std::pair<T1,T2>,string_view>>
         reads(string_view v)
         {
             //
@@ -50,17 +49,17 @@ namespace cat
             //
             // auto v1 = consume('(', v);
             // if (!v1)
-            //     return std::experimental::nullopt;
+            //     return nullopt;
             // auto t1 = cat::reads<T1>(v1.value());
             // if (!t1)
-            //     return std::experimental::nullopt;
+            //     return nullopt;
             // auto t2 = cat::reads<T2>(t1.value().second);
             // if (!t2)
-            //     return std::experimental::nullopt;
+            //     return nullopt;
             // auto c2 = consume(')', t2.value().second);
             // if (!c2)
-            //     return std::experimental::nullopt;
-            // return std::experimental::make_optional(std::make_pair(std::make_pair(t1.value().first, t2.value().first), c2.value()));
+            //     return nullopt;
+            // return make_optional(std::make_pair(std::make_pair(t1.value().first, t2.value().first), c2.value()));
 
             //
             // The functional way... We all love monads!
@@ -70,7 +69,7 @@ namespace cat
                 return cat::reads<T1>(s1) >>= [&] (auto const &t1) {
                     return cat::reads<T2>(t1.second) >>= [&] (auto const &t2) {
                         return consume(')', t2.second) >>= [&](string_view left) {
-                            return mreturn.in<std::experimental::optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
+                            return mreturn.in<optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
                         };
                     };
                 };
@@ -82,7 +81,7 @@ namespace cat
     template <typename ...Ts>
     struct ReadInstance<std::tuple<Ts...>> final : Read<std::tuple<Ts...>>
     {
-        std::experimental::optional<std::pair<std::tuple<Ts...>,string_view>>
+        optional<std::pair<std::tuple<Ts...>,string_view>>
         reads(string_view s)
         {
             if (auto s_ = consume('(', s))
@@ -104,11 +103,11 @@ namespace cat
                 if (auto left = consume(')', s))
                 {
                     if (cnt == sizeof...(Ts))
-                        return std::experimental::make_optional(std::make_pair(ret, left.value()));
+                        return make_optional(std::make_pair(ret, left.value()));
                 }
             }
 
-            return std::experimental::nullopt;
+            return nullopt;
         }
     };
 

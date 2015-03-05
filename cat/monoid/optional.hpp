@@ -26,30 +26,30 @@
 
 #pragma once
 
-#include <experimental/optional>
+#include <cat/optional.hpp>
 #include <cat/monoid/monoid.hpp>
 
 namespace cat
 {
     template <typename T>
-    struct is_monoid<std::experimental::optional<T>> : std::true_type { };
+    struct is_monoid<optional<T>> : std::true_type { };
 
     template <typename F, typename M1, typename M2, typename T>
-    struct MonoidInstance<std::experimental::optional<T>, F, M1, M2> final : Monoid<std::experimental::optional<T>>::
+    struct MonoidInstance<optional<T>, F, M1, M2> final : Monoid<optional<T>>::
     template _<F, M1, M2>
     {
         static_assert(is_monoid<T>::value, "optional<T>: T must be a monoid");
 
-        virtual std::experimental::optional<T> mempty() override
+        virtual optional<T> mempty() override
         {
-            return std::experimental::optional<T>{};
+            return optional<T>{};
         }
 
-        virtual std::experimental::optional<T>
+        virtual optional<T>
         mappend(M1 &&a, M2 &&b) override
         {
             if (a) {
-                return b ? std::experimental::make_optional(cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)))
+                return b ? make_optional(cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)))
                          : a;
             }
             return b;

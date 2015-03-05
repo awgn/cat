@@ -42,11 +42,11 @@ namespace cat
     template <>
     struct ReadInstance<short> final : Read<short>
     {
-        std::experimental::optional<std::pair<short,string_view>> reads(string_view v)
+        optional<std::pair<short,string_view>> reads(string_view v)
         {
             auto ret = to_number<short>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -54,11 +54,11 @@ namespace cat
     template <>
     struct ReadInstance<int> final : Read<int>
     {
-        std::experimental::optional<std::pair<int,string_view>> reads(string_view v)
+        optional<std::pair<int,string_view>> reads(string_view v)
         {
             auto ret = to_number<int>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -66,11 +66,11 @@ namespace cat
     template <>
     struct ReadInstance<long int> final : Read<long int>
     {
-        std::experimental::optional<std::pair<long int,string_view>> reads(string_view v)
+        optional<std::pair<long int,string_view>> reads(string_view v)
         {
             auto ret = to_number<long int>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -78,11 +78,11 @@ namespace cat
     template <>
     struct ReadInstance<long long int> final : Read<long long int>
     {
-        std::experimental::optional<std::pair<long long int,string_view>> reads(string_view v)
+        optional<std::pair<long long int,string_view>> reads(string_view v)
         {
             auto ret = to_number<long long int>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -90,11 +90,11 @@ namespace cat
     template <>
     struct ReadInstance<unsigned short> final : Read<unsigned short>
     {
-        std::experimental::optional<std::pair<unsigned short,string_view>> reads(string_view v)
+        optional<std::pair<unsigned short,string_view>> reads(string_view v)
         {
             auto ret = to_number<unsigned short>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -102,11 +102,11 @@ namespace cat
     template <>
     struct ReadInstance<unsigned> final : Read<unsigned>
     {
-        std::experimental::optional<std::pair<unsigned,string_view>> reads(string_view v)
+        optional<std::pair<unsigned,string_view>> reads(string_view v)
         {
             auto ret = to_number<unsigned>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -114,11 +114,11 @@ namespace cat
     template <>
     struct ReadInstance<long unsigned> final : Read<long unsigned>
     {
-        std::experimental::optional<std::pair<long unsigned,string_view>> reads(string_view v)
+        optional<std::pair<long unsigned,string_view>> reads(string_view v)
         {
             auto ret = to_number<long unsigned>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -126,11 +126,11 @@ namespace cat
     template <>
     struct ReadInstance<long long unsigned> final : Read<long long unsigned>
     {
-        std::experimental::optional<std::pair<long long unsigned,string_view>> reads(string_view v)
+        optional<std::pair<long long unsigned,string_view>> reads(string_view v)
         {
             auto ret = to_number<long long unsigned>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -138,11 +138,11 @@ namespace cat
     template <>
     struct ReadInstance<float> final : Read<float>
     {
-        std::experimental::optional<std::pair<float,string_view>> reads(string_view v)
+        optional<std::pair<float,string_view>> reads(string_view v)
         {
             auto ret = to_number<float>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -150,11 +150,11 @@ namespace cat
     template <>
     struct ReadInstance<double> final : Read<double>
     {
-        std::experimental::optional<std::pair<double,string_view>> reads(string_view v)
+        optional<std::pair<double,string_view>> reads(string_view v)
         {
             auto ret = to_number<double>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -162,11 +162,11 @@ namespace cat
     template <>
     struct ReadInstance<long double> final : Read<long double>
     {
-        std::experimental::optional<std::pair<long double,string_view>> reads(string_view v)
+        optional<std::pair<long double,string_view>> reads(string_view v)
         {
             auto ret = to_number<long double>(v);
             if (ret.second == v)
-                return std::experimental::nullopt;
+                return nullopt;
             return ret;
         }
     };
@@ -175,11 +175,11 @@ namespace cat
     template <>
     struct ReadInstance<char> final : Read<char>
     {
-        std::experimental::optional<std::pair<char,string_view>> reads(string_view v)
+        optional<std::pair<char,string_view>> reads(string_view v)
         {
             auto v1 = cat::skipws(v);
             if (v1.empty())
-                return std::experimental::nullopt;
+                return nullopt;
 
             auto c = v1.front(); v1.remove_prefix(1);
             return std::make_pair(c, v1);
@@ -189,11 +189,11 @@ namespace cat
     template <>
     struct ReadInstance<unsigned char> final : Read<unsigned char>
     {
-        std::experimental::optional<std::pair<unsigned char,string_view>> reads(string_view v)
+        optional<std::pair<unsigned char,string_view>> reads(string_view v)
         {
             auto v1 = cat::skipws(v);
             if (v1.empty())
-                return std::experimental::nullopt;
+                return nullopt;
 
             auto c = v1.front(); v1.remove_prefix(1);
             return std::make_pair(static_cast<unsigned char>(c), v1);
@@ -203,14 +203,14 @@ namespace cat
     template <>
     struct ReadInstance<bool> final : Read<bool>
     {
-        std::experimental::optional<std::pair<bool,string_view>> reads(string_view v)
+        optional<std::pair<bool,string_view>> reads(string_view v)
         {
             std::istringstream in(v.to_string());
             bool x; in >> std::noboolalpha;
             if (!(in >> x)) {
                 in.clear();
                 if (!(in >> std::boolalpha >> x))
-                    return std::experimental::nullopt;
+                    return nullopt;
             }
             v.remove_prefix(in.tellg());
             return std::make_pair(x, v);

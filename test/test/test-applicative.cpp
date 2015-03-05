@@ -212,13 +212,13 @@ Context(applicative)
 
     Test(applicative_optional)
     {
-        auto z  = pure.in<std::experimental::optional>(42);
+        auto z  = pure.in<optional>(42);
 
-        auto f  = std::experimental::make_optional<std::function<int(int)>> ([](int n) { return n+1; });
-        auto f_ = std::experimental::optional<std::function<int(int)>>();
+        auto f  = make_optional<std::function<int(int)>> ([](int n) { return n+1; });
+        auto f_ = optional<std::function<int(int)>>();
 
-        auto x  = std::experimental::make_optional<int>(41);
-        auto x_ = std::experimental::optional<int>();
+        auto x  = make_optional<int>(41);
+        auto x_ = optional<int>();
 
         auto y1 = f  * x;
         auto y2 = f_ * x;
@@ -246,7 +246,7 @@ Context(applicative)
 
         std::cout << type_of(sum) << std::endl;
 
-        auto x = std::experimental::make_optional(21);
+        auto x = make_optional(21);
 
         auto a  = std::vector<int>{ 1, 2 };
         auto b  = std::vector<int>{ 0, 1, 2};

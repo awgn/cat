@@ -28,9 +28,9 @@
 
 #include <cat/show/show.hpp>
 #include <cat/type_traits.hpp>
+#include <cat/string_view.hpp>
 
 #include <string>
-#include <experimental/string_view>
 
 namespace cat
 {
@@ -48,9 +48,9 @@ namespace cat
     };
 
     template <>
-    struct ShowInstance<std::experimental::string_view> final : Show<std::experimental::string_view>
+    struct ShowInstance<string_view> final : Show<string_view>
     {
-        std::string show(std::experimental::string_view const &v)
+        std::string show(string_view const &v)
         {
             return '"' + v.to_string() + '"';
         }

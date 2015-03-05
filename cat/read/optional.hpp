@@ -27,7 +27,6 @@
 #pragma once
 
 #include <cat/read/read.hpp>
-#include <cat/read/fundamental.hpp>
 #include <cat/monad/optional.hpp>
 
 #include <type_traits>
@@ -39,24 +38,24 @@ namespace cat
     //
 
     template <typename T>
-    struct ReadInstance<std::experimental::optional<T>> final : Read<std::experimental::optional<T>>
+    struct ReadInstance<optional<T>> final : Read<optional<T>>
     {
-        std::experimental::optional<std::pair<std::experimental::optional<T>,string_view>>
+        optional<std::pair<optional<T>,string_view>>
         reads(string_view v)
         {
             return consume('(', v) >>= [](string_view s1)
-                -> std::experimental::optional<std::pair< std::experimental::optional<T>, string_view>>
+                -> optional<std::pair< optional<T>, string_view>>
             {
                 if (auto val = cat::reads<T>(s1) >>= [&] (auto const &t) {
                         return consume(')', t.second) >>= [&](string_view left) {
-                            return mreturn.in<std::experimental::optional>(std::make_pair(std::experimental::make_optional(t.first), left));
+                            return mreturn.in<optional>(std::make_pair(make_optional(t.first), left));
                         }; })
                     return val;
 
                 if (auto nothing = consume(')', s1))
-                    return mreturn.in<std::experimental::optional>(std::make_pair(std::experimental::optional<T>{}, nothing.value()));
+                    return mreturn.in<optional>(std::make_pair(optional<T>{}, nothing.value()));
 
-                return std::experimental::nullopt;
+                return nullopt;
             };
         }
     };

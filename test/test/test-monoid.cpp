@@ -75,11 +75,11 @@ Context(monoid)
         auto a = Any{ true };
         auto b = Any{ false };
 
-        Assert(mempty<std::experimental::optional<Any>>() == std::experimental::optional<Any>());
+        Assert(mempty<optional<Any>>() == optional<Any>());
 
-        Assert(mappend(std::experimental::make_optional(a), std::experimental::optional<Any>()) == a);
-        Assert(mappend(std::experimental::optional<Any>(),  std::experimental::make_optional(b)) == b);
-        Assert(mappend(std::experimental::make_optional(a), std::experimental::make_optional(b)) == mappend(a,b));
+        Assert(mappend(make_optional(a), optional<Any>()) == a);
+        Assert(mappend(optional<Any>(),  make_optional(b)) == b);
+        Assert(mappend(make_optional(a), make_optional(b)) == mappend(a,b));
     }
 
 

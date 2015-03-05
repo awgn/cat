@@ -29,8 +29,7 @@
 #include <cat/type_traits.hpp>
 #include <cat/bits/type.hpp>
 #include <cat/string_view.hpp>
-
-#include <experimental/optional>
+#include <cat/optional.hpp>
 
 namespace cat
 {
@@ -55,7 +54,7 @@ namespace cat
     template <typename T>
     struct Read
     {
-        virtual std::experimental::optional<std::pair<T, string_view>> reads(string_view) = 0;
+        virtual optional<std::pair<T, string_view>> reads(string_view) = 0;
     };
 
     //
@@ -91,7 +90,7 @@ namespace cat
     //
 
     template <typename T>
-    std::experimental::optional<std::pair<T, string_view>>
+    optional<std::pair<T, string_view>>
     reads(std::string const &str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
@@ -99,7 +98,7 @@ namespace cat
     }
 
     template <typename T>
-    std::experimental::optional<std::pair<T, string_view>>
+    optional<std::pair<T, string_view>>
     reads(string_view str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
@@ -107,7 +106,7 @@ namespace cat
     }
 
     template <typename T>
-    std::experimental::optional<std::pair<T, string_view>>
+    optional<std::pair<T, string_view>>
     reads(const char *str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");

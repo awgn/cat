@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <experimental/optional>
+#include <cat/optional.hpp>
 #include <cat/functor/functor.hpp>
 
 namespace cat
@@ -34,24 +34,24 @@ namespace cat
     // optional is a functor:
     //
 
-    template <> struct is_functor<std::experimental::optional> : std::true_type { };
+    template <> struct is_functor<optional> : std::true_type { };
 
-    // experimental::optional instance:
+    // optional instance:
     //
 
     template <typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<std::experimental::optional<A>, Fun, Fa_> final : Functor<std::experimental::optional>::
+    struct FunctorInstance<optional<A>, Fun, Fa_> final : Functor<optional>::
     template _<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 
-        std::experimental::optional<B>
+        optional<B>
         fmap(Fun f, Fa_ && x) override
         {
             if (x)
-                return std::experimental::make_optional(f(forward_as<Fa_>(*x)));
+                return make_optional(f(forward_as<Fa_>(*x)));
 
-            return std::experimental::optional<B>();
+            return optional<B>();
         }
     };
 

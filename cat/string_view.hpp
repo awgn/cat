@@ -27,10 +27,10 @@
 #pragma once
 
 #include <cat/bits/type.hpp>
-#include <type_traits>
+#include <cat/optional.hpp>
 
+#include <type_traits>
 #include <experimental/string_view>
-#include <experimental/optional>
 
 #include <cctype>
 #include <limits>
@@ -119,7 +119,7 @@ namespace cat
     // otherwise
     //
 
-    inline std::experimental::optional<string_view>
+    inline optional<string_view>
     consume(const char c, string_view s)
     {
         auto s1 = skipws(s);
@@ -128,7 +128,7 @@ namespace cat
             s1.remove_prefix(1);
             return s1;
         }
-        return std::experimental::nullopt;
+        return nullopt;
     }
 
     //
@@ -136,13 +136,13 @@ namespace cat
     // otherwise
     //
 
-    inline std::experimental::optional<string_view>
+    inline optional<string_view>
     consume(const char *str, string_view s)
     {
         auto size = std::strlen(str);
         auto s1 = skipws(s);
         if (s1.compare(0, size, str))
-            return std::experimental::nullopt;
+            return nullopt;
         s1.remove_prefix(size);
         return s1;
     }

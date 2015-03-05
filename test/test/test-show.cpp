@@ -35,7 +35,7 @@ Context(test_show)
         print(42.0l);
 
         print(std::string("Hello World"));
-        print(std::experimental::string_view("Hello World"));
+        print(string_view("Hello World"));
 
         print('f');
         print(static_cast<unsigned char>('x'));
@@ -75,9 +75,9 @@ Context(test_show)
         print(std::integral_constant<bool, true>());
         print(std::make_integer_sequence<int, 10>{});
 
-        print(std::experimental::make_optional(42));
-        print(std::experimental::optional<int>());
-        print(std::experimental::nullopt);
+        print(make_optional(42));
+        print(optional<int>());
+        print(nullopt);
     }
 }
 

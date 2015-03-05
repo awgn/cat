@@ -14,7 +14,7 @@ Context(test_read)
 {
     Test(simple)
     {
-        Assert(reads<short>("...") == std::experimental::nullopt);
+        Assert(reads<short>("...") == nullopt);
 
         Assert(reads<unsigned char>(" test").value() == std::make_pair<unsigned char, string_view>('t', "est"));
 
@@ -35,7 +35,7 @@ Context(test_read)
 
         Assert(reads<char>("abc").value() == std::make_pair<char, string_view>('a', "bc"));
         Assert(reads<char>("   a").value() == std::make_pair<char, string_view>('a', ""));
-        Assert(reads<char>("   ") == std::experimental::nullopt);
+        Assert(reads<char>("   ") == nullopt);
 
         Assert(reads<bool>("true.").value() == std::make_pair<bool, string_view>(true, "."));
         Assert(reads<bool>("false.").value() == std::make_pair<bool, string_view>(false, "."));
@@ -45,9 +45,9 @@ Context(test_read)
 
     Test(pair)
     {
-        Assert(reads<std::pair<char, int>>("x") == std::experimental::nullopt);
-        Assert(reads<std::pair<char, int>>(" (  x )") == std::experimental::nullopt);
-        Assert(reads<std::pair<char, int>>(" (  x )") == std::experimental::nullopt);
+        Assert(reads<std::pair<char, int>>("x") == nullopt);
+        Assert(reads<std::pair<char, int>>(" (  x )") == nullopt);
+        Assert(reads<std::pair<char, int>>(" (  x )") == nullopt);
         Assert(reads<std::pair<char, int>>("(x 42)").value() == std::make_pair< std::pair<char,int>, string_view>( {'x', 42 }, "" ));
         Assert(reads<std::pair<char, int>>(" (  x 42)!").value() == std::make_pair< std::pair<char,int>, string_view>( {'x', 42 }, "!" ));
     }
@@ -55,27 +55,27 @@ Context(test_read)
 
     Test(tuple)
     {
-        Assert(reads<std::tuple<int>>("x") == std::experimental::nullopt);
+        Assert(reads<std::tuple<int>>("x") == nullopt);
         Assert(reads<std::tuple<int>>(" ( 42)") == std::make_pair(std::make_tuple(42), string_view{""}));
-        Assert(reads<std::tuple<char, int, double>>("x") == std::experimental::nullopt);
-        Assert(reads<std::tuple<char, int, double>>(" (  x )") == std::experimental::nullopt);
-        Assert(reads<std::tuple<char, int, double>>(" (  x )") == std::experimental::nullopt);
+        Assert(reads<std::tuple<char, int, double>>("x") == nullopt);
+        Assert(reads<std::tuple<char, int, double>>(" (  x )") == nullopt);
+        Assert(reads<std::tuple<char, int, double>>(" (  x )") == nullopt);
         Assert(reads<std::tuple<char, int, double>>("(x 42 1.0)").value() == std::make_pair( std::make_tuple<char, int, double>('x', 42, 1.0 ), string_view{""} ));
         Assert(reads<std::tuple<char, int, double>>(" (  x 42 1.0)!").value() == std::make_pair( std::make_tuple<char, int, double>('x', 42, 1.0 ), string_view{"!"} ));
     }
 
     Test(optional)
     {
-        Assert(reads<std::experimental::optional<int>>("x") == std::experimental::nullopt);
-        Assert(reads<std::experimental::optional<int>>(" (  x )") == std::experimental::nullopt);
-        Assert(reads<std::experimental::optional<int>>(" (  )").value() == std::pair<std::experimental::optional<int>, string_view>());
-        Assert(reads<std::experimental::optional<int>>(" (  11 )") == std::make_pair(std::experimental::make_optional(11), string_view{""}));
+        Assert(reads<optional<int>>("x") == nullopt);
+        Assert(reads<optional<int>>(" (  x )") == nullopt);
+        Assert(reads<optional<int>>(" (  )").value() == std::pair<optional<int>, string_view>());
+        Assert(reads<optional<int>>(" (  11 )") == std::make_pair(make_optional(11), string_view{""}));
 
 
-        Assert(reads<std::tuple<std::experimental::optional<int>>>("x") == std::experimental::nullopt);
-        Assert(reads<std::tuple<std::experimental::optional<int>>>("()") == std::experimental::nullopt);
-        Assert(reads<std::tuple<std::experimental::optional<int>>>("(())").value() == std::make_pair(std::tuple<std::experimental::optional<int>>{}, string_view{""}));
-        Assert(reads<std::tuple<std::experimental::optional<int>>>("((42) )!").value() == std::make_pair(std::tuple<std::experimental::optional<int>>{42}, string_view{"!"}));
+        Assert(reads<std::tuple<optional<int>>>("x") == nullopt);
+        Assert(reads<std::tuple<optional<int>>>("()") == nullopt);
+        Assert(reads<std::tuple<optional<int>>>("(())").value() == std::make_pair(std::tuple<optional<int>>{}, string_view{""}));
+        Assert(reads<std::tuple<optional<int>>>("((42) )!").value() == std::make_pair(std::tuple<optional<int>>{42}, string_view{"!"}));
     }
 }
 
