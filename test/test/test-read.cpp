@@ -1,4 +1,5 @@
 #include <cat/read.hpp>
+#include <cat/show.hpp>
 #include <cat/bits/type.hpp>
 
 #include <utility>
@@ -76,6 +77,15 @@ Context(test_read)
         Assert(reads<std::tuple<optional<int>>>("()") == nullopt);
         Assert(reads<std::tuple<optional<int>>>("(())").value() == std::make_pair(std::tuple<optional<int>>{}, string_view{""}));
         Assert(reads<std::tuple<optional<int>>>("((42) )!").value() == std::make_pair(std::tuple<optional<int>>{42}, string_view{"!"}));
+    }
+
+    Test(string)
+    {
+        Assert(reads<std::string>("x") == nullopt);
+        Assert(reads<std::string>(R"(""!)") == std::make_pair(std::string(""), string_view{"!"}));
+        Assert(reads<std::string>(R"("x")") == std::make_pair(std::string("x"), string_view{""}));
+        Assert(reads<std::string>(R"(   "abc" )") == std::make_pair(std::string("abc"), string_view{" "}));
+        Assert(reads<std::string>(R"(   "abc\"123" )") == std::make_pair(std::string("abc\"123"), string_view{" "}));
     }
 }
 
