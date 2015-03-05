@@ -52,6 +52,13 @@ namespace cat
         }
 
         template <typename Fun, typename TupleT, size_t ...N>
+        void tuple_foreach_index(Fun fun, TupleT &&tup, std::index_sequence<N...>)
+        {
+            std::initializer_list<bool> sink {(fun(std::integral_constant<size_t, N>{}, std::get<N>(std::forward<TupleT>(tup))), true)...};
+            (void)sink;
+        }
+
+        template <typename Fun, typename TupleT, size_t ...N>
         auto tuple_map(Fun fun, TupleT &&tup, std::index_sequence<N...>)
         {
             return std::make_tuple(fun(std::get<N>(std::forward<TupleT>(tup)))...);
@@ -92,6 +99,20 @@ namespace cat
                                       std::forward<TupleT>(tup),
                                       std::make_index_sequence<
                                         std::tuple_size<std::decay_t<TupleT>>::value>());
+    }
+
+
+    //
+    // tuple_foreach_index: polymorphic actions over tuple with indexes
+    //
+
+    template <typename Fun, typename TupleT>
+    void tuple_foreach_index(Fun fun, TupleT &&tup)
+    {
+        return details::tuple_foreach_index(fun,
+                                            std::forward<TupleT>(tup),
+                                            std::make_index_sequence<
+                                                std::tuple_size<std::decay_t<TupleT>>::value>());
     }
 
     //

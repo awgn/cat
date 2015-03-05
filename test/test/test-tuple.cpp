@@ -80,6 +80,22 @@ Context(tuple)
         Assert(sum, is_equal_to(6));
     }
 
+    Test(for_each_index)
+    {
+        std::tuple<int,int,int> const v {1,2,3};
+        int sum = 0;
+        int idx = 0;
+
+        tuple_foreach_index([&](auto index, int n) {
+                              sum += n;
+                              idx += index.value;
+                             }, v);
+
+        Assert(sum, is_equal_to(6));
+        Assert(idx, is_equal_to(3));
+    }
+
+
     Test(map)
     {
         auto t = tuple_map(strlen, std::make_tuple("hello", "world"));
