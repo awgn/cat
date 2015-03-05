@@ -41,7 +41,7 @@ namespace cat
     template <typename T>
     struct ShowInstance<T *> final : Show<T *>
     {
-        std::string show(T * const &p)
+        std::string show(T * const &p) override
         {
             std::ostringstream out;
             out << static_cast<const void *>(p);
@@ -52,7 +52,7 @@ namespace cat
     template <typename T>
     struct ShowInstance<std::unique_ptr<T>> final : Show<std::unique_ptr<T>>
     {
-        std::string show(std::unique_ptr<T> const &p)
+        std::string show(std::unique_ptr<T> const &p) override
         {
             std::ostringstream out;
             out << static_cast<const void *>(p.get()) << "_up";
@@ -63,7 +63,7 @@ namespace cat
     template <typename T>
     struct ShowInstance<std::shared_ptr<T>> final : Show<std::shared_ptr<T>>
     {
-        std::string show(std::shared_ptr<T> const &p)
+        std::string show(std::shared_ptr<T> const &p) override
         {
             std::ostringstream out;
             out << static_cast<const void *>(p.get()) << "_sp" << p.use_count();

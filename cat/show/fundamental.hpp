@@ -41,84 +41,126 @@ namespace cat
     template <>
     struct ShowInstance<short> final : Show<short>
     {
-        std::string show(short const &v) { return std::to_string(v); }
+        std::string show(short const &v) override
+        {
+            return std::to_string(v);
+        }
     };
 
     template <>
     struct ShowInstance<int> final : Show<int>
     {
-        std::string show(int const &v) { return std::to_string(v); }
+        std::string show(int const &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<long int> final : Show<long int>
     {
-        std::string show(long int const &v) { return std::to_string(v); }
+        std::string show(long int const &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<long long int> final : Show<long long int>
     {
-        std::string show(long long int const &v) { return std::to_string(v); }
+        std::string show(long long int const &v) override
+        {
+            return std::to_string(v);
+        }
     };
 
     template <>
     struct ShowInstance<short unsigned> final : Show<short unsigned>
     {
-        std::string show(short unsigned const &v) { return std::to_string(v); }
+        std::string show(short unsigned const &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<unsigned> final : Show<unsigned>
     {
-        std::string show(unsigned const &v) { return std::to_string(v); }
+        std::string show(unsigned const &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<long unsigned> final : Show<long unsigned>
     {
-        std::string show(long unsigned const &v) { return std::to_string(v); }
+        std::string show(long unsigned const &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<long long unsigned> final : Show<long long unsigned>
     {
-        std::string show(long long unsigned const &v) { return std::to_string(v); }
+        std::string show(long long unsigned const &v) override
+        {
+            return std::to_string(v);
+        }
     };
 
     template <>
     struct ShowInstance<float> final : Show<float>
     {
-        std::string show(const float &v) { return std::to_string(v); }
+        std::string show(const float &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<double> final : Show<double>
     {
-        std::string show(const double &v) { return std::to_string(v); }
+        std::string show(const double &v) override
+        {
+            return std::to_string(v);
+        }
     };
     template <>
     struct ShowInstance<long double> final : Show<long double>
     {
-        std::string show(const long double &v) { return std::to_string(v); }
+        std::string show(const long double &v) override
+        {
+            return std::to_string(v);
+        }
     };
 
     template <>
     struct ShowInstance<char> final : Show<char>
     {
-        std::string show(char const &c) { return "'" + std::string(1, c) + "'"; }
+        std::string show(char const &c) override
+        {
+            return "'" + std::string(1, c) + "'";
+        }
     };
 
     template <>
     struct ShowInstance<unsigned char> final : Show<unsigned char>
     {
-        std::string show(unsigned char const &c) { return std::to_string(c); }
+        std::string show(unsigned char const &c) override
+        {
+            return std::to_string(c);
+        }
     };
 
     template <>
     struct ShowInstance<bool> final : Show<bool>
     {
-        std::string show(bool const &v) { return v ? "true" : "false"; }
+        std::string show(bool const &v) override
+        {
+            return v ? "true" : "false";
+        }
     };
 
     template <>
     struct ShowInstance<std::nullptr_t> final : Show<std::nullptr_t>
     {
-        std::string show(std::nullptr_t const &)
+        std::string show(std::nullptr_t const &) override
         {
             return "nullptr";
         }
@@ -128,7 +170,7 @@ namespace cat
     struct ShowInstance<std::integral_constant<T, value>> final : Show<std::integral_constant<T, value>>
     {
         std::string
-        show(std::integral_constant<T, value> const &)
+        show(std::integral_constant<T, value> const &) override
         {
             return type_name<T>() + ":" + cat::show(value);
         }
@@ -138,7 +180,7 @@ namespace cat
     struct ShowInstance<std::integer_sequence<T, Ints...>> final : Show<std::integer_sequence<T, Ints...>>
     {
         std::string
-        show(std::integer_sequence<T, Ints...> const &)
+        show(std::integer_sequence<T, Ints...> const &) override
         {
             std::string out = "{" + type_name<T>() + ": ";
             if (sizeof...(Ints))

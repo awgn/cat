@@ -40,7 +40,7 @@ namespace cat
     struct ShowInstance<optional<T>> final : Show<optional<T>>
     {
         std::string
-        show(const optional<T> &t)
+        show(const optional<T> &t) override
         {
             if (t)
                 return std::string(1, '(') + cat::show(t.value()) + ')';
@@ -52,7 +52,7 @@ namespace cat
     struct ShowInstance<nullopt_t> final : Show<nullopt_t>
     {
         std::string
-        show(const nullopt_t &)
+        show(const nullopt_t &) override
         {
             return "()";
         }

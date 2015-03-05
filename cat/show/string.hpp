@@ -41,7 +41,7 @@ namespace cat
     template <>
     struct ShowInstance<std::string> final : Show<std::string>
     {
-        std::string show(std::string const &v)
+        std::string show(std::string const &v) override
         {
             return '"' + v + '"';
         }
@@ -50,7 +50,7 @@ namespace cat
     template <>
     struct ShowInstance<string_view> final : Show<string_view>
     {
-        std::string show(string_view const &v)
+        std::string show(string_view const &v) override
         {
             return '"' + v.to_string() + '"';
         }
@@ -59,7 +59,7 @@ namespace cat
     template <>
     struct ShowInstance<const char *> final : Show<const char *>
     {
-        std::string show(const char * const & s)
+        std::string show(const char * const & s) override
         {
             if (s)
                 return '"' + std::string(s) + '"';

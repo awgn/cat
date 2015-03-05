@@ -41,7 +41,7 @@ namespace cat
     struct ShowInstance<std::pair<T, V>> final : Show<std::pair<T,V>>
     {
         std::string
-        show(const std::pair<T,V> &p)
+        show(const std::pair<T,V> &p) override
         {
             return  '(' + cat::show(p.first) + ' ' + cat::show(p.second) + ')';
         }
@@ -52,7 +52,7 @@ namespace cat
     struct ShowInstance<std::tuple<Ts...>> final : Show<std::tuple<Ts...>>
     {
         std::string
-        show(const std::tuple<Ts...> &t)
+        show(const std::tuple<Ts...> &t) override
         {
             std::string out("(");
 

@@ -62,84 +62,126 @@ namespace cat
     template <typename T>
     struct ShowInstance<std::initializer_list<T>> final : Show<std::initializer_list<T>>
     {
-        std::string show(std::initializer_list<T> const &xs) { return "{ " + details::show_container(xs) + "}"; }
+        std::string show(std::initializer_list<T> const &xs) override
+        {
+            return "{ " + details::show_container(xs) + "}";
+        }
     };
 
     template <typename T, std::size_t N>
     struct ShowInstance<std::array<T, N>> final : Show<std::array<T,N>>
     {
-        std::string show(std::array<T,N> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::array<T,N> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::vector<T>> final : Show<std::vector<T>>
     {
-        std::string show(std::vector<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::vector<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::list<T>> final : Show<std::list<T>>
     {
-        std::string show(std::list<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::list<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::forward_list<T>> final : Show<std::forward_list<T>>
     {
-        std::string show(std::forward_list<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::forward_list<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::deque<T>> final : Show<std::deque<T>>
     {
-        std::string show(std::deque<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::deque<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::set<T>> final : Show<std::set<T>>
     {
-        std::string show(std::set<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::set<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::unordered_set<T>> final : Show<std::unordered_set<T>>
     {
-        std::string show(std::unordered_set<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::unordered_set<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::multiset<T>> final : Show<std::multiset<T>>
     {
-        std::string show(std::multiset<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::multiset<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T>
     struct ShowInstance<std::unordered_multiset<T>> final : Show<std::unordered_multiset<T>>
     {
-        std::string show(std::unordered_multiset<T> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::unordered_multiset<T> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T, typename K>
     struct ShowInstance<std::map<T,K>> final : Show<std::map<T,K>>
     {
-        std::string show(std::map<T,K> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::map<T,K> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T, typename K>
     struct ShowInstance<std::unordered_map<T,K>> final : Show<std::unordered_map<T,K>>
     {
-        std::string show(std::unordered_map<T,K> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::unordered_map<T,K> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T, typename K>
     struct ShowInstance<std::multimap<T,K>> final : Show<std::multimap<T,K>>
     {
-        std::string show(std::multimap<T,K> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::multimap<T,K> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 
     template <typename T, typename K>
     struct ShowInstance<std::unordered_multimap<T,K>> final : Show<std::unordered_multimap<T,K>>
     {
-        std::string show(std::unordered_multimap<T,K> const &xs) { return "[ " + details::show_container(xs) + "]"; }
+        std::string show(std::unordered_multimap<T,K> const &xs) override
+        {
+            return "[ " + details::show_container(xs) + "]";
+        }
     };
 }
