@@ -70,6 +70,12 @@ Context(test_read)
         Assert(reads<std::experimental::optional<int>>(" (  x )") == std::experimental::nullopt);
         Assert(reads<std::experimental::optional<int>>(" (  )").value() == std::pair<std::experimental::optional<int>, string_view>());
         Assert(reads<std::experimental::optional<int>>(" (  11 )") == std::make_pair(std::experimental::make_optional(11), string_view{""}));
+
+
+        Assert(reads<std::tuple<std::experimental::optional<int>>>("x") == std::experimental::nullopt);
+        Assert(reads<std::tuple<std::experimental::optional<int>>>("()") == std::experimental::nullopt);
+        Assert(reads<std::tuple<std::experimental::optional<int>>>("(())").value() == std::make_pair(std::tuple<std::experimental::optional<int>>{}, string_view{""}));
+        Assert(reads<std::tuple<std::experimental::optional<int>>>("((42) )!").value() == std::make_pair(std::tuple<std::experimental::optional<int>>{42}, string_view{"!"}));
     }
 }
 
