@@ -64,6 +64,13 @@ Context(test_read)
         Assert(reads<std::tuple<char, int, double>>(" (  x 42 1.0)!").value() == std::make_pair( std::make_tuple<char, int, double>('x', 42, 1.0 ), string_view{"!"} ));
     }
 
+    Test(optional)
+    {
+        Assert(reads<std::experimental::optional<int>>("x") == std::experimental::nullopt);
+        Assert(reads<std::experimental::optional<int>>(" (  x )") == std::experimental::nullopt);
+        Assert(reads<std::experimental::optional<int>>(" (  )").value() == std::pair<std::experimental::optional<int>, string_view>());
+        Assert(reads<std::experimental::optional<int>>(" (  11 )") == std::make_pair(std::experimental::make_optional(11), string_view{""}));
+    }
 }
 
 
