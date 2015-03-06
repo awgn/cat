@@ -46,7 +46,7 @@
     template <typename T> \
     class has_ ## member \
     { \
-        template <class C> static void check(typename std::decay<decltype(C::member)>::type *) noexcept; \
+        template <class C> static void check(typename std::decay<typename C::member>::type *) noexcept; \
         template <class C> static void check(...) noexcept(false); \
     public: \
     \
