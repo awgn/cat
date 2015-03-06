@@ -42,7 +42,8 @@ namespace cat
     template <>
     struct ReadInstance<short> final : Read<short>
     {
-        optional<std::pair<short,string_view>> reads(string_view v)
+        optional<std::pair<short,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<short>(v);
             if (ret.second == v)
@@ -54,7 +55,8 @@ namespace cat
     template <>
     struct ReadInstance<int> final : Read<int>
     {
-        optional<std::pair<int,string_view>> reads(string_view v)
+        optional<std::pair<int,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<int>(v);
             if (ret.second == v)
@@ -66,7 +68,8 @@ namespace cat
     template <>
     struct ReadInstance<long int> final : Read<long int>
     {
-        optional<std::pair<long int,string_view>> reads(string_view v)
+        optional<std::pair<long int,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<long int>(v);
             if (ret.second == v)
@@ -78,7 +81,8 @@ namespace cat
     template <>
     struct ReadInstance<long long int> final : Read<long long int>
     {
-        optional<std::pair<long long int,string_view>> reads(string_view v)
+        optional<std::pair<long long int,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<long long int>(v);
             if (ret.second == v)
@@ -90,7 +94,8 @@ namespace cat
     template <>
     struct ReadInstance<unsigned short> final : Read<unsigned short>
     {
-        optional<std::pair<unsigned short,string_view>> reads(string_view v)
+        optional<std::pair<unsigned short,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<unsigned short>(v);
             if (ret.second == v)
@@ -102,7 +107,8 @@ namespace cat
     template <>
     struct ReadInstance<unsigned> final : Read<unsigned>
     {
-        optional<std::pair<unsigned,string_view>> reads(string_view v)
+        optional<std::pair<unsigned,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<unsigned>(v);
             if (ret.second == v)
@@ -114,7 +120,8 @@ namespace cat
     template <>
     struct ReadInstance<long unsigned> final : Read<long unsigned>
     {
-        optional<std::pair<long unsigned,string_view>> reads(string_view v)
+        optional<std::pair<long unsigned,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<long unsigned>(v);
             if (ret.second == v)
@@ -126,7 +133,8 @@ namespace cat
     template <>
     struct ReadInstance<long long unsigned> final : Read<long long unsigned>
     {
-        optional<std::pair<long long unsigned,string_view>> reads(string_view v)
+        optional<std::pair<long long unsigned,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<long long unsigned>(v);
             if (ret.second == v)
@@ -138,7 +146,8 @@ namespace cat
     template <>
     struct ReadInstance<float> final : Read<float>
     {
-        optional<std::pair<float,string_view>> reads(string_view v)
+        optional<std::pair<float,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<float>(v);
             if (ret.second == v)
@@ -150,7 +159,8 @@ namespace cat
     template <>
     struct ReadInstance<double> final : Read<double>
     {
-        optional<std::pair<double,string_view>> reads(string_view v)
+        optional<std::pair<double,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<double>(v);
             if (ret.second == v)
@@ -162,7 +172,8 @@ namespace cat
     template <>
     struct ReadInstance<long double> final : Read<long double>
     {
-        optional<std::pair<long double,string_view>> reads(string_view v)
+        optional<std::pair<long double,string_view>>
+        reads(string_view v) override
         {
             auto ret = to_number<long double>(v);
             if (ret.second == v)
@@ -175,7 +186,8 @@ namespace cat
     template <>
     struct ReadInstance<char> final : Read<char>
     {
-        optional<std::pair<char,string_view>> reads(string_view v)
+        optional<std::pair<char,string_view>>
+        reads(string_view v) override
         {
             auto v1 = cat::skipws(v);
             if (v1.empty())
@@ -189,7 +201,8 @@ namespace cat
     template <>
     struct ReadInstance<unsigned char> final : Read<unsigned char>
     {
-        optional<std::pair<unsigned char,string_view>> reads(string_view v)
+        optional<std::pair<unsigned char,string_view>>
+        reads(string_view v) override
         {
             auto v1 = cat::skipws(v);
             if (v1.empty())
@@ -203,7 +216,8 @@ namespace cat
     template <>
     struct ReadInstance<bool> final : Read<bool>
     {
-        optional<std::pair<bool,string_view>> reads(string_view v)
+        optional<std::pair<bool,string_view>>
+        reads(string_view v) override
         {
             std::istringstream in(v.to_string());
             bool x; in >> std::noboolalpha;

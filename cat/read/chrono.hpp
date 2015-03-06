@@ -45,7 +45,7 @@ namespace cat
     {
 
         optional<std::pair<std::chrono::duration<Rep, Period>, string_view>>
-        reads(string_view s)
+        reads(string_view s) override
         {
             using Duration = std::chrono::duration<Rep, Period>;
 
@@ -78,7 +78,7 @@ namespace cat
     struct ReadInstance<std::chrono::time_point<Clock, Dur>> final : Read<std::chrono::time_point<Clock, Dur>>
     {
         optional<std::pair<std::chrono::time_point<Clock, Dur>, string_view>>
-        reads(string_view s)
+        reads(string_view s) override
         {
             if (auto d = cat::reads<Dur>(s))
             {

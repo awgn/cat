@@ -42,7 +42,7 @@ namespace cat
     struct ReadInstance<std::pair<T1,T2>> final : Read<std::pair<T1, T2>>
     {
         optional<std::pair<std::pair<T1,T2>,string_view>>
-        reads(string_view v)
+        reads(string_view v) override
         {
             //
             // classic way...
@@ -82,7 +82,7 @@ namespace cat
     struct ReadInstance<std::tuple<Ts...>> final : Read<std::tuple<Ts...>>
     {
         optional<std::pair<std::tuple<Ts...>,string_view>>
-        reads(string_view s)
+        reads(string_view s) override
         {
             if (auto s_ = consume('(', s))
             {

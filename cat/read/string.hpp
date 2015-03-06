@@ -46,7 +46,7 @@ namespace cat
     struct ReadInstance<std::string> final : Read<std::string>
     {
         optional<std::pair<std::string, string_view>>
-        reads(string_view s)
+        reads(string_view s) override
         {
             std::string str;
             bool quoted = false, escaped = false;

@@ -41,7 +41,7 @@ namespace cat
     struct ReadInstance<optional<T>> final : Read<optional<T>>
     {
         optional<std::pair<optional<T>,string_view>>
-        reads(string_view v)
+        reads(string_view v) override
         {
             return consume('(', v) >>= [](string_view s1)
                 -> optional<std::pair< optional<T>, string_view>>
