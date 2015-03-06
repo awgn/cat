@@ -94,6 +94,25 @@ Context(test_read)
         Assert(reads<std::string>(R"(test")") == std::make_pair(std::string(R"(test")"), string_view{""}));
         Assert(reads<std::string>(R"("test)") == nullopt);
     }
+
+    using namespace std::literals::chrono_literals;
+
+    Test(duration)
+    {
+        Assert(reads<std::chrono::nanoseconds>("x") == nullopt);
+        Assert(reads<std::chrono::nanoseconds>("42") == nullopt);
+        Assert(reads<std::chrono::nanoseconds>("42_") == nullopt);
+        Assert(reads<std::chrono::nanoseconds>("42_ns") == std::make_pair(42ns, string_view{""}));
+        Assert(reads<std::chrono::microseconds>("42_us") == std::make_pair(42us, string_view{""}));
+        Assert(reads<std::chrono::milliseconds>("42_ms") == std::make_pair(42ms, string_view{""}));
+        Assert(reads<std::chrono::seconds>("42_s") == std::make_pair(42s, string_view{""}));
+        Assert(reads<std::chrono::minutes>("42_min") == std::make_pair(42min, string_view{""}));
+        Assert(reads<std::chrono::hours>("42_h") == std::make_pair(42h, string_view{""}));
+
+        Assert(reads<std::chrono::system_clock::time_point>("x") == nullopt);
+        Assert(reads<std::chrono::system_clock::time_point>("42") == nullopt);
+        Assert(reads<std::chrono::system_clock::time_point>("42_") == nullopt);
+        Assert(reads<std::chrono::system_clock::time_point>("42_ns") == std::make_pair(std::chrono::system_clock::time_point(42ns), string_view{""}));
     }
 }
 
