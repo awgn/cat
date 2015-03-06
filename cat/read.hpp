@@ -29,5 +29,6 @@
 #include <cat/read/fundamental.hpp>
 #include <cat/read/optional.hpp>
 #include <cat/read/string.hpp>
+#include <cat/read/chrono.hpp>
 #include <cat/read/tuple.hpp>
 
