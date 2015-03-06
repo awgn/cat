@@ -664,6 +664,21 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // apply a meta-function over the inner types
+    //
+
+    template <template <typename> class Fun, typename Functor>
+    struct fmap_type;
+
+    template <template <typename> class Fun, template <typename ...> class Functor, typename ...Ts>
+    struct fmap_type<Fun, Functor<Ts...>>
+    {
+        using type = Functor<typename Fun<Ts>::type...>;
+    };
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // has_specialization: e.g. has_specialization<ShowInstance, T>
     //
 
