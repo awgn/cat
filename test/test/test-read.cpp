@@ -11,7 +11,6 @@ using namespace cat;
 // Tests:
 //
 
-
 Context(test_read)
 {
     Test(simple)
@@ -113,6 +112,34 @@ Context(test_read)
         Assert(reads<std::chrono::system_clock::time_point>("42") == nullopt);
         Assert(reads<std::chrono::system_clock::time_point>("42_") == nullopt);
         Assert(reads<std::chrono::system_clock::time_point>("42_ns") == std::make_pair(std::chrono::system_clock::time_point(42ns), string_view{""}));
+    }
+
+    Test(container)
+    {
+        Assert(reads<std::vector<int>>("  ") == nullopt);
+        Assert(reads<std::vector<int>>("[") == nullopt);
+        Assert(reads<std::vector<int>>("]") == nullopt);
+        Assert(reads<std::vector<int>>("[ ]") == std::make_pair(std::vector<int>{}, string_view{""}));
+        Assert(reads<std::vector<int>>("[ 1 ]") == std::make_pair(std::vector<int>{1}, string_view{""}));
+        Assert(reads<std::vector<int>>("[ 1 2 3 ]") == std::make_pair(std::vector<int>{1, 2, 3}, string_view{""}));
+
+        Assert(reads<std::array<int,1>>("[ 1 2 3 ]") == nullopt);
+        Assert(reads<std::array<int,2>>("[ 1 2 3 ]") == nullopt);
+        Assert(reads<std::array<int,3>>("[ 1 2 3 ]") == std::make_pair(std::array<int, 3>{1, 2, 3}, string_view{""}));
+
+        Assert(reads<std::list<int>>("[ 1 2 3 ]") == std::make_pair(std::list<int>{1, 2, 3}, string_view{""}));
+        Assert(reads<std::forward_list<int>>("[ 1 2 3 ]") == std::make_pair(std::forward_list<int>{1, 2, 3}, string_view{""}));
+        Assert(reads<std::deque<int>>("[ 1 2 3 ]") == std::make_pair(std::deque<int>{1, 2, 3}, string_view{""}));
+
+        Assert(reads<std::set<int>>("[ 1 2 3 ]") == std::make_pair(std::set<int>{1, 2, 3}, string_view{""}));
+        Assert(reads<std::unordered_set<int>>("[ 1 2 3 ]") == std::make_pair(std::unordered_set<int>{1, 2, 3}, string_view{""}));
+        Assert(reads<std::multiset<int>>("[ 1 1 2 2 3 3 ]") == std::make_pair(std::multiset<int>{1, 1, 2, 2, 3, 3}, string_view{""}));
+        Assert(reads<std::unordered_multiset<int>>("[ 1 1 2 2 3 3 ]") == std::make_pair(std::unordered_multiset<int>{1, 1, 2, 2, 3, 3}, string_view{""}));
+
+        Assert(reads<std::map<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::map<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
+        Assert(reads<std::unordered_map<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::unordered_map<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
+        Assert(reads<std::multimap<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::multimap<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
+        Assert(reads<std::unordered_multimap<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::unordered_multimap<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
     }
 }
 
