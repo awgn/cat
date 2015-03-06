@@ -49,42 +49,55 @@ namespace cat
         reads(string_view s)
         {
             std::string str;
+            bool quoted = false, escaped = false;
 
             if (auto s_ = consume('"', s))
             {
-                bool quoted = false;
+                quoted = true;
                 s = s_.value();
+            }
+            else {
+                s = skipws(s);
+            }
 
-                while(!s.empty())
+            while(!s.empty())
+            {
+                auto c = s.front();
+
+                if (escaped)
                 {
-                    auto c = s.front();
-
-                    if (quoted)
-                    {
-                        quoted = false;
-                        str.push_back(c);
-                    }
+                    escaped = false;
+                    str.push_back(c);
+                }
+                else
+                {
+                    if ((quoted && c == '"') || (!quoted && std::isspace(c)))
+                        break;
+                    else if (c == '\\')
+                        escaped = true;
                     else
-                    {
-                        if (c == '"')
-                            break;
-                        if (c == '\\')
-                            quoted = true;
-                        else
-                            str.push_back(c);
-                    }
-
-                    s.remove_prefix(1);
+                        str.push_back(c);
                 }
 
-                if (!s.empty())
-                {
+                s.remove_prefix(1);
+            }
+
+            if (quoted)
+            {
+                if (!s.empty()) {
                     s.remove_prefix(1);
                     return std::make_pair(std::move(str), s);
                 }
+                else
+                    return nullopt;
             }
+            else {
 
-            return nullopt;
+                if (!str.empty())
+                    return std::make_pair(std::move(str), s);
+                else
+                    return nullopt;
+            }
         }
     };
 

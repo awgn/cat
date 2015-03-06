@@ -11,6 +11,7 @@ using namespace cat;
 // Tests:
 //
 
+
 Context(test_read)
 {
     Test(simple)
@@ -81,11 +82,18 @@ Context(test_read)
 
     Test(string)
     {
-        Assert(reads<std::string>("x") == nullopt);
+        Assert(reads<std::string>("") == nullopt);
+        Assert(reads<std::string>("   ") == nullopt);
+        Assert(reads<std::string>(" abc ").value() == std::make_pair(std::string("abc"), string_view{" "}));
         Assert(reads<std::string>(R"(""!)") == std::make_pair(std::string(""), string_view{"!"}));
         Assert(reads<std::string>(R"("x")") == std::make_pair(std::string("x"), string_view{""}));
         Assert(reads<std::string>(R"(   "abc" )") == std::make_pair(std::string("abc"), string_view{" "}));
-        Assert(reads<std::string>(R"(   "abc\"123" )") == std::make_pair(std::string("abc\"123"), string_view{" "}));
+        Assert(reads<std::string>(R"(   "abc\"123" )") == std::make_pair(std::string(R"(abc"123)"), string_view{" "}));
+        Assert(reads<std::string>(R"(   "\\")") == std::make_pair(std::string(R"(\)"), string_view{""}));
+
+        Assert(reads<std::string>(R"(test")") == std::make_pair(std::string(R"(test")"), string_view{""}));
+        Assert(reads<std::string>(R"("test)") == nullopt);
+    }
     }
 }
 
