@@ -55,7 +55,7 @@ namespace cat
             std::string out;
             for(auto const & e : v)
                 out += cat::show(e) + ' ';
-            return std::move(out);
+            return out;
         }
     }
 

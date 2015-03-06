@@ -53,7 +53,7 @@ namespace cat
                     return val;
 
                 if (auto nothing = consume(')', s1))
-                    return mreturn.in<optional>(std::make_pair(optional<T>{}, nothing.value()));
+                    return mreturn.in<optional>(std::make_pair(optional<T>{}, std::move(nothing.value())));
 
                 return nullopt;
             };

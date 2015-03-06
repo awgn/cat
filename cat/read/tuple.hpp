@@ -86,10 +86,10 @@ namespace cat
         {
             if (auto s_ = consume('(', s))
             {
+                s = std::move(s_.value());
+
                 std::tuple<Ts...> ret;
                 size_t cnt = 0;
-
-                s = s_.value();
 
                 tuple_foreach([&](auto &elem) {
                     if (auto val = cat::reads<std::decay_t<decltype(elem)>>(s))
@@ -103,7 +103,7 @@ namespace cat
                 if (auto left = consume(')', s))
                 {
                     if (cnt == sizeof...(Ts))
-                        return make_optional(std::make_pair(ret, left.value()));
+                        return make_optional(std::make_pair(ret, std::move(left.value())));
                 }
             }
 
