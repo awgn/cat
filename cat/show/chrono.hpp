@@ -43,7 +43,7 @@ namespace cat
         template <> struct duration_traits<std::chrono::microseconds> { static constexpr const char *str = "_us"; };
         template <> struct duration_traits<std::chrono::milliseconds> { static constexpr const char *str = "_ms"; };
         template <> struct duration_traits<std::chrono::seconds>      { static constexpr const char *str = "_s"; };
-        template <> struct duration_traits<std::chrono::minutes>      { static constexpr const char *str = "_m"; };
+        template <> struct duration_traits<std::chrono::minutes>      { static constexpr const char *str = "_min"; };
         template <> struct duration_traits<std::chrono::hours>        { static constexpr const char *str = "_h"; };
     }
 
