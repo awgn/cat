@@ -26,15 +26,13 @@ Context(test_read)
 
     Test(trim)
     {
-        string_view spaces("    ");
-        string_view s0(" hello world ");
-        string_view s1(" hello");
-        string_view s2("world!   ");
-
-        Assert(cat::trim(spaces) == string_view{});
-        Assert(cat::trim(s0) == string_view{"hello world"});
-        Assert(cat::trim(s1) == string_view{"hello"});
-        Assert(cat::trim(s2) == string_view{"world!"});
+        Assert(cat::trim("") == string_view{});
+        Assert(cat::trim("   ") == string_view{});
+        Assert(cat::trim("hello world") == string_view{"hello world"});
+        Assert(cat::trim("    hello world") == string_view{"hello world"});
+        Assert(cat::trim("hello world   ") == string_view{"hello world"});
+        Assert(cat::trim("   hello world   ") == string_view{"hello world"});
+    }
     }
 }
 

@@ -148,7 +148,7 @@ namespace cat
     }
 
     //
-    // trim
+    // trim a string_view
     //
 
     inline string_view
