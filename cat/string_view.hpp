@@ -33,6 +33,7 @@
 #include <experimental/string_view>
 
 #include <cctype>
+#include <vector>
 #include <limits>
 #include <cstring>
 #include <stdexcept>
@@ -163,5 +164,24 @@ namespace cat
         return str.substr(b, e);
     }
 
+    //
+    // split a string_view by means of the given separator.
+    //
+
+    inline std::vector<std::string>
+    split(string_view str, const char *sep)
+    {
+        std::vector<std::string> ret;
+        auto len = std::strlen(sep);
+
+        for(std::string::size_type n; (n = str.find(sep)) != std::string::npos;)
+        {
+            ret.push_back(std::string(str.substr(0,n)));
+            str = str.substr(n + len, std::string::npos);
+        }
+
+        ret.push_back(std::string(str));
+        return ret;
+    }
 
 } // namespace cat
