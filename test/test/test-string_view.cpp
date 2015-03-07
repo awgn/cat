@@ -1,4 +1,5 @@
 #include <cat/string_view.hpp>
+#include <vector>
 
 #include "yats.hpp"
 
@@ -33,6 +34,15 @@ Context(test_read)
         Assert(cat::trim("hello world   ") == string_view{"hello world"});
         Assert(cat::trim("   hello world   ") == string_view{"hello world"});
     }
+
+    Test(split)
+    {
+        Assert(cat::split("", "***") == std::vector<std::string>{""});
+        Assert(cat::split("***", "***") == std::vector<std::string>{"", ""});
+        Assert(cat::split("aaa", "***") == std::vector<std::string>{"aaa"});
+        Assert(cat::split("***aaa", "***") == std::vector<std::string>{"", "aaa"});
+        Assert(cat::split("aaa***", "***") == std::vector<std::string>{"aaa", ""});
+        Assert(cat::split("aaa***bbb", "***") == std::vector<std::string>{"aaa", "bbb"});
     }
 }
 
