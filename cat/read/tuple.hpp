@@ -45,7 +45,7 @@ namespace cat
         reads(string_view v) override
         {
             //
-            // classic way...
+            // C++ way...
             //
             // auto v1 = consume('(', v);
             // if (!v1)
@@ -62,18 +62,30 @@ namespace cat
             // return make_optional(std::make_pair(std::make_pair(t1.value().first, t2.value().first), c2.value()));
 
             //
-            // The functional way... We all love monads!
+            // The functional way... desugared monads!
             //
 
-            return consume('(', v) >>= [](string_view s1) {
-                return cat::reads<T1>(s1) >>= [&] (auto const &t1) {
-                    return cat::reads<T2>(t1.second) >>= [&] (auto const &t2) {
-                        return consume(')', t2.second) >>= [&](string_view left) {
-                            return mreturn.in<optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
-                        };
-                    };
-                };
-            };
+            // return consume('(', v) >>= [](string_view s1) {
+            //     return cat::reads<T1>(s1) >>= [&] (auto const &t1) {
+            //         return cat::reads<T2>(t1.second) >>= [&] (auto const &t2) {
+            //             return consume(')', t2.second) >>= [&](string_view left) {
+            //                 return mreturn.in<optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
+            //             };
+            //         };
+            //     };
+            // };
+
+            //
+            // sugared monad...
+            //
+
+            return LET( s1,   (consume('(', v)),
+                   LET( t1,   (cat::reads<T1>(s1)),
+                   LET( t2,   (cat::reads<T2>(t1.second)),
+                   LET(left,  (consume(')', t2.second)),
+                      (
+                            mreturn.in<optional>(std::make_pair( std::make_pair(std::move(t1.first), std::move(t2.first)), std::move(left)));
+                      )))));
         }
     };
 

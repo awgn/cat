@@ -35,6 +35,15 @@
 #include <cat/functional.hpp>
 #include <cat/infix.hpp>
 
+
+//
+// Sugaring monads...
+//
+
+#define CAT_UNPACK_ARGS(...)        __VA_ARGS__
+#define CAT_UNPACK(xs)              CAT_UNPACK_ARGS xs
+#define LET(var, fun, cont)        ((fun) >>= [&](auto var) { return CAT_UNPACK(cont); })
+
 namespace cat
 {
     //
