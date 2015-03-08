@@ -34,7 +34,7 @@ namespace cat
 {
     //
     // conditionally make move_iterator, according
-    // to the L/R valueness of the of container.
+    // to the L/R valueness of the container.
     //
 
     template <typename Iter>
