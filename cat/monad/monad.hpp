@@ -202,13 +202,13 @@ namespace cat
     //
 
     template <template <typename ...> class M, typename Fun, typename A,
-              typename std::enable_if<is_monad<M>::value>::type * = nullptr>
+              std::enable_if_t<is_monad<M>::value> * = nullptr>
     auto operator>>=(M<A> && ma, Fun f)
     {
         return mbind(std::move(ma), std::move(f));
     }
     template <template <typename ...> class M, typename Fun, typename A,
-              typename std::enable_if<is_monad<M>::value>::type * = nullptr>
+              std::enable_if_t<is_monad<M>::value> * = nullptr>
     auto operator>>=(M<A> const &ma, Fun f)
     {
         return mbind(ma, std::move(f));
@@ -216,13 +216,13 @@ namespace cat
 
 
     template <template <typename ...> class M, typename A, typename B,
-              typename std::enable_if<is_monad<M>::value>::type * = nullptr>
+              std::enable_if_t<is_monad<M>::value> * = nullptr>
     auto operator>>(M<A> && ma, M<B> const & mb)
     {
         return mbind(std::move(ma), constant(mb));
     }
     template <template <typename ...> class M, typename A, typename B,
-              typename std::enable_if<is_monad<M>::value>::type * = nullptr>
+              std::enable_if_t<is_monad<M>::value> * = nullptr>
     auto operator>>(M<A> const & ma, M<B> const & mb)
     {
         return mbind(ma, constant(mb));

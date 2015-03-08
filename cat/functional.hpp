@@ -348,7 +348,7 @@ namespace cat
     template <typename F_, typename G_, typename = void>  struct Compose_;
 
     template <typename F_, typename G_>
-    struct Compose_<F_, G_, typename std::enable_if<arity<G_>::value != 0>::type>
+    struct Compose_<F_, G_, std::enable_if_t<arity<G_>::value != 0>>
     {
         template <typename F, typename G>
         constexpr Compose_(F && f, G && g)
@@ -368,7 +368,7 @@ namespace cat
     };
 
     template <typename F_, typename G_>
-    struct Compose_<F_, G_, typename std::enable_if<arity<G_>::value == 0>::type>
+    struct Compose_<F_, G_, std::enable_if_t<arity<G_>::value == 0>>
     {
         template <typename F, typename G>
         constexpr Compose_(F && f, G && g)
@@ -388,14 +388,14 @@ namespace cat
     };
 
     template <typename F, typename G,
-              typename std::enable_if<is_callable<F>::value && is_callable<G>::value>::type * = nullptr>
+              std::enable_if_t<is_callable<F>::value && is_callable<G>::value> * = nullptr>
     constexpr auto compose(F f, G g)
     {
         return Compose_<F,G>{ std::move(f), std::move(g) };
     }
 
     template <typename F, typename G,
-              typename std::enable_if<is_callable<F>::value && is_callable<G>::value>::type * = nullptr>
+              std::enable_if_t<is_callable<F>::value && is_callable<G>::value> * = nullptr>
     constexpr auto operator^(F f, G g)
     {
         return compose(std::move(f), std::move(g));

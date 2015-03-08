@@ -312,7 +312,7 @@ namespace cat
     // is_not_copy_constructing:
     // trait useful to disable universal constructor to enable copy constructor:
     //
-    //  template <typename ...Ts, typename = typename std::enable_if<is_not_copy_constructing<ThisClass, Ts...>::value>::type>
+    //  template <typename ...Ts, std::enable_if_t<is_not_copy_constructing<ThisClass, Ts...>::value> * = nullptr>
     //  ThisClass(Ts&& ...args)
     //
 
@@ -638,11 +638,11 @@ namespace cat
     template <typename F, size_t N, typename = void > struct partial_function_type;
 
     template <typename R, typename T, typename ...Ts, size_t N>
-    struct partial_function_type<R(T, Ts...), N, typename std::enable_if<(N != 0)>::type>
+    struct partial_function_type<R(T, Ts...), N, std::enable_if_t<(N != 0)>>
         : partial_function_type<R(Ts...), N-1> { };
 
     template <typename R, typename ...Ts, size_t N>
-    struct partial_function_type<R(Ts...), N, typename std::enable_if<(N == 0)>::type>
+    struct partial_function_type<R(Ts...), N, std::enable_if_t<(N == 0)>>
     {
         using type = R(Ts...);
     };

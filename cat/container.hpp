@@ -54,9 +54,8 @@ namespace cat
     //
 
     template <typename C, typename V,
-              typename std::enable_if<
-                !has_key_type<C>::value &&
-                !has_container_type<C>::value>::type * = nullptr>
+              std::enable_if_t< !has_key_type<C>::value &&
+                                !has_container_type<C>::value> * = nullptr>
     bool
     insert(C &cont, V &&value)
     {
@@ -68,8 +67,8 @@ namespace cat
     //
 
     template <typename C, typename V,
-              typename std::enable_if<!has_key_type<C>::value &&
-                                       has_container_type<C>::value>::type * = nullptr>
+              std::enable_if_t<!has_key_type<C>::value &&
+                                has_container_type<C>::value> * = nullptr>
     bool
     insert(C &cont, V &&value)
     {
@@ -83,7 +82,7 @@ namespace cat
     //
 
     template <typename C, typename V,
-             typename std::enable_if<has_key_type<C>::value>::type * = nullptr>
+                std::enable_if_t<has_key_type<C>::value> * = nullptr>
     bool
     insert(C &cont, V && value)
     {

@@ -119,13 +119,13 @@ namespace cat
     //
 
     template <template <typename ...> class F, typename Fun, typename Fa_,
-              typename std::enable_if<is_applicative<F>::value>::type * = nullptr>
+              std::enable_if_t<is_applicative<F>::value> * = nullptr>
     auto operator*(F<Fun> const &fs, Fa_ &&xs)
     {
         return apply(fs, std::forward<Fa_>(xs));
     }
     template <template <typename ...> class F, typename Fun, typename Fa_,
-              typename std::enable_if<is_applicative<F>::value>::type * = nullptr>
+              std::enable_if_t<is_applicative<F>::value> * = nullptr>
     auto operator*(F<Fun> && fs, Fa_ &&xs)
     {
         return apply(std::move(fs), std::forward<Fa_>(xs));
@@ -219,7 +219,7 @@ namespace cat
 
 
     template <typename Fl, typename Fr,
-        typename std::enable_if<on_outer_type<is_alternative, Fl>::value>::type * = nullptr >
+              std::enable_if_t<on_outer_type<is_alternative, Fl>::value> * = nullptr >
     inline auto operator||(Fl && lhs, Fr && rhs)
     {
         return or_(std::forward<Fl>(lhs), std::forward<Fr>(rhs));
