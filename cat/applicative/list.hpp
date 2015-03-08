@@ -64,5 +64,36 @@ namespace cat
         }
     };
 
+    // list is an alternative instance:
+    //
+
+    template <> struct is_alternative<std::list> : std::true_type { };
+
+    // list instance:
+    //
+
+    template <typename A, typename Fl_, typename Fr_>
+    struct AlternativeInstance<std::list<A>, Fl_, Fr_> final : Alternative<std::list>::
+    template _<std::list<A>, Fl_, Fr_>
+    {
+        std::list<A>
+        empty() override
+        {
+            return std::list<A>{};
+        }
+
+        std::list<A>
+        or_(Fl_ && lhs, Fr_ && rhs) override
+        {
+            std::list<A> ret = std::forward<Fl_>(lhs);
+
+            ret.insert(std::end(ret),
+                        forward_iterator<Fr_>(std::begin(rhs)),
+                        forward_iterator<Fr_>(std::end(rhs))
+                      );
+            return ret;
+        }
+    };
+
 } // namespace cat
 

@@ -64,5 +64,36 @@ namespace cat
         }
     };
 
+    // deque is an alternative instance:
+    //
+
+    template <> struct is_alternative<std::deque> : std::true_type { };
+
+    // deque instance:
+    //
+
+    template <typename A, typename Fl_, typename Fr_>
+    struct AlternativeInstance<std::deque<A>, Fl_, Fr_> final : Alternative<std::deque>::
+    template _<std::deque<A>, Fl_, Fr_>
+    {
+        std::deque<A>
+        empty() override
+        {
+            return std::deque<A>{};
+        }
+
+        std::deque<A>
+        or_(Fl_ && lhs, Fr_ && rhs) override
+        {
+            std::deque<A> ret = std::forward<Fl_>(lhs);
+
+            ret.insert(std::end(ret),
+                        forward_iterator<Fr_>(std::begin(rhs)),
+                        forward_iterator<Fr_>(std::end(rhs))
+                      );
+            return ret;
+        }
+    };
+
 } // namespace cat
 

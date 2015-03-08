@@ -61,5 +61,32 @@ namespace cat
         }
     };
 
+    // shared_ptr is an alternative instance:
+    //
+
+    template <> struct is_alternative<std::shared_ptr> : std::true_type { };
+
+    // std::shared_ptr instance:
+    //
+
+    template <typename A, typename Fl_, typename Fr_>
+    struct AlternativeInstance<std::shared_ptr<A>, Fl_, Fr_> final : Alternative<std::shared_ptr>::
+    template _<std::shared_ptr<A>, Fl_, Fr_>
+    {
+        std::shared_ptr<A>
+        empty() override
+        {
+            return std::shared_ptr<A>{};
+        }
+
+        std::shared_ptr<A>
+        or_(Fl_ && lhs, Fr_ && rhs) override
+        {
+            if (lhs)
+                return std::forward<Fl_>(lhs);
+            return std::forward<Fr_>(rhs);
+        }
+    };
+
 } // namespace cat
 

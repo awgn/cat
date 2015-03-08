@@ -61,5 +61,32 @@ namespace cat
         }
     };
 
+    // unique_ptr is an alternative instance:
+    //
+
+    template <> struct is_alternative<std::unique_ptr> : std::true_type { };
+
+    // std::unique_ptr instance:
+    //
+
+    template <typename A, typename Fl_, typename Fr_>
+    struct AlternativeInstance<std::unique_ptr<A>, Fl_, Fr_> final : Alternative<std::unique_ptr>::
+    template _<std::unique_ptr<A>, Fl_, Fr_>
+    {
+        std::unique_ptr<A>
+        empty() override
+        {
+            return std::unique_ptr<A>{};
+        }
+
+        std::unique_ptr<A>
+        or_(Fl_ && lhs, Fr_ && rhs) override
+        {
+            if (lhs)
+                return std::forward<Fl_>(lhs);
+            return std::forward<Fr_>(rhs);
+        }
+    };
+
 } // namespace cat
 

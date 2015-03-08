@@ -27,7 +27,9 @@
 #pragma once
 
 #include <vector>
+
 #include <cat/applicative/applicative.hpp>
+#include <cat/iterator.hpp>
 
 namespace cat
 {
@@ -62,6 +64,37 @@ namespace cat
                     out.push_back(forward_as<Ff_>(f)(forward_as<Fa_>(x)));
 
             return out;
+        }
+    };
+
+    // vector is an alternative instance:
+    //
+
+    template <> struct is_alternative<std::vector> : std::true_type { };
+
+    // vector instance:
+    //
+
+    template <typename A, typename Fl_, typename Fr_>
+    struct AlternativeInstance<std::vector<A>, Fl_, Fr_> final : Alternative<std::vector>::
+    template _<std::vector<A>, Fl_, Fr_>
+    {
+        std::vector<A>
+        empty() override
+        {
+            return std::vector<A>{};
+        }
+
+        std::vector<A>
+        or_(Fl_ && lhs, Fr_ && rhs) override
+        {
+            std::vector<A> ret = std::forward<Fl_>(lhs);
+
+            ret.insert(std::end(ret),
+                        forward_iterator<Fr_>(std::begin(rhs)),
+                        forward_iterator<Fr_>(std::end(rhs))
+                      );
+            return ret;
         }
     };
 

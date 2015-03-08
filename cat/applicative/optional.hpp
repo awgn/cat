@@ -62,5 +62,32 @@ namespace cat
 
     };
 
+    // optional is an alternative instance:
+    //
+
+    template <> struct is_alternative<optional> : std::true_type { };
+
+    // optional instance:
+    //
+
+    template <typename A, typename Fl_, typename Fr_>
+    struct AlternativeInstance<optional<A>, Fl_, Fr_> final : Alternative<optional>::
+    template _<optional<A>, Fl_, Fr_>
+    {
+        optional<A>
+        empty() override
+        {
+            return optional<A>{};
+        }
+
+        optional<A>
+        or_(Fl_ && lhs, Fr_ && rhs) override
+        {
+            if (lhs)
+                return std::forward<Fl_>(lhs);
+            return std::forward<Fr_>(rhs);
+        }
+    };
+
 } // namespace cat
 

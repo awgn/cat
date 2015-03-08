@@ -152,6 +152,76 @@ namespace cat
     struct is_applicative : std::false_type
     { };
 
+    //
+    // class Alternative:
+    //
+
+    template <template <typename...> class F>
+    struct Alternative : Applicative<F>
+    {
+        template <typename Fa, typename Fl_, typename Fr_>
+        struct _
+        {
+            virtual auto empty() -> Fa = 0;   // identity of or_
+            virtual auto or_(Fl_ &&, Fr_ &&) -> Fa = 0;
+        };
+    };
+
+    //
+    // Alternative instance
+    //
+
+    template <typename A, typename ...> struct AlternativeInstance;
+
+    //
+    // free functions...
+    //
+
+    template <typename Fa>
+    auto empty()
+    {
+        return AlternativeInstance<Fa, Fa, Fa>{}.empty();
+    }
+
+
+    namespace details
+    {
+        using namespace placeholders;
+
+        struct or_
+        {
+            using function_type = _F<_a>(_F<_a>, _F<_a>);
+
+            template <typename Fl_, typename Fr_>
+            auto operator()(Fl_&& lhs, Fr_ && rhs) const
+            {
+                static_assert(std::is_same<std::decay_t<Fl_>, std::decay_t<Fr_>>::value, "alternative::or_ types differ");
+
+                using Fa = std::decay_t<Fl_>;
+
+                return AlternativeInstance<Fa, Fl_, Fr_>{}.or_(std::forward<Fl_>(lhs),
+                                                               std::forward<Fr_>(rhs));
+            }
+        };
+    }
+
+    constexpr auto or_ = details::or_ {};
+
+    //
+    // trait for concepts
+    //
+
+    template <template <typename ...> class A>
+    struct is_alternative : std::false_type
+    { };
+
+
+    template <typename Fl, typename Fr,
+        typename std::enable_if<on_outer_type<is_alternative, Fl>::value>::type * = nullptr >
+    inline auto operator||(Fl && lhs, Fr && rhs)
+    {
+        return or_(std::forward<Fl>(lhs), std::forward<Fr>(rhs));
+    }
 
 } // namespace cat
 
