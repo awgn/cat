@@ -97,8 +97,15 @@ namespace cat
                 return ApplicativeInstance<Ff, Fa, Ff_, Fa_, int>{}.apply(std::forward<Ff_>(fs), std::forward<Fa_>(xs));
             }
         };
-
     }
+
+    //
+    // trait for concepts
+    //
+
+    template <template <typename ...> class A>
+    struct is_applicative : std::false_type
+    { };
 
     //
     // functions: pure and apply
@@ -111,12 +118,14 @@ namespace cat
     // operator *
     //
 
-    template <template <typename ...> class F, typename Fun, typename Fa_>
+    template <template <typename ...> class F, typename Fun, typename Fa_,
+              typename std::enable_if<is_applicative<F>::value>::type * = nullptr>
     auto operator*(F<Fun> const &fs, Fa_ &&xs)
     {
         return apply(fs, std::forward<Fa_>(xs));
     }
-    template <template <typename ...> class F, typename Fun, typename Fa_>
+    template <template <typename ...> class F, typename Fun, typename Fa_,
+              typename std::enable_if<is_applicative<F>::value>::type * = nullptr>
     auto operator*(F<Fun> && fs, Fa_ &&xs)
     {
         return apply(std::move(fs), std::forward<Fa_>(xs));
@@ -144,13 +153,6 @@ namespace cat
 
     constexpr infix_adaptor<details::fapply_> $;
 
-    //
-    // trait for concepts
-    //
-
-    template <template <typename ...> class A>
-    struct is_applicative : std::false_type
-    { };
 
     //
     // class Alternative:
