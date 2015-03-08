@@ -255,6 +255,91 @@ Context(applicative)
 
         Assert( n == std::vector<int>{ 1, 2, 3, 2, 3, 4, } );
     };
+
+
+    Test(alternative_simple)
+    {
+        Assert( empty<optional<int>>() == nullopt);
+        Assert( or_(empty<optional<int>>(), make_optional(42)).value() == 42 );
+        Assert( (empty<optional<int>>() || make_optional(42)).value() == 42);
+        Assert( (make_optional(42) || empty<optional<int>>()).value() == 42);
+    }
+
+    Test(alternative_vector)
+    {
+        Assert( empty<std::vector<int>>() == std::vector<int>{});
+        Assert( or_(empty<std::vector<int>>(), std::vector<int>{42}) == pure.in<std::vector>(42) );
+        Assert( or_(std::vector<int>{42}, empty<std::vector<int>>()) == pure.in<std::vector>(42) );
+        Assert( or_(std::vector<int>{42}, std::vector<int>{11}) == std::vector<int>{42, 11} );
+
+        Assert( (empty<std::vector<int>>() || std::vector<int>{42} ) == pure.in<std::vector>(42) );
+        Assert( (std::vector<int>{42} || empty<std::vector<int>>() ) == pure.in<std::vector>(42) );
+        Assert( (std::vector<int>{42} || std::vector<int>{11})  == std::vector<int>{42, 11} );
+    }
+
+    Test(alternative_list)
+    {
+        Assert( empty<std::list<int>>() == std::list<int>{});
+        Assert( or_(empty<std::list<int>>(), std::list<int>{42}) == pure.in<std::list>(42) );
+        Assert( or_(std::list<int>{42}, empty<std::list<int>>()) == pure.in<std::list>(42) );
+        Assert( or_(std::list<int>{42}, std::list<int>{11}) == std::list<int>{42, 11} );
+
+        Assert( (empty<std::list<int>>() || std::list<int>{42} ) == pure.in<std::list>(42) );
+        Assert( (std::list<int>{42} || empty<std::list<int>>() ) == pure.in<std::list>(42) );
+        Assert( (std::list<int>{42} || std::list<int>{11})  == std::list<int>{42, 11} );
+    }
+
+    Test(alternative_deque)
+    {
+        Assert( empty<std::deque<int>>() == std::deque<int>{});
+        Assert( or_(empty<std::deque<int>>(), std::deque<int>{42}) == pure.in<std::deque>(42) );
+        Assert( or_(std::deque<int>{42}, empty<std::deque<int>>()) == pure.in<std::deque>(42) );
+        Assert( or_(std::deque<int>{42}, std::deque<int>{11}) == std::deque<int>{42, 11} );
+
+        Assert( (empty<std::deque<int>>() || std::deque<int>{42} ) == pure.in<std::deque>(42) );
+        Assert( (std::deque<int>{42} || empty<std::deque<int>>() ) == pure.in<std::deque>(42) );
+        Assert( (std::deque<int>{42} || std::deque<int>{11})  == std::deque<int>{42, 11} );
+    }
+
+
+    Test(alternative_forward_list)
+    {
+        Assert( empty<std::forward_list<int>>() == std::forward_list<int>{});
+        Assert( or_(empty<std::forward_list<int>>(), std::forward_list<int>{42}) == pure.in<std::forward_list>(42) );
+        Assert( or_(std::forward_list<int>{42}, empty<std::forward_list<int>>()) == pure.in<std::forward_list>(42) );
+        Assert( or_(std::forward_list<int>{42}, std::forward_list<int>{11}) == std::forward_list<int>{42, 11} );
+
+        Assert( (empty<std::forward_list<int>>() || std::forward_list<int>{42} ) == pure.in<std::forward_list>(42) );
+        Assert( (std::forward_list<int>{42} || empty<std::forward_list<int>>() ) == pure.in<std::forward_list>(42) );
+        Assert( (std::forward_list<int>{42} || std::forward_list<int>{11})  == std::forward_list<int>{42, 11} );
+    }
+
+    Test(alternative_shared_ptr)
+    {
+        Assert( empty<std::shared_ptr<int>>() == std::shared_ptr<int>{});
+
+        Assert( * or_(empty<std::shared_ptr<int>>(), std::make_shared<int>(42)) == 42 );
+        Assert( * or_(std::make_shared<int>(42), empty<std::shared_ptr<int>>()) == 42 );
+        Assert( * or_(std::make_shared<int>(42), std::make_shared<int>(11))     == 42 );
+
+        Assert( * (empty<std::shared_ptr<int>>() || std::make_shared<int>(42) ) == 42 );
+        Assert( * (std::make_shared<int>(42) || empty<std::shared_ptr<int>>() ) == 42 );
+        Assert( * (std::make_shared<int>(42) || std::make_shared<int>(11))      == 42 );
+    }
+
+    Test(alternative_unique_ptr)
+    {
+        Assert( empty<std::unique_ptr<int>>() == std::unique_ptr<int>{});
+
+        Assert( * or_(empty<std::unique_ptr<int>>(), std::make_unique<int>(42)) == 42 );
+        Assert( * or_(std::make_unique<int>(42), empty<std::unique_ptr<int>>()) == 42 );
+        Assert( * or_(std::make_unique<int>(42), std::make_unique<int>(11))     == 42 );
+
+        Assert( * (empty<std::unique_ptr<int>>() || std::make_unique<int>(42) ) == 42 );
+        Assert( * (std::make_unique<int>(42) || empty<std::unique_ptr<int>>() ) == 42 );
+        Assert( * (std::make_unique<int>(42) || std::make_unique<int>(11))      == 42 );
+    }
+
 }
 
 
