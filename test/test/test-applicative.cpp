@@ -244,8 +244,6 @@ Context(applicative)
     {
         auto sum = currying(sum_f);
 
-        std::cout << type_of(sum) << std::endl;
-
         auto x = make_optional(21);
 
         auto a  = std::vector<int>{ 1, 2 };
@@ -254,7 +252,6 @@ Context(applicative)
         Assert( (sum <$> x) * x == 42);
 
         auto n = (sum <$> a) * b;
-        std::cout << type_of(n) << std::endl;
 
         Assert( n == std::vector<int>{ 1, 2, 3, 2, 3, 4, } );
     };
