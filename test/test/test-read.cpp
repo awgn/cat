@@ -125,7 +125,7 @@ Context(test_read)
 
         Assert(reads<std::array<int,1>>("[ 1 2 3 ]") == nullopt);
         Assert(reads<std::array<int,2>>("[ 1 2 3 ]") == nullopt);
-        Assert(reads<std::array<int,3>>("[ 1 2 3 ]") == std::make_pair(std::array<int, 3>{1, 2, 3}, string_view{""}));
+        Assert(reads<std::array<int,3>>("[ 1 2 3 ]") == std::make_pair(std::array<int, 3>{{1, 2, 3}}, string_view{""}));
 
         Assert(reads<std::list<int>>("[ 1 2 3 ]") == std::make_pair(std::list<int>{1, 2, 3}, string_view{""}));
         Assert(reads<std::forward_list<int>>("[ 1 2 3 ]") == std::make_pair(std::forward_list<int>{1, 2, 3}, string_view{""}));

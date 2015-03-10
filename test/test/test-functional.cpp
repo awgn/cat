@@ -216,15 +216,6 @@ Context(currying_test)
 
     }
 
-    Test(fold)
-    {
-        Assert( foldl( [](int a, int b) { return a - b;}, 0, std::vector<int>{1,2,3}) , is_equal_to(-6) );
-        Assert( foldr( [](int a, int b) { return a - b;}, 0, std::vector<int>{1,2,3}) , is_equal_to( 2) );
-        Assert( foldl1( [](int a, int b) { return a - b;}, std::vector<int>{1,2,3}) , is_equal_to(-4) );
-        Assert( foldr1( [](int a, int b) { return a - b;}, std::vector<int>{1,2,3}) , is_equal_to( 2) );
-    }
-
-
     Test(currying_noncopyable)
     {
         auto p1 = std::make_unique<int>(42);
