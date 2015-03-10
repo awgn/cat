@@ -20,6 +20,7 @@ add_executable(test-bifunctor test/test-bifunctor.cpp)
 add_executable(test-monoid test/test-monoid.cpp)
 add_executable(test-applicative test/test-applicative.cpp)
 add_executable(test-monad test/test-monad.cpp)
+add_executable(test-foldable test/test-foldable.cpp)
 
 add_executable(test-show test/test-show.cpp)
 add_executable(test-read test/test-read.cpp)
