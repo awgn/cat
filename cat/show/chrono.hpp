@@ -39,12 +39,12 @@ namespace cat
     namespace details
     {
         template <typename T> struct duration_traits;
-        template <> struct duration_traits<std::chrono::nanoseconds>  { static constexpr const char *str = "_ns"; };
-        template <> struct duration_traits<std::chrono::microseconds> { static constexpr const char *str = "_us"; };
-        template <> struct duration_traits<std::chrono::milliseconds> { static constexpr const char *str = "_ms"; };
-        template <> struct duration_traits<std::chrono::seconds>      { static constexpr const char *str = "_s"; };
-        template <> struct duration_traits<std::chrono::minutes>      { static constexpr const char *str = "_min"; };
-        template <> struct duration_traits<std::chrono::hours>        { static constexpr const char *str = "_h"; };
+        template <> struct duration_traits<std::chrono::nanoseconds>  { static constexpr const char *str = "ns"; };
+        template <> struct duration_traits<std::chrono::microseconds> { static constexpr const char *str = "us"; };
+        template <> struct duration_traits<std::chrono::milliseconds> { static constexpr const char *str = "ms"; };
+        template <> struct duration_traits<std::chrono::seconds>      { static constexpr const char *str = "s"; };
+        template <> struct duration_traits<std::chrono::minutes>      { static constexpr const char *str = "min"; };
+        template <> struct duration_traits<std::chrono::hours>        { static constexpr const char *str = "h"; };
     }
 
     template <typename Rep, typename Period>
