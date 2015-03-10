@@ -47,18 +47,11 @@ namespace cat
     template <template <typename ...> class F>
     struct Functor
     {
-        template <typename A, typename Fun, typename Fa_>
+        template <typename A, typename Fun, typename Fa_, typename = void>
         struct _
         {
             virtual auto fmap(Fun fun, Fa_ && fa) -> F<std::result_of_t<Fun(A)>> = 0;
         };
-
-        template <typename K, typename A, typename Fun, typename Fa_>
-        struct _2
-        {
-            virtual auto fmap(Fun fun, Fa_ && fa) -> F<K, std::result_of_t<Fun(A)>> = 0;
-        };
-
     };
 
     //

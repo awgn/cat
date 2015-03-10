@@ -40,8 +40,8 @@ namespace cat
     //
 
     template <typename K, typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<std::map<K, A>, Fun, Fa_> final : Functor<std::map>::
-    template _2<K, A, Fun, Fa_>
+    struct FunctorInstance<std::map<K, A>, Fun, Fa_> final : Functor<curry_type<std::map, K>::template type>::
+    template _<A, Fun, Fa_,K>
     {
         using B = std::result_of_t<Fun(A)>;
 
@@ -67,8 +67,8 @@ namespace cat
     //
 
     template <typename K, typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<std::multimap<K,A>, Fun, Fa_> final : Functor<std::multimap>::
-    template _2<K, A, Fun, Fa_>
+    struct FunctorInstance<std::multimap<K,A>, Fun, Fa_> final : Functor<curry_type<std::multimap, K>::template type>::
+    template _<A, Fun, Fa_, K>
     {
         using B = std::result_of_t<Fun(A)>;
 
