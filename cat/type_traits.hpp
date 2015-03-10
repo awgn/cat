@@ -600,7 +600,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // inner_type....
+    // inner_type, inner_value_type
     //
 
     template <typename F, size_t N = 0> struct inner_type;
@@ -611,6 +611,24 @@ namespace cat
 
     template <typename T, size_t N = 0>
     using inner_type_t = typename inner_type<T, N>::type;
+
+    template <typename F, typename E = void> struct inner_value_type;
+
+    template <typename F>
+    struct inner_value_type<F, typename std::enable_if<
+                                    is_associative_container<F>::value ||
+                                    is_pair<F>::value>::type>
+    : inner_type<F,1> { };
+
+    template <typename F>
+    struct inner_value_type<F, typename std::enable_if<
+                                    !is_associative_container<F>::value &&
+                                    !is_pair<F>::value>::type>
+    : inner_type<F,0> { };
+
+
+    template <typename T>
+    using inner_value_type_t = typename inner_value_type<T>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////
