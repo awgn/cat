@@ -27,6 +27,8 @@
 #pragma once
 
 #include <type_traits>
+
+#include <cat/show.hpp>
 #include <cat/monoid/monoid.hpp>
 
 namespace cat
@@ -62,6 +64,17 @@ namespace cat
         }
     };
 
+
+    template <>
+    struct ShowInstance<Any> final : Show<Any>
+    {
+        std::string
+        show(const Any &t) override
+        {
+            return std::string("Any ") + (t.value ? "true" : "false");
+        }
+    };
+
     //
     // All boolean
     //
@@ -90,6 +103,16 @@ namespace cat
         virtual All mappend(M1 && a, M2 && b) override
         {
             return All { a.value && b.value };
+        }
+    };
+
+    template <>
+    struct ShowInstance<All> final : Show<All>
+    {
+        std::string
+        show(const All &t) override
+        {
+            return std::string("All ") + (t.value ? "true" : "false");
         }
     };
 
@@ -132,6 +155,16 @@ namespace cat
         }
     };
 
+    template <typename T>
+    struct ShowInstance<Sum<T>> final : Show<Sum<T>>
+    {
+        std::string
+        show(const Sum<T> &t) override
+        {
+            return type_name<Sum<T>>() + ' ' + show(t.value());
+        }
+    };
+
     //
     // Product numeric
     //
@@ -168,6 +201,16 @@ namespace cat
         {
             return Product<T>{ forward_as<M1>(a.value) *
                                forward_as<M2>(b.value) };
+        }
+    };
+
+    template <typename T>
+    struct ShowInstance<Product<T>> final : Show<Product<T>>
+    {
+        std::string
+        show(const Product<T> &t) override
+        {
+            return type_name<Product<T>>() + ' ' + show(t.value());
         }
     };
 };
