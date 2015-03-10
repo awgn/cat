@@ -26,9 +26,13 @@
 
 #pragma once
 
+#include <cat/show.hpp>
 #include <cat/type_traits.hpp>
+#include <cat/missing.hpp>
 
 #include <utility>
+#include <forward_list>
+#include <iterator>
 
 namespace cat
 {
@@ -47,7 +51,7 @@ namespace cat
     }
 
     //
-    //  generic insert...
+    //  generic insert for containers...
     //
 
     // enabled for std::vector, std::dequeue, std::list
@@ -105,6 +109,110 @@ namespace cat
         }
         cont.insert_after(before_end, std::forward<V>(value));
         return true;
+    }
+
+    //
+    // generic fold operations for containers
+    //
+
+#ifndef CAT_FOLDABLE
+    inline
+#endif
+    namespace container
+    {
+        template <typename T,
+                 std::enable_if_t<!is_pair<std::decay_t<T>>::value> * = nullptr>
+        decltype(auto) iterator_elem(T &&value)
+        {
+            return std::forward<T>(value);
+        }
+
+        template <typename T,
+                 std::enable_if_t<is_pair<std::decay_t<T>>::value> * = nullptr>
+        decltype(auto) iterator_elem(T &&value)
+        {
+            return forward_as<T>(value.second);
+        }
+
+        //
+        // foldl, foldl1, foldr, foldr1
+        //
+
+        namespace details_
+        {
+            using namespace placeholders;
+
+            struct Foldl_
+            {
+                using function_type = _a(_<_a(_a, _b)>, _a, _C<_b> const &);
+
+                template <typename F, typename A, typename Cont>
+                auto operator()(F f, A acc, Cont &&xs) const
+                {
+                    for(auto it = std::begin(xs); it != std::end(xs); ++it)
+                        acc = f(std::move(acc), iterator_elem(forward_as<Cont>(*it)));
+
+                    return acc;
+                }
+            };
+
+            struct Foldl1_
+            {
+                using function_type = _a(_<_a(_a, _a)>, _C<_b> const &);
+
+                template <typename F, typename Cont>
+                auto operator()(F f, Cont &&xs) const
+                {
+                    if (xs.empty())
+                        throw std::runtime_error("foldl1: empty container");
+
+                    auto acc = iterator_elem(forward_as<Cont>(*std::begin(xs)));
+
+                    for(auto it = std::next(std::begin(xs)); it != std::end(xs); ++it)
+                        acc = f(std::move(acc), iterator_elem(forward_as<Cont>(*it)));
+
+                    return acc;
+                }
+            };
+
+            struct Foldr_
+            {
+                using function_type = _b(_<_b(_a, _b)>, _b, _C<_a> const &);
+
+                template <typename F, typename A, typename Cont>
+                auto operator()(F f, A acc, Cont &&xs) const
+                {
+                    for(auto it = std::rbegin(xs); it != std::rend(xs); ++it)
+                        acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
+
+                    return acc;
+                }
+            };
+
+            struct Foldr1_
+            {
+                using function_type = _a(_<_a(_a, _a)>, _C<_a> const &);
+
+                template <typename F, typename Cont>
+                auto operator()(F f, Cont &&xs) const
+                {
+                    if (xs.empty())
+                        throw std::runtime_error("foldr1: empty container");
+
+                    auto acc = iterator_elem(forward_as<Cont>(*std::rbegin(xs)));
+
+                    for(auto it = std::next(std::rbegin(xs)); it != std::rend(xs); ++it)
+                        acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
+
+                    return acc;
+                }
+            };
+        }
+
+        constexpr auto foldl  = details_::Foldl_{};
+        constexpr auto foldl1 = details_::Foldl1_{};
+        constexpr auto foldr  = details_::Foldr_{};
+        constexpr auto foldr1 = details_::Foldr1_{ };
     }
 
 

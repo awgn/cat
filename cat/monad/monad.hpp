@@ -33,6 +33,7 @@
 #include <cat/functor.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/functional.hpp>
+#include <cat/container.hpp>
 #include <cat/infix.hpp>
 
 
