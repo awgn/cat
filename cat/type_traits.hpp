@@ -676,6 +676,7 @@ namespace cat
 
     template < template <template <typename ...> class> class Trait, typename T>
     struct on_outer_type;
+
     template < template <template <typename ...> class> class Trait, template <typename ...> class Outer, typename ...Ts>
     struct on_outer_type<Trait, Outer<Ts...>> : Trait<Outer> { };
 
@@ -692,6 +693,18 @@ namespace cat
     struct fmap_type<Fun, Functor<Ts...>>
     {
         using type = Functor<typename Fun<Ts>::type...>;
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // curry_type type traits
+    //
+
+    template <template <typename ...> class F, typename T>
+    struct curry_type
+    {
+        template <typename ...Ts>
+        using type = F<T, Ts...>;
     };
 
 
