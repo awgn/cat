@@ -45,18 +45,18 @@ namespace cat
     // std::unique_ptr instance:
     //
 
-    template <typename A, typename B, typename Fun, typename Fa_>
-    struct FoldableInstance<std::unique_ptr<A>, B, Fun, Fa_> final : Foldable<std::unique_ptr>::
-    template _<A, B, Fun, Fa_>
+    template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
+    struct FoldableInstance<std::unique_ptr<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::unique_ptr>::
+    template _<A, B, FunR, FunL, Fun, Fa_>
     {
-        B foldr(Fun f, B value, Fa_ && xs) override
+        B foldr(FunR f, B value, Fa_ && xs) override
         {
             if (xs)
                 return f(forward_as<Fa_>(*xs), value);
             return value;
         }
 
-        B foldl(Fun f, B value, Fa_ && xs) override
+        B foldl(FunL f, B value, Fa_ && xs) override
         {
             if (xs)
                 return f(value, forward_as<Fa_>(*xs));

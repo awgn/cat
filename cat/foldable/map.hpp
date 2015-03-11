@@ -43,16 +43,16 @@ namespace cat
     // map instance:
     //
 
-    template <typename K, typename A, typename B, typename Fun, typename Fa_>
-    struct FoldableInstance<std::map<K, A>, B, Fun, Fa_> final : Foldable<std::map>::
-    template _<A, B, Fun, Fa_>
+    template <typename K, typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
+    struct FoldableInstance<std::map<K, A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::map>::
+    template _<A, B, FunR, FunL, Fun, Fa_>
     {
-        B foldr(Fun f, B value, Fa_ && xs) override
+        B foldr(FunR f, B value, Fa_ && xs) override
         {
             return container::foldr(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
 
-        B foldl(Fun f, B value, Fa_ && xs) override
+        B foldl(FunL f, B value, Fa_ && xs) override
         {
             return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
@@ -76,16 +76,16 @@ namespace cat
     // multimap instance:
     //
 
-    template <typename K, typename A, typename B, typename Fun, typename Fa_>
-    struct FoldableInstance<std::multimap<K, A>, B, Fun, Fa_> final : Foldable<std::multimap>::
-    template _<A, B, Fun, Fa_>
+    template <typename K, typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
+    struct FoldableInstance<std::multimap<K, A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::multimap>::
+    template _<A, B, FunR, FunL, Fun, Fa_>
     {
-        B foldr(Fun f, B value, Fa_ && xs) override
+        B foldr(FunR f, B value, Fa_ && xs) override
         {
             return container::foldr(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
 
-        B foldl(Fun f, B value, Fa_ && xs) override
+        B foldl(FunL f, B value, Fa_ && xs) override
         {
             return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }

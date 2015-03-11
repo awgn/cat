@@ -49,11 +49,11 @@ namespace cat
     template <template <typename ...> class F>
     struct Foldable
     {
-        template <typename A, typename B, typename Fun, typename Fa_>
+        template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
         struct _
         {
-            virtual auto foldr(Fun fun, B, Fa_ && fa) -> B = 0;
-            virtual auto foldl(Fun fun, B, Fa_ && fa) -> B = 0;
+            virtual auto foldr (FunR fun, B, Fa_ && fa) -> B = 0;
+            virtual auto foldl (FunL fun, B, Fa_ && fa) -> B = 0;
             virtual auto foldr1(Fun fun, Fa_ && fa) -> A = 0;
             virtual auto foldl1(Fun fun, Fa_ && fa) -> A = 0;
         };
@@ -77,12 +77,19 @@ namespace cat
         {
             using function_type = _b(_<_b(_a, _b)>, _b, _F<_a> &&);
 
-            template <typename Fun, typename B, typename Fa_>
-            auto operator()(Fun f, B value, Fa_ && xs) const
+            template <typename FunR, typename B, typename Fa_>
+            auto operator()(FunR f, B value, Fa_ && xs) const
             {
-                static_assert(on_outer_type<is_foldable, std::decay_t<Fa_>>::value, "Type not a foldable!");
+                using Fa = std::decay_t<Fa_>;
+                using A  = inner_value_type_t<Fa>;
 
-                return FoldableInstance<std::decay_t<Fa_>, B, Fun, Fa_>{}.foldr(std::move(f), std::move(value), std::forward<Fa_>(xs));
+                static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
+
+                return FoldableInstance<Fa, B,
+                       FunR,
+                       std::function<B(B,A)>,
+                       std::function<A(A,A)>,
+                       Fa_>{}.foldr(std::move(f), std::move(value), std::forward<Fa_>(xs));
             }
         };
 
@@ -94,8 +101,14 @@ namespace cat
             auto operator()(Fun f, Fa_ && xs) const
             {
                 using Fa = std::decay_t<Fa_>;
+                using A  = inner_value_type_t<Fa>;
+
                 static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
-                return FoldableInstance<std::decay_t<Fa_>, inner_value_type_t<Fa>, Fun, Fa_>{}.foldr1(std::move(f), std::forward<Fa_>(xs));
+
+                return FoldableInstance<Fa, A,
+                       std::function<A(A,A)>,
+                       std::function<A(A,A)>,
+                       Fun, Fa_>{}.foldr1(std::move(f), std::forward<Fa_>(xs));
             }
         };
 
@@ -103,12 +116,19 @@ namespace cat
         {
             using function_type = _b(_<_b(_b, _a)>, _b, _F<_a> &&);
 
-            template <typename Fun, typename B, typename Fa_>
-            auto operator()(Fun f, B value, Fa_ && xs) const
+            template <typename FunL, typename B, typename Fa_>
+            auto operator()(FunL f, B value, Fa_ && xs) const
             {
-                static_assert(on_outer_type<is_foldable, std::decay_t<Fa_>>::value, "Type not a foldable!");
+                using Fa = std::decay_t<Fa_>;
+                using A  = inner_value_type_t<Fa>;
 
-                return FoldableInstance<std::decay_t<Fa_>, B, Fun, Fa_>{}.foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
+                static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
+
+                return FoldableInstance<Fa, B,
+                       std::function<B(A,B)>,
+                       FunL,
+                       std::function<A(A,A)>,
+                       Fa_>{}.foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
             }
         };
 
@@ -120,8 +140,14 @@ namespace cat
             auto operator()(Fun f, Fa_ && xs) const
             {
                 using Fa = std::decay_t<Fa_>;
+                using A  = inner_value_type_t<Fa>;
+
                 static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
-                return FoldableInstance<std::decay_t<Fa_>, inner_value_type_t<Fa>, Fun, Fa_>{}.foldl1(std::move(f), std::forward<Fa_>(xs));
+                return FoldableInstance<Fa, A,
+                        std::function<A(A,A)>,
+                        std::function<A(A,A)>,
+                        Fun,
+                        Fa_>{}.foldl1(std::move(f), std::forward<Fa_>(xs));
             }
         };
     }

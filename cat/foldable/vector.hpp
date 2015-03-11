@@ -44,16 +44,16 @@ namespace cat
     // vector instance:
     //
 
-    template <typename A, typename B, typename Fun, typename Fa_>
-    struct FoldableInstance<std::vector<A>, B, Fun, Fa_> final : Foldable<std::vector>::
-    template _<A, B, Fun, Fa_>
+    template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
+    struct FoldableInstance<std::vector<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::vector>::
+    template _<A, B, FunR, FunL, Fun, Fa_>
     {
-        B foldr(Fun f, B value, Fa_ && xs) override
+        B foldr(FunR f, B value, Fa_ && xs) override
         {
             return container::foldr(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
 
-        B foldl(Fun f, B value, Fa_ && xs) override
+        B foldl(FunL f, B value, Fa_ && xs) override
         {
             return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
