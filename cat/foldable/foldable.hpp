@@ -171,9 +171,21 @@ namespace cat
                 return foldr1(mappend, std::forward<Fm_>(xs));
             }
         };
+
+        struct foldMap_
+        {
+            template <typename Fun, typename Fm_>
+            auto operator()(Fun f, Fm_ && xs) const
+            {
+                using Fm = std::decay_t<Fm_>;
+                using  B = decltype(f(std::declval<inner_type_t<Fm>>()));
+                return foldr(compose(mappend, f), mempty<B>(), std::forward<Fm_>(xs));
+            }
+        };
     }
 
     constexpr auto fold = details::fold_{};
+    constexpr auto foldMap = details::foldMap_{};
 
 } // namespace cat
 

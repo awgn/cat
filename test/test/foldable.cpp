@@ -147,6 +147,10 @@ Context(foldable)
         Assert( foldr1( [](int a, int b) { return a - b;}, std::multiset<int>{1,2,3}) , is_equal_to( 2) );
     }
 
+    Test(foldableMap)
+    {
+        Assert( foldMap([](int n) { return (n >= 0 ? std::vector<int>{n} : std::vector<int>{}); }, std::vector<int>{1, 2, -3}), is_equal_to(std::vector<int>{1,2}));
+    }
 
 
     Test(foldable_constraint)
