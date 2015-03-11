@@ -131,7 +131,7 @@ Context(currying_test)
 
     int sum(int a, int b)
     {
-        return a - b;
+        return a + b;
     }
 
     Test(composition)
@@ -141,21 +141,31 @@ Context(currying_test)
         auto h3 = compose(sum,currying(next));
         auto h4 = compose(currying(sum),currying(next));
 
-        Assert(h1(10,1)  == 10);
-        Assert(h2(10)(1) == 10);
-        Assert(h3(10,1)  == 10);
-        Assert(h4(10)(1)  == 10);
+        Assert(h1(10,1)   == 12);
+        Assert(h2(10)(1)  == 12);
+        Assert(h3(10,1)   == 12);
+        Assert(h4(10)(1)  == 12);
 
         auto l1 = compose(currying(sum), [](int n) { return n+1; });
         auto l2 = l1(10);
 
-        Assert( l2(1) == 10);
+        Assert( l2(1) == 12);
 
         auto x1 = compose(sum, constant);
-        Assert(x1(1) == 41);
+        Assert(x1(1) == 43);
 
         auto x2 = currying(sum) ^ (constant);
-        Assert(x2(1) == 41);
+        Assert(x2(1) == 43);
+    }
+
+
+    Test(composition2)
+    {
+        auto h1 = compose(sum, next);
+        auto h2 = compose(h1, next);
+
+        Assert(h1(2,3), is_equal_to(6));
+        Assert(h2(2,3), is_equal_to(7));
     }
 
 

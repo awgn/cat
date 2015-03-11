@@ -232,6 +232,7 @@ namespace cat
         return currying(Generic_<Fun, F>(std::move(f)));
     };
 
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // Compose_: functional composition of callable types
@@ -242,6 +243,10 @@ namespace cat
     template <typename F_, typename G_>
     struct Compose_<F_, G_, std::enable_if_t<arity<G_>::value != 0>>
     {
+       using function_type = compose_function_type_t<
+                                function_type_t<F_>,
+                                function_type_t<G_>>;
+
         template <typename F, typename G>
         constexpr Compose_(F && f, G && g)
         : f_(std::forward<F>(f))
@@ -262,6 +267,10 @@ namespace cat
     template <typename F_, typename G_>
     struct Compose_<F_, G_, std::enable_if_t<arity<G_>::value == 0>>
     {
+        using function_type = compose_function_type_t<
+                                function_type_t<F_>,
+                                function_type_t<G_>>;
+
         template <typename F, typename G>
         constexpr Compose_(F && f, G && g)
         : f_(std::forward<F>(f))
@@ -371,6 +380,8 @@ namespace cat
     template <typename T>
     struct Constant_
     {
+        using function_type = T(placeholders::unspec);
+
         template <typename Tp>
         constexpr T operator()(Tp const &) const
         {
