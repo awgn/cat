@@ -67,4 +67,24 @@ namespace cat
     {
         virtual std::string show(T const &) = 0;
     };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // print:
+    //
+
+    namespace details
+    {
+        struct Print_
+        {
+            template <typename T>
+            void operator()(T const &elem) const
+            {
+                std::cout << show(elem) << std::endl;
+            }
+
+        };
+    }
+
+    constexpr auto print = details::Print_{ };
 }

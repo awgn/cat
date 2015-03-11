@@ -86,6 +86,7 @@ namespace cat
 
     } constexpr first = First_{};
 
+
     struct Second_
     {
         template <typename P>
@@ -115,23 +116,6 @@ namespace cat
     constexpr auto elem = Elem_<N>{};
 
 #endif
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // print:
-    //
-
-    struct Print_
-    {
-        template <typename T>
-        void operator()(T const &elem) const
-        {
-            // TODO: use show typeclass...
-            //
-            std::cout << elem << std::endl;
-        }
-
-    } constexpr print = Print_{ };
 
 
     //////////////////////////////////////////////////////////////////////////////////
