@@ -680,6 +680,28 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // compose_function_type
+    //
+
+    template <typename F, typename G> struct compose_function_type;
+
+    template <typename Fr, typename Fx, typename ...Fxs, typename Gr, typename Gx, typename ...Gxs>
+    struct compose_function_type<Fr(Fx, Fxs...), Gr(Gx, Gxs...)>
+    {
+        using type = Fr(Gx, Fxs...);
+    };
+    template <typename Fr, typename Fx, typename ...Fxs, typename Gr>
+    struct compose_function_type<Fr(Fx, Fxs...), Gr()>
+    {
+        using type = Fr(Fxs...);
+    };
+
+    template <typename F, typename G>
+    using compose_function_type_t = typename compose_function_type<F, G>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // apply a meta-predicate on the outer type (e.g. functor, monad) of the given type
     //
 
