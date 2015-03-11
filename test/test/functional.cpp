@@ -214,6 +214,7 @@ Context(currying_test)
         // std::sort(std::begin(v), std::end(v), on(std::less<int>(), first)); or better...
 
         std::sort(std::begin(v), std::end(v), std::less<int>() |on| first);
+        std::sort(std::begin(v), std::end(v), currying(generic<bool(int,int)>(std::less<int>()) |on| first));
 
         Assert(first(v[0]) == 1);
         Assert(first(v[1]) == 2);

@@ -719,6 +719,23 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // on_function_type
+    //
+
+    template <typename F, typename G> struct on_function_type;
+
+    template <typename R, typename T1, typename T2, typename ...Ts, typename T, typename Gx>
+    struct on_function_type<R(T1, T2, Ts...), T(Gx)>
+    {
+        using type = R(Gx, Gx, Ts...);
+    };
+
+    template <typename F, typename G>
+    using on_function_type_t = typename on_function_type<F,G>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // apply a meta-predicate on the outer type (e.g. functor, monad) of the given type
     //
 

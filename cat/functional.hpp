@@ -70,6 +70,7 @@ namespace cat
         return std::function<typename function_type<F>::type>(std::forward<F>(f));
     }
 
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // first, second, elem<> on pair/tuple...:
@@ -77,6 +78,8 @@ namespace cat
 
     struct First_
     {
+        using function_type = placeholders::_a(std::pair<placeholders::_a, placeholders::_b>);
+
         template <typename P>
         constexpr decltype(auto)
         operator()(P && p) const noexcept
@@ -89,6 +92,8 @@ namespace cat
 
     struct Second_
     {
+        using function_type = placeholders::_b(std::pair<placeholders::_a, placeholders::_b>);
+
         template <typename P>
         constexpr decltype(auto)
         operator()(P &&p) const noexcept
@@ -102,6 +107,8 @@ namespace cat
     template <size_t N>
     struct Elem_
     {
+        using function_type = placeholders::unspec(std::tuple<placeholders::unspec>);
+
         template <typename Tuple>
         constexpr decltype(auto)
         operator()(Tuple && t) const noexcept
@@ -344,6 +351,9 @@ namespace cat
     template <typename F, typename G>
     struct On_
     {
+        using function_type = on_function_type_t<function_type_t<F>,
+                                                 function_type_t<G>>;
+
         constexpr On_(F f, G g)
         : f_(std::move(f))
         , g_(std::move(g))
