@@ -578,24 +578,33 @@ namespace cat
     // outer_type....
     //
 
-    template <template <typename ...> class > struct template_class;
-
     template <typename T> struct outer_type;
 
-    template <template <typename ...> class F, typename ...Vs>
-    struct outer_type< F<Vs...> >
+    template <template <typename> class F, typename V1>
+    struct outer_type<F<V1>>
     {
-        using type = template_class<F>;
-
-        template <typename ...Ts>
-        struct other
-        {
-            using type = F<Ts...>;
-        };
+        template <typename T1>
+        using type = F<T1>;
+    };
+    template <template <typename, typename > class F, typename V1, typename V2>
+    struct outer_type<F<V1,V2>>
+    {
+        template <typename T1, typename T2>
+        using type = F<T1,T2>;
+    };
+    template <template <typename, typename, typename> class F, typename V1, typename V2, typename V3>
+    struct outer_type<F<V1,V2,V3>>
+    {
+        template <typename T1, typename T2, typename T3>
+        using type = F<T1,T2,T3>;
     };
 
-    template <typename T, size_t N = 0>
-    using outer_type_t = typename outer_type<T>::type;
+    template <template <typename, typename, typename, typename> class F, typename V1, typename V2, typename V3, typename V4>
+    struct outer_type<F<V1,V2,V3,V4>>
+    {
+        template <typename T1, typename T2, typename T3, typename T4>
+        using type = F<T1,T2,T3,T4>;
+    };
 
 
     //////////////////////////////////////////////////////////////////////////////////
