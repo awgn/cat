@@ -161,7 +161,7 @@ Context(currying_test)
 
     Test(composition2)
     {
-        auto h1 = compose(sum, next);
+        auto h1 = compose(flip(sum), next);
         auto h2 = compose(h1, next);
 
         Assert(h1(2,3), is_equal_to(6));

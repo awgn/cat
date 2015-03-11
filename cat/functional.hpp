@@ -310,6 +310,8 @@ namespace cat
     template <typename F>
     struct Flip_
     {
+        using function_type = flip_function_type_t<function_type_t<F>>;
+
         constexpr Flip_(F fun)
         : fun_(std::move(fun))
         { }
