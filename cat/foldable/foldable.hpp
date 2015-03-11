@@ -54,8 +54,8 @@ namespace cat
         {
             virtual auto foldr(Fun fun, B, Fa_ && fa) -> B = 0;
             virtual auto foldl(Fun fun, B, Fa_ && fa) -> B = 0;
-            virtual auto foldr1(Fun fun, Fa_ && fa) -> B = 0;
-            virtual auto foldl1(Fun fun, Fa_ && fa) -> B = 0;
+            virtual auto foldr1(Fun fun, Fa_ && fa) -> A = 0;
+            virtual auto foldl1(Fun fun, Fa_ && fa) -> A = 0;
         };
     };
 

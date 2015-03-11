@@ -63,14 +63,14 @@ namespace cat
             return value;
         }
 
-        B foldr1(Fun, Fa_ && xs) override
+        A foldr1(Fun, Fa_ && xs) override
         {
             if (!xs)
                 throw std::runtime_error("foldr1: null pointer");
             return forward_as<Fa_>(*xs);
         }
 
-        B foldl1(Fun, Fa_ && xs) override
+        A foldl1(Fun, Fa_ && xs) override
         {
             if (!xs)
                 throw std::runtime_error("foldl1: null pointer");

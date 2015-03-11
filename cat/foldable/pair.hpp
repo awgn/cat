@@ -56,12 +56,12 @@ namespace cat
             return f(value, forward_as<Fa_>(xs.second));
         }
 
-        B foldr1(Fun, Fa_ && xs) override
+        A foldr1(Fun, Fa_ && xs) override
         {
             return forward_as<Fa_>(xs.second);
         }
 
-        B foldl1(Fun, Fa_ && xs) override
+        A foldl1(Fun, Fa_ && xs) override
         {
             return forward_as<Fa_>(xs.second);
         }

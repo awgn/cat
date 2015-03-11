@@ -57,12 +57,12 @@ namespace cat
             return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
 
-        B foldr1(Fun f, Fa_ && xs) override
+        A foldr1(Fun f, Fa_ && xs) override
         {
             return container::foldr1(std::move(f), std::forward<Fa_>(xs));
         }
 
-        B foldl1(Fun f, Fa_ && xs) override
+        A foldl1(Fun f, Fa_ && xs) override
         {
             return container::foldl1(std::move(f), std::forward<Fa_>(xs));
         }
@@ -90,12 +90,12 @@ namespace cat
             return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
 
-        B foldr1(Fun f, Fa_ && xs) override
+        A foldr1(Fun f, Fa_ && xs) override
         {
             return container::foldr1(std::move(f), std::forward<Fa_>(xs));
         }
 
-        B foldl1(Fun f, Fa_ && xs) override
+        A foldl1(Fun f, Fa_ && xs) override
         {
             return container::foldl1(std::move(f), std::forward<Fa_>(xs));
         }

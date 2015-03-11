@@ -59,14 +59,14 @@ namespace cat
             return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
         }
 
-        B foldr1(Fun f, Fa_ && xs) override
+        A foldr1(Fun f, Fa_ && xs) override
         {
             auto ys = std::forward<Fa_>(xs);
             ys.reverse();
             return container::foldl1(flip(std::move(f)), std::move(ys));
         }
 
-        B foldl1(Fun f, Fa_ && xs) override
+        A foldl1(Fun f, Fa_ && xs) override
         {
             return container::foldl1(std::move(f), std::forward<Fa_>(xs));
         }
