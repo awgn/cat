@@ -702,6 +702,23 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // flip_function_type
+    //
+
+    template <typename F> struct flip_function_type;
+
+    template <typename R, typename T0, typename T1, typename ...Ts>
+    struct flip_function_type<R(T0, T1, Ts...)>
+    {
+        using type = R(T1, T0, Ts...);
+    };
+
+    template <typename F>
+    using flip_function_type_t = typename flip_function_type<F>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // apply a meta-predicate on the outer type (e.g. functor, monad) of the given type
     //
 
