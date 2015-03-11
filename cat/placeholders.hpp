@@ -32,6 +32,7 @@ namespace cat
     namespace placeholders
     {
         struct unspec { };
+        struct void_  { };
         struct num    { };
 
         struct _a { };

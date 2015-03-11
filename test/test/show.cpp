@@ -1,4 +1,5 @@
 #include <cat/show.hpp>
+#include <cat/functional.hpp>
 #include <cat/bits/type.hpp>
 
 #include "yats.hpp"
@@ -78,6 +79,9 @@ Context(test_show)
         print(make_optional(42));
         print(optional<int>());
         print(nullopt);
+
+        std::cout << "currying: ";
+        currying(cat::print)(make_optional(42));
     }
 }
 

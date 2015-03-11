@@ -27,6 +27,7 @@
 #pragma once
 
 #include <cat/show/show.hpp>
+#include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 
 #include <string>
@@ -77,12 +78,15 @@ namespace cat
     {
         struct Print_
         {
+            using function_type = std::string(placeholders::_a);
+
             template <typename T>
-            void operator()(T const &elem) const
+            placeholders::void_
+            operator()(T const &elem) const
             {
                 std::cout << show(elem) << std::endl;
+                return placeholders::void_{};
             }
-
         };
     }
 
