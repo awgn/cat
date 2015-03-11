@@ -10,15 +10,6 @@ using namespace std::placeholders;
 
 Context(traits)
 {
-    Test(partail_function_type)
-    {
-       Assert(std::is_same<partial_function_type<int(char,short,int,long), 0>::type, int(char,short,int,long)>::value);
-       Assert(std::is_same<partial_function_type<int(char,short,int,long), 1>::type, int(short,int,long)>::value);
-       Assert(std::is_same<partial_function_type<int(char,short,int,long), 2>::type, int(int,long)>::value);
-       Assert(std::is_same<partial_function_type<int(char,short,int,long), 3>::type, int(long)>::value);
-       Assert(std::is_same<partial_function_type<int(char,short,int,long), 4>::type, int()>::value);
-    }
-
 
     int f0()            { return 0; };
     int f1(int)         { return 0; };
@@ -184,10 +175,8 @@ Context(traits)
 
 
     template <typename T> struct test_spec;
-
     template <>
     struct test_spec<int> { };
-
 
     Test(others)
     {
@@ -210,6 +199,26 @@ Context(traits)
         Assert( ! has_specialization<test_spec, char>::value );
     }
 
+    Test(partail_function_type)
+    {
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 0>::type, int(char,short,int,long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 1>::type, int(short,int,long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 2>::type, int(int,long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 3>::type, int(long)>::value);
+       Assert(std::is_same<partial_function_type<int(char,short,int,long), 4>::type, int()>::value);
+    }
+
+    Test(composition_function)
+    {
+        Assert( std::is_same<compose_function_type<int(int), int()>::type, int()>::value );
+        Assert( std::is_same<compose_function_type<int(int, char), int()>::type, int(char)>::value );
+        Assert( std::is_same<compose_function_type<int(int, char, double), int()>::type, int(char, double)>::value );
+
+        Assert( std::is_same<compose_function_type<int(int), int(short)>::type, int(short)>::value );
+        Assert( std::is_same<compose_function_type<int(int, char), int(short)>::type, int(short, char)>::value );
+        Assert( std::is_same<compose_function_type<int(int, char, double), int(short)>::type, int(short, char, double)>::value );
+
+    }
 }
 
 
