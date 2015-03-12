@@ -80,7 +80,6 @@ namespace cat
                 check_limits<T>(n);
             return n;
         }
-
     }
 
     //

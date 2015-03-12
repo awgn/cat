@@ -387,6 +387,7 @@ namespace cat
     template <typename F>
     using function_type_t = typename function_type<F>::type;
 
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // function arity
@@ -480,7 +481,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // is_callable....
+    // is_callable (for non-overloaded callable types)
     //
 
     namespace details
@@ -557,6 +558,9 @@ namespace cat
     template <size_t N, typename T, typename ...Ts>
     struct type_at<N, T, Ts...> : type_at<N-1, Ts...>
     { };
+
+    template <size_t N, typename ...Ts>
+    using type_at_t = typename type_at<N, Ts...>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -737,7 +741,8 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // apply a meta-predicate on the outer type (e.g. functor, monad) of the given type
+    // apply a meta-predicate on the outer type (type constructor, e.g. functor, monad)
+    // of the given type
     //
 
     template < template <template <typename ...> class> class Trait, typename T>
@@ -749,6 +754,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // curry_type traits
     //
 
     template <template <typename ...> class F, typename T>
