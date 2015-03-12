@@ -27,7 +27,6 @@
 #pragma once
 
 #include <utility>
-#include <list>
 #include <vector>
 
 #include <cat/functor.hpp>
@@ -97,7 +96,7 @@ namespace cat
     {
         using namespace placeholders;
 
-        struct mreturn_
+        struct Mreturn_
         {
             template <template <typename ...> class M, typename A_>
             auto in(A_ && a) const
@@ -117,7 +116,7 @@ namespace cat
             }
         };
 
-        struct mbind_
+        struct Mbind_
         {
             using function_type = _M<_b>(_M<_a> &&, _<_M<_b>(_a)>);
 
@@ -132,8 +131,8 @@ namespace cat
         };
     }
 
-    constexpr auto mreturn = details::mreturn_{};
-    constexpr auto mbind = details::mbind_ {};
+    constexpr auto mreturn = details::Mreturn_{};
+    constexpr auto mbind = details::Mbind_ {};
 
     //
     // monad plus
@@ -150,7 +149,7 @@ namespace cat
     {
         using namespace placeholders;
 
-        struct mplus_
+        struct Mplus_
         {
             using function_type = _M<_a>(_M<_a> &&, _M<_a> &&);
 
@@ -165,7 +164,7 @@ namespace cat
         };
     }
 
-    constexpr auto mplus = details::mplus_ {};
+    constexpr auto mplus = details::Mplus_ {};
 
     //
     // class Monad
@@ -233,35 +232,37 @@ namespace cat
     // sequence
     //
 
-    template <template <typename ...> class M, typename A>
-    auto sequence(std::list<M<A>> const &ms)
+    template <template <typename ...> class C, template <typename ...> class M, typename A>
+    auto sequence(C<M<A>> const &ms)
     {
+        static_assert(is_monad_plus<M>::value, "Type M not a monad!");
+
         auto k = [] (auto m, auto ms)
         {
             return (m >>= [&](auto x) {
                     return (ms >>= [&] (auto xs) {
-                            std::list<A> l{x};
-                            l.insert(l.end(), std::begin(xs), std::end(xs));
+                            C<A> l{x};
+                            insert(l, std::begin(xs), std::end(xs));
                             return mreturn.in<M>(std::move(l));
                             });
                     });
         };
 
-        return foldr(k, mreturn.in<M>( std::list<A>{} ), ms);
+        return foldr(k, mreturn.in<M>(C<A>{}), ms);
     }
 
     //
     // mapM and forM
     //
 
-    template <typename A, typename F>
-    auto mapM(F f, std::list<A> const &xs)
+    template <template <typename ...> class C, typename A, typename F>
+    auto mapM(F f, C<A> const &xs)
     {
         return sequence( fmap(f, xs) );
     }
 
-    template <typename A, typename F>
-    auto forM(std::list<A> const &ma, F f)
+    template <template <typename ...> class C, typename A, typename F>
+    auto forM(C<A> const &ma, F f)
     {
         return mapM(f, ma);
     }
