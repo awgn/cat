@@ -7,6 +7,7 @@ add_definitions(-DCAT_CPP14_RBEGIN_MISSING)
 include_directories(inc)
 include_directories(../.)
 
+add_executable(test-container test/container.cpp)
 add_executable(test-traits test/traits.cpp)
 add_executable(test-infix test/infix.cpp)
 add_executable(test-tuple test/tuple.cpp)
