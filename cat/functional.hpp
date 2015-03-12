@@ -39,6 +39,7 @@
 
 namespace cat
 {
+
     //////////////////////////////////////////////////////////////////////////////////
     //
     // identity function
@@ -46,7 +47,7 @@ namespace cat
 
     struct Identity
     {
-        using function_type = placeholders::unspec(placeholders::unspec);
+        using function_type = placeholders::_a(placeholders::_a);
 
         template <typename T>
         constexpr auto
@@ -130,23 +131,24 @@ namespace cat
     // Currying_ with partial application support
     //
 
-    //
-    // Decay on the basis of the callable signature.
-    //
-
-    template <typename F, size_t Idx, typename T>
-    struct currying_decay
+    namespace details
     {
-        using Tp = arg_type_at_t<F, Idx>;
+        // Decay on the basis of the callable signature.
+        //
 
-        using type = typename std::conditional<
-                        std::is_lvalue_reference<Tp>::value,
-                        T, std::decay_t<T>
-                        >::type;
-    };
+        template <typename F, size_t Idx, typename T>
+        struct currying_decay
+        {
+            using Tp = arg_type_at_t<F, Idx>;
 
-    template <typename F, size_t Idx, typename T>
-    using currying_decay_t = typename currying_decay<F, Idx, T>::type;
+            using type = typename std::conditional<
+                            std::is_lvalue_reference<Tp>::value,
+                            T, std::decay_t<T> >::type;
+        };
+
+        template <typename F, size_t Idx, typename T>
+        using currying_decay_t = typename currying_decay<F, Idx, T>::type;
+    }
 
 
     template <typename F, typename ...Ts>
@@ -188,14 +190,14 @@ namespace cat
         template <size_t I, size_t ...N, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Currying_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
+            return Currying_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, size_t ...N, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Currying_<F, Ts..., currying_decay_t<function_type, N, Xs>...>(
+            return Currying_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -204,9 +206,9 @@ namespace cat
     };
 
     template<typename F>
-    constexpr auto currying(F f)
+    constexpr auto currying(F && f)
     {
-        return Currying_<F>(std::move(f));
+        return Currying_<std::decay_t<F>>(std::forward<F>(f));
     }
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -234,9 +236,9 @@ namespace cat
     };
 
     template <typename Fun, typename F>
-    constexpr auto generic(F f)
+    constexpr auto generic(F && f)
     {
-        return currying(Generic_<Fun, F>(std::move(f)));
+        return currying(Generic_<Fun, std::decay_t<F>>(std::forward<F>(f)));
     };
 
 
@@ -245,19 +247,18 @@ namespace cat
     // Compose_: functional composition of callable types
     //
 
-    template <typename F_, typename G_, typename = void>  struct Compose_;
+    template <typename F, typename G, typename = void>  struct Compose_;
 
-    template <typename F_, typename G_>
-    struct Compose_<F_, G_, std::enable_if_t<arity<G_>::value != 0>>
+    template <typename F, typename G>
+    struct Compose_<F, G, std::enable_if_t<arity<G>::value != 0>>
     {
        using function_type = compose_function_type_t<
-                                function_type_t<F_>,
-                                function_type_t<G_>>;
+                                function_type_t<F>,
+                                function_type_t<G>>;
 
-        template <typename F, typename G>
-        constexpr Compose_(F && f, G && g)
-        : f_(std::forward<F>(f))
-        , g_(std::forward<G>(g))
+        constexpr Compose_(F f, G g)
+        : f_(std::move(f))
+        , g_(std::move(g))
         { }
 
         template <typename T, typename ...Ts>
@@ -267,21 +268,20 @@ namespace cat
             return f_( g_(std::forward<T>(x)), std::forward<Ts>(xs)...);
         }
 
-        F_ f_;
-        G_ g_;
+        F f_;
+        G g_;
     };
 
-    template <typename F_, typename G_>
-    struct Compose_<F_, G_, std::enable_if_t<arity<G_>::value == 0>>
+    template <typename F, typename G>
+    struct Compose_<F, G, std::enable_if_t<arity<G>::value == 0>>
     {
         using function_type = compose_function_type_t<
-                                function_type_t<F_>,
-                                function_type_t<G_>>;
+                                function_type_t<F>,
+                                function_type_t<G>>;
 
-        template <typename F, typename G>
-        constexpr Compose_(F && f, G && g)
-        : f_(std::forward<F>(f))
-        , g_(std::forward<G>(g))
+        constexpr Compose_(F f, G g)
+        : f_(std::move(f))
+        , g_(std::move(g))
         { }
 
         template <typename ...Ts>
@@ -291,22 +291,24 @@ namespace cat
             return f_( g_(), std::forward<Ts>(xs)...);
         }
 
-        F_ f_;
-        G_ g_;
+        F f_;
+        G g_;
     };
 
-    template <typename F, typename G,
-              std::enable_if_t<is_callable<F>::value && is_callable<G>::value> * = nullptr>
-    constexpr auto compose(F f, G g)
+    template <typename F, typename G>
+    constexpr auto compose(F && f, G && g)
     {
-        return Compose_<F,G>{ std::move(f), std::move(g) };
+        static_assert(is_callable<F>::value && is_callable<G>::value,
+                      "compose: F and G must be callable types");
+
+        return Compose_<std::decay_t<F>,std::decay_t<G>>{ std::forward<F>(f), std::forward<G>(g) };
     }
 
     template <typename F, typename G,
               std::enable_if_t<is_callable<F>::value && is_callable<G>::value> * = nullptr>
-    constexpr auto operator^(F f, G g)
+    constexpr auto operator^(F && f, G && g)
     {
-        return compose(std::move(f), std::move(g));
+        return compose(std::forward<F>(f), std::forward<G>(g));
     }
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -337,9 +339,9 @@ namespace cat
     };
 
     template <typename F>
-    constexpr auto flip(F fun_)
+    constexpr auto flip(F && fun_)
     {
-        return Flip_<F>{ std::move(fun_) };
+        return Flip_<std::decay_t<F>>{ std::forward<F>(fun_) };
     };
 
 
@@ -404,9 +406,9 @@ namespace cat
     };
 
     template <typename T>
-    constexpr auto constant(T value)
+    constexpr auto constant(T && value)
     {
-        return Constant_<T>{ std::move(value) };
+        return Constant_<std::decay_t<T>>{ std::forward<T>(value) };
     }
 
 
