@@ -503,38 +503,42 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // map_result_of: apply functor over inner types and return a new type with
-    // each result_of
+    // apply a meta-function(s) over the inner types
     //
 
-    template <typename Type, typename ...Fs> struct map_result_of;
+    template <typename Functor, template <typename...> class ...Fs>
+    struct fmap_type;
 
-    template <template <typename ...> class Functor,
-              typename T0, typename F>
-    struct map_result_of <Functor<T0>, F>
+    template <template <typename ...> class Functor, typename T, typename ...Ts, template <typename...> class F>
+    struct fmap_type<Functor<T,Ts...>, F>
     {
-        using type = Functor< typename std::result_of_t<F(T0)>>;
+        using type = Functor<typename F<T>::type, Ts...>;
     };
-    template <template <typename ...> class Functor,
-              typename T0, typename T1,
-              typename F0, typename F1>
-    struct map_result_of <Functor<T0, T1>, F0, F1>
+    template <template <typename ...> class Functor, typename T0, typename T, typename ...Ts, template <typename...> class F0, template <typename...> class F>
+    struct fmap_type<Functor<T0, T, Ts...>, F0, F>
     {
-        using type = Functor< std::result_of_t<F0(T0)>,
-                                       std::result_of_t<F1(T1)>>;
+        using type = Functor<typename F0<T0>::type, typename F<T>::type, Ts...>;
     };
-    template <template <typename ...> class Functor,
-              typename T0, typename T1, typename T2,
-              typename F0, typename F1, typename F2>
-    struct map_result_of <Functor<T0, T1, T2>, F0, F1, F2>
+    template <template <typename ...> class Functor, typename T0, typename T1, typename T, typename ...Ts, template <typename...> class F0, template <typename...> class F1, template <typename...> class F>
+    struct fmap_type<Functor<T0, T1, T, Ts...>, F0, F1, F>
     {
-        using type = Functor< std::result_of_t<F0(T0)>,
-                                        std::result_of_t<F1(T1)>,
-                                        std::result_of_t<F2(T2)> >;
+        using type = Functor<typename F0<T0>::type, typename F1<T1>::type, typename F<T>::type, Ts...>;
     };
 
-    template <typename Type, typename ...Fs>
-    using map_result_of_t = typename map_result_of<Type, Fs...>::type;
+    template <typename Functor, template <typename...> class ...Fs>
+    using fmap_type_t = typename fmap_type<Functor, Fs...>::type;
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // result_of_type: std::result_of meta-function adapter
+    //
+
+    template <typename Fun, typename T>
+    struct result_of_type
+    {
+        using type = typename std::result_of<Fun(T)>::type;
+    };
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -745,21 +749,6 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // apply a meta-function over the inner types
-    //
-
-    template <template <typename> class Fun, typename Functor>
-    struct fmap_type;
-
-    template <template <typename> class Fun, template <typename ...> class Functor, typename ...Ts>
-    struct fmap_type<Fun, Functor<Ts...>>
-    {
-        using type = Functor<typename Fun<Ts>::type...>;
-    };
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // curry_type type traits
     //
 
     template <template <typename ...> class F, typename T>

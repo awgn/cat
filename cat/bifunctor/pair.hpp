@@ -45,7 +45,11 @@ namespace cat
     struct BifunctorInstance<std::pair<A,B>, F, G, Fab_> final : Bifunctor<std::pair>::
     template _ <A, B, F, G, Fab_>
     {
-        map_result_of_t< std::decay_t<Fab_>, F, G>
+        using R = fmap_type_t< std::decay_t<Fab_>,
+                                curry_type<result_of_type, F>::template type,
+                                curry_type<result_of_type, G>::template type
+                    >;
+        R
         bimap(F f, G g, Fab_ && xs) override
         {
             return std::make_pair(
