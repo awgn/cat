@@ -29,9 +29,11 @@
 #include <cat/show.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/missing.hpp>
+#include <cat/utility.hpp>
 
 #include <utility>
 #include <forward_list>
+#include <initializer_list>
 #include <iterator>
 
 namespace cat
@@ -51,34 +53,53 @@ namespace cat
     }
 
     //
-    //  generic insert for containers...
+    //  generic inserter for different containers...
     //
 
     // enabled for std::vector, std::dequeue, std::list
     //
 
-    template <typename C, typename V,
-              std::enable_if_t< !has_key_type<C>::value &&
-                                !has_container_type<C>::value> * = nullptr>
-    bool
-    insert(C &cont, V &&value)
+    template <typename C, typename T,
+    std::enable_if_t<!has_key_type<C>::value &&
+                     !has_container_type<C>::value> * = nullptr>
+    bool insert(C &cont, T && x)
     {
-        cont.push_back(std::forward<V>(value));
+        cont.push_back(std::forward<T>(x));
         return true;
     }
+
+    template <typename C, typename It,
+    std::enable_if_t<!has_key_type<C>::value &&
+                     !has_container_type<C>::value> * = nullptr>
+    bool insert(C &cont, It beg, It end)
+    {
+        cont.insert(std::end(cont), beg, end);
+        return true;
+    }
+
 
     // enabled for std::stack, std::queue, std::priority_queue
     //
 
     template <typename C, typename V,
-              std::enable_if_t<!has_key_type<C>::value &&
-                                has_container_type<C>::value> * = nullptr>
-    bool
-    insert(C &cont, V &&value)
+    std::enable_if_t<!has_key_type<C>::value &&
+                      has_container_type<C>::value> * = nullptr>
+    bool insert(C &cont, V &&value)
     {
         cont.push(std::forward<V>(value));
         return true;
     }
+
+    template <typename C, typename It,
+    std::enable_if_t<!has_key_type<C>::value &&
+                      has_container_type<C>::value> * = nullptr>
+    bool insert(C &cont, It it, It end)
+    {
+        for(; it != end; ++it)
+            cont.push(*it);
+        return true;
+    }
+
 
     // enabled for std::set, std::multiset, std::unordered_set,
     // std::unordered_multiset, std::map, std::multimap, std::unordered_map
@@ -86,7 +107,7 @@ namespace cat
     //
 
     template <typename C, typename V,
-                std::enable_if_t<has_key_type<C>::value> * = nullptr>
+    std::enable_if_t<has_key_type<C>::value> * = nullptr>
     bool
     insert(C &cont, V && value)
     {
@@ -94,13 +115,24 @@ namespace cat
         return details::insert_check(cont, res);
     }
 
+    template <typename C, typename It,
+    std::enable_if_t<has_key_type<C>::value> * = nullptr>
+    bool insert(C &cont, It it, It end)
+    {
+        for(; it != end; ++it) {
+            auto res = cont.insert(*it);
+            if (!details::insert_check(cont, res))
+                return false;
+        }
+        return true;
+    }
+
     //
     // special case for forward_list...  This is O(n)!
     //
 
     template <typename T, typename V>
-    bool
-    insert(std::forward_list<T> &cont, V &&value)
+    bool insert(std::forward_list<T> &cont, V &&value)
     {
         auto before_end = cont.before_begin();
         for(auto &e : cont) {
@@ -109,6 +141,34 @@ namespace cat
         }
         cont.insert_after(before_end, std::forward<V>(value));
         return true;
+    }
+
+    template <typename T, typename It>
+    bool insert(std::forward_list<T> &cont, It it, It end)
+    {
+        auto before_end = cont.before_begin();
+        for(auto &e : cont) {
+            (void)e;
+            ++before_end;
+        }
+
+        for(; it != end; ++it)
+        {
+            cont.insert_after(before_end, *it);
+            ++before_end;
+        }
+
+        return true;
+    }
+
+    //
+    // generic inserter for initializer_list
+    //
+
+    template <typename C, typename T>
+    bool insert(C &cont, std::initializer_list<T> xs)
+    {
+        return insert(cont, std::begin(xs), std::end(xs));
     }
 
     //
