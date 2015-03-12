@@ -178,7 +178,7 @@ namespace cat
             auto operator()(Fun f, Fm_ && xs) const
             {
                 using Fm = std::decay_t<Fm_>;
-                using  B = decltype(f(std::declval<inner_type_t<Fm>>()));
+                using  B = decltype(f(std::declval<inner_value_type_t<Fm>>()));
                 return foldr(compose(mappend, f), mempty<B>(), std::forward<Fm_>(xs));
             }
         };

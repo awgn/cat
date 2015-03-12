@@ -261,7 +261,6 @@ namespace cat
         public:
             enum { value = noexcept(test<T>(nullptr)) };
         };
-
     }
 
     template <typename T>
@@ -285,7 +284,6 @@ namespace cat
         public:
             enum { value = noexcept(test<T>(nullptr)) };
         };
-
     }
 
     template <typename T>
@@ -427,7 +425,6 @@ namespace cat
         public:
             enum { value = noexcept(check<T>(nullptr)) };
         };
-
     }
 
     template <typename T>
@@ -542,35 +539,35 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // type_index
+    // type_at
     //
 
-    template <size_t N, typename ...Ts> struct type_index;
+    template <size_t N, typename ...Ts> struct type_at;
 
     template <typename T, typename ...Ts>
-    struct type_index<0, T, Ts...>
+    struct type_at<0, T, Ts...>
     {
         using type = T;
     };
 
     template <size_t N, typename T, typename ...Ts>
-    struct type_index<N, T, Ts...> : type_index<N-1, Ts...>
+    struct type_at<N, T, Ts...> : type_at<N-1, Ts...>
     { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // arg_type
+    // arg_type_at
     //
 
-    template <typename F, size_t N> struct arg_type;
+    template <typename F, size_t N> struct arg_type_at;
 
     template <typename R, typename ...Ts, size_t N>
-    struct arg_type<R(Ts...), N> : type_index<N, Ts...>
+    struct arg_type_at<R(Ts...), N> : type_at<N, Ts...>
     { };
 
     template <typename T, size_t N>
-    using arg_type_t = typename arg_type<T, N>::type;
+    using arg_type_at_t = typename arg_type_at<T, N>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -615,7 +612,7 @@ namespace cat
     template <typename F, size_t N = 0> struct inner_type;
 
     template <size_t N, template <typename ...> class F, typename ...Ts>
-    struct inner_type<F<Ts...>, N> : type_index<N, Ts...>
+    struct inner_type<F<Ts...>, N> : type_at<N, Ts...>
     { };
 
     template <typename T, size_t N = 0>
