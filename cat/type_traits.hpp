@@ -535,10 +535,10 @@ namespace cat
     // result_of_type: std::result_of meta-function adapter
     //
 
-    template <typename Fun, typename T>
+    template <typename Fun, typename ...Ts>
     struct result_of_type
     {
-        using type = typename std::result_of<Fun(T)>::type;
+        using type = typename std::result_of<Fun(Ts...)>::type;
     };
 
 
