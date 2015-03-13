@@ -158,6 +158,14 @@ Context(functor)
     }
 
 
+    Test(functor_future)
+    {
+        auto x = std::async(std::launch::deferred, []() { return std::string("one"); });
+        auto y = fmap([](const std::string &s) { return s.size(); }, std::move(x));
+        Assert(y.get(), is_equal_to(3));
+    }
+
+
     Test(functor_map)
     {
         std::map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };

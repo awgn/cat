@@ -236,6 +236,20 @@ Context(applicative)
         Assert(!y4);
     }
 
+    Test(applicative_future)
+    {
+        auto z  = pure.in<std::future>(42);
+
+        Assert(z.get() == 42 );
+
+        auto x  = pure.in<std::future>(42);
+        auto f  = pure.in<std::future>(currying([](int n) { return n+1; }));
+
+        auto r  = std::move(f) * std::move(x);  // std::future is non-copyable!
+
+        Assert( r.get(), is_equal_to(43) );
+    }
+
 
     int sum_f(int a, int b) { return a + b; };
 

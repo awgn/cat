@@ -83,6 +83,19 @@ Context(monoid)
     }
 
 
+    Test(monoid_future)
+    {
+        auto a = Any{ true };
+        auto b = Any{ false };
+
+        auto a_ = std::async([=]() { return a; });
+        auto b_ = std::async([=]() { return b; });
+
+        Assert(mempty<std::future<Any>>().get() == mempty<Any>());
+        Assert(mappend(std::move(a_), std::move(b_)).get() == mappend(a, b));
+    }
+
+
     Test(monoid_map)
     {
         Assert(mempty<std::map<int,std::string>>().empty());

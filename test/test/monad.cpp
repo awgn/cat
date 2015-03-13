@@ -92,6 +92,22 @@ Context(monad)
     }
 
 
+    Test(monad_future)
+    {
+        auto f = [](int n) { return mreturn.in<std::future>(n); };
+        auto g = [](int n) { return mreturn.in<std::future>(n+2); };
+
+        Assert( mbind(mreturn.in<std::future>(10), f).get() == 10 );
+
+        Assert( mbind( mbind(mreturn.in<std::future>(10), f), g).get() == 12 );
+
+        Assert( (mreturn.in<std::future>(10) >>= f).get()  == 10 );
+
+        Assert( ((mreturn.in<std::future>(10)
+                 >>= f) >>= g).get() == 12 );
+    }
+
+
     Test(monad_unique_ptr)
     {
         auto f = [](int n) { return mreturn.in<std::unique_ptr>(n); };
