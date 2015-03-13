@@ -27,6 +27,8 @@
 #pragma once
 
 #include <cat/bits/type.hpp>
+#include <cat/container.hpp>
+#include <cat/placeholders.hpp>
 
 #include <experimental/optional>
 
@@ -37,5 +39,91 @@ namespace cat
     using std::experimental::make_optional;
     using std::experimental::nullopt_t;
     using std::experimental::nullopt;
+
+
+    namespace details
+    {
+        using namespace placeholders;
+
+        struct Maybe_
+        {
+            template <typename V, typename Fun, typename T>
+            constexpr V operator()(V const & def, Fun fun, optional<T> const & value) const
+            {
+                return value ?  fun(value.value()) : def;
+            }
+        };
+
+        struct CatOptionals_
+        {
+            using function_type =  _C<_a>(_C<optional<_a>>);
+
+            template <template <typename...> class Cont, typename T>
+            constexpr
+            auto operator()(Cont<optional<T>> const &in)
+            {
+                Cont<T> ret;
+
+                for(auto & elem: in)
+                    if (elem)
+                        insert(ret, elem.value());
+
+                return ret;
+            }
+
+            template <template <typename...> class Cont, typename T>
+            constexpr
+            auto operator()(Cont<optional<T>> && in)
+            {
+                Cont<T> ret;
+
+                for(auto & elem: in)
+                    if (elem)
+                        insert(ret, std::move(elem.value()));
+
+                return ret;
+            }
+        };
+
+
+        struct MapOptional_
+        {
+            using function_type =  _C<_b>(_f<optional<_b>(_a)>, _C<_a>);
+
+            template <typename Fun, template <typename...> class Cont, typename T>
+            constexpr auto operator()(Fun f, Cont<T> const &xs)
+            {
+                Cont<typename decltype(f(std::declval<T>()))::value_type> ret;
+
+                for(auto & x : xs)
+                {
+                    auto y = f(x);
+                    if (y)
+                        insert(ret,y.value());
+                }
+
+                return ret;
+            }
+
+            template <typename Fun, template <typename...> class Cont, typename T>
+            constexpr auto operator()(Fun f, Cont<T> && xs)
+            {
+                Cont<typename decltype(f(std::declval<T>()))::value_type> ret;
+
+                for(auto & x : xs)
+                {
+                    auto y = f(std::move(x));
+                    if (y)
+                        insert(ret, y.value());
+                }
+
+                return ret;
+            }
+        };
+    }
+
+    constexpr auto maybe = details::Maybe_{};
+    constexpr auto cat_optionals = details::CatOptionals_{};
+    constexpr auto map_optional = details::MapOptional_{};
 
 } // namespace cat
