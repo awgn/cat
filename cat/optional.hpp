@@ -60,7 +60,7 @@ namespace cat
 
             template <template <typename...> class Cont, typename T>
             constexpr
-            auto operator()(Cont<optional<T>> const &in)
+            auto operator()(Cont<optional<T>> const &in) const
             {
                 Cont<T> ret;
 
@@ -73,7 +73,7 @@ namespace cat
 
             template <template <typename...> class Cont, typename T>
             constexpr
-            auto operator()(Cont<optional<T>> && in)
+            auto operator()(Cont<optional<T>> && in) const
             {
                 Cont<T> ret;
 
@@ -91,7 +91,7 @@ namespace cat
             using function_type =  _C<_b>(_f<optional<_b>(_a)>, _C<_a>);
 
             template <typename Fun, template <typename...> class Cont, typename T>
-            constexpr auto operator()(Fun f, Cont<T> const &xs)
+            constexpr auto operator()(Fun f, Cont<T> const &xs) const
             {
                 Cont<typename decltype(f(std::declval<T>()))::value_type> ret;
 
@@ -106,7 +106,7 @@ namespace cat
             }
 
             template <typename Fun, template <typename...> class Cont, typename T>
-            constexpr auto operator()(Fun f, Cont<T> && xs)
+            constexpr auto operator()(Fun f, Cont<T> && xs) const
             {
                 Cont<typename decltype(f(std::declval<T>()))::value_type> ret;
 
