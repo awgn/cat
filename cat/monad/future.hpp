@@ -26,12 +26,46 @@
 
 #pragma once
 
-#include <cat/applicative/vector.hpp>
-#include <cat/applicative/deque.hpp>
-#include <cat/applicative/list.hpp>
-#include <cat/applicative/forward_list.hpp>
-#include <cat/applicative/shared_ptr.hpp>
-#include <cat/applicative/unique_ptr.hpp>
-#include <cat/applicative/optional.hpp>
-#include <cat/applicative/future.hpp>
+#include <future>
+#include <cat/monad/monad.hpp>
+
+namespace cat
+{
+    // std::future is a monad:
+    //
+
+    template <> struct is_monad<std::future> : std::true_type { };
+
+    // std::future instance:
+    //
+
+    template <typename A, typename Fun, typename Ma_, typename A_>
+    struct MonadInstance<std::future<A>, Fun, Ma_, A_> final : Monad<std::future>::
+    template _<Fun, A, Ma_, A_>
+    {
+        using B = inner_type_t<std::result_of_t<Fun(A)>>;
+
+        std::future<B>
+        mbind(Ma_ && x, Fun f) override
+        {
+            return std::async(std::launch::deferred,
+                              [=](auto && x)
+                              {
+                                    return f(x.get()).get();
+
+                              }, std::forward<Ma_>(x));
+        }
+
+        std::future<A>
+        mreturn(A_ && x) override
+        {
+            return std::async(std::launch::deferred,
+                              [](auto && x) { return x; },
+                              std::forward<A_>(x));
+        }
+
+    };
+
+
+} // namespace cat
 

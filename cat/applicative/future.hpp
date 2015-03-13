@@ -26,12 +26,48 @@
 
 #pragma once
 
-#include <cat/applicative/vector.hpp>
-#include <cat/applicative/deque.hpp>
-#include <cat/applicative/list.hpp>
-#include <cat/applicative/forward_list.hpp>
-#include <cat/applicative/shared_ptr.hpp>
-#include <cat/applicative/unique_ptr.hpp>
-#include <cat/applicative/optional.hpp>
-#include <cat/applicative/future.hpp>
+#include <future>
+#include <cat/applicative/applicative.hpp>
+
+namespace cat
+{
+    // std::future is an applicative instance:
+    //
+
+    template <> struct is_applicative<std::future> : std::true_type { };
+
+    // std::future instance:
+    //
+
+    template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
+    struct ApplicativeInstance<std::future<F>, std::future<A>, Ff_, Fa_, A_>  final : Applicative<std::future>::
+    template _<F, A, Ff_, Fa_, A_>
+    {
+        using B = std::result_of_t<F(A_)>;
+
+        std::future<A>
+        pure(A_ &&elem) override
+        {
+            return std::async(std::launch::deferred,
+                              [](auto && x) { return x; },
+                              std::forward<A_>(elem));
+        }
+
+        std::future<B>
+        apply(Ff_ && f, Fa_ && x) override
+        {
+            return std::async(std::launch::deferred,
+                              [](std::decay_t<Ff_> f, std::decay_t<Fa_> x)
+                              {
+                                    auto f_ = f.get();
+                                    auto x_ = x.get();
+                                    return f_(std::move(x_));
+                              },
+                              std::forward<Ff_>(f), std::forward<Fa_>(x));
+        }
+
+    };
+
+
+} // namespace cat
 

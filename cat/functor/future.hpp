@@ -26,12 +26,39 @@
 
 #pragma once
 
-#include <cat/applicative/vector.hpp>
-#include <cat/applicative/deque.hpp>
-#include <cat/applicative/list.hpp>
-#include <cat/applicative/forward_list.hpp>
-#include <cat/applicative/shared_ptr.hpp>
-#include <cat/applicative/unique_ptr.hpp>
-#include <cat/applicative/optional.hpp>
-#include <cat/applicative/future.hpp>
+#include <future>
+
+#include <cat/functor/functor.hpp>
+#include <cat/utility.hpp>
+
+namespace cat
+{
+    // future is a functor:
+    //
+
+    template <> struct is_functor<std::future> : std::true_type { };
+
+    // future instance:
+    //
+
+    template <typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::future<A>, Fun, Fa_> final : Functor<std::future>::
+    template _<A, Fun, Fa_>
+    {
+        using B = std::result_of_t<Fun(A)>;
+
+        std::future<B>
+        fmap(Fun f, Fa_ && xs) override
+        {
+            return std::async(std::launch::deferred,
+                    [=](auto && fut){
+                        auto val = fut.get();
+                        return f(val);
+
+                    }, std::forward<Fa_>(xs));
+        }
+
+    };
+
+} // namespace cat
 

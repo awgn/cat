@@ -33,6 +33,7 @@
 #include <cat/functor/shared_ptr.hpp>
 #include <cat/functor/unique_ptr.hpp>
 #include <cat/functor/optional.hpp>
+#include <cat/functor/future.hpp>
 
 #include <cat/functor/map.hpp>
 #include <cat/functor/unordered_map.hpp>

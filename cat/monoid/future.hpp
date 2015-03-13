@@ -26,12 +26,35 @@
 
 #pragma once
 
-#include <cat/applicative/vector.hpp>
-#include <cat/applicative/deque.hpp>
-#include <cat/applicative/list.hpp>
-#include <cat/applicative/forward_list.hpp>
-#include <cat/applicative/shared_ptr.hpp>
-#include <cat/applicative/unique_ptr.hpp>
-#include <cat/applicative/optional.hpp>
-#include <cat/applicative/future.hpp>
+#include <future>
+#include <cat/monoid/monoid.hpp>
 
+namespace cat
+{
+    template <typename T>
+    struct is_monoid<std::future<T>> : std::true_type { };
+
+    template <typename F, typename M1, typename M2, typename T>
+    struct MonoidInstance<std::future<T>, F, M1, M2> final : Monoid<std::future<T>>::
+    template _<F, M1, M2>
+    {
+        static_assert(is_monoid<T>::value, "std::future<T>: T must be a monoid");
+
+        virtual std::future<T> mempty() override
+        {
+            return std::async(std::launch::deferred,
+                              []() { return cat::mempty<T>(); });
+        }
+
+        virtual std::future<T>
+        mappend(M1 &&a, M2 &&b) override
+        {
+            return std::async(std::launch::deferred,
+                              [](auto && a, auto && b)
+                              {
+                                    return mappend(a.get(), b.get());
+
+                              }, std::forward<M1>(a), std::forward<M2>(b));
+        }
+    };
+};
