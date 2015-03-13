@@ -1,5 +1,5 @@
 #include <cat/functional.hpp>
-
+#include <cat/placeholders.hpp>
 #include <cat/bits/constexpr.hpp>
 
 #include <algorithm>
@@ -12,7 +12,7 @@
 
 using namespace yats;
 using namespace cat;
-
+using namespace cat::placeholders;
 
 Context(currying_test)
 {
@@ -58,6 +58,20 @@ Context(currying_test)
         Assert(currying(f0)(42)("hello")('x')(true), is_equal_to(42));
     }
 
+
+    Test(template_currying)
+    {
+        int n = 1;
+
+        auto f = generic<_a(_a,_a)>([](auto && x, auto && y) { return (x++) + y;});
+        Assert(f(n)(2), is_equal_to(3));
+        Assert(n, is_equal_to(1));
+
+        auto g = generic<_a(_a &,_a &)>([](auto && x, auto && y) { return (x++) + y;});
+        Assert(g(n)(2), is_equal_to(3));
+        Assert(n, is_equal_to(2));
+
+    }
 
     void increment(int &n)
     {
