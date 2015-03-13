@@ -248,7 +248,7 @@ namespace cat
                     });
         };
 
-        return foldr(k, mreturn.in<M>(C<A>{}), ms);
+        return container::foldr(k, mreturn.in<M>(C<A>{}), ms);
     }
 
     //

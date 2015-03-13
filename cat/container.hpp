@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <cat/show.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/missing.hpp>
 #include <cat/utility.hpp>
+#include <cat/placeholders.hpp>
 
 #include <utility>
 #include <forward_list>
@@ -175,105 +175,98 @@ namespace cat
     // generic fold operations for containers (overridden by Foldable)
     //
 
-#ifndef CAT_FOLDABLE
-    inline
-#endif
     namespace container
     {
         template <typename T,
                  std::enable_if_t<!is_pair<std::decay_t<T>>::value> * = nullptr>
-        decltype(auto) iterator_elem(T &&value)
-        {
-            return std::forward<T>(value);
-        }
+                 decltype(auto) iterator_elem(T &&value)
+                 {
+                     return std::forward<T>(value);
+                 }
 
         template <typename T,
                  std::enable_if_t<is_pair<std::decay_t<T>>::value> * = nullptr>
-        decltype(auto) iterator_elem(T &&value)
-        {
-            return forward_as<T>(value.second);
-        }
+                 decltype(auto) iterator_elem(T &&value)
+                 {
+                     return forward_as<T>(value.second);
+                 }
 
         //
         // foldl, foldl1, foldr, foldr1
         //
 
-        namespace details_
+        using namespace placeholders;
+
+        struct Foldl_
         {
-            using namespace placeholders;
+            using function_type = _a(_<_a(_a, _b)>, _a, _C<_b>);
 
-            struct Foldl_
+            template <typename F, typename A, typename Cont>
+            auto operator()(F f, A acc, Cont &&xs) const
             {
-                using function_type = _a(_<_a(_a, _b)>, _a, _C<_b>);
+                for(auto it = std::begin(xs); it != std::end(xs); ++it)
+                    acc = f(std::move(acc), iterator_elem(forward_as<Cont>(*it)));
 
-                template <typename F, typename A, typename Cont>
-                auto operator()(F f, A acc, Cont &&xs) const
-                {
-                    for(auto it = std::begin(xs); it != std::end(xs); ++it)
-                        acc = f(std::move(acc), iterator_elem(forward_as<Cont>(*it)));
+                return acc;
+            }
+        };
 
-                    return acc;
-                }
-            };
+        struct Foldl1_
+        {
+            using function_type = _a(_<_a(_a, _a)>, _C<_a>);
 
-            struct Foldl1_
+            template <typename F, typename Cont>
+            auto operator()(F f, Cont &&xs) const
             {
-                using function_type = _a(_<_a(_a, _a)>, _C<_a>);
+                if (xs.empty())
+                    throw std::runtime_error("foldl1: empty container");
 
-                template <typename F, typename Cont>
-                auto operator()(F f, Cont &&xs) const
-                {
-                    if (xs.empty())
-                        throw std::runtime_error("foldl1: empty container");
+                auto acc = iterator_elem(forward_as<Cont>(*std::begin(xs)));
 
-                    auto acc = iterator_elem(forward_as<Cont>(*std::begin(xs)));
+                for(auto it = std::next(std::begin(xs)); it != std::end(xs); ++it)
+                    acc = f(std::move(acc), iterator_elem(forward_as<Cont>(*it)));
 
-                    for(auto it = std::next(std::begin(xs)); it != std::end(xs); ++it)
-                        acc = f(std::move(acc), iterator_elem(forward_as<Cont>(*it)));
+                return acc;
+            }
+        };
 
-                    return acc;
-                }
-            };
+        struct Foldr_
+        {
+            using function_type = _b(_<_b(_a, _b)>, _b, _C<_a>);
 
-            struct Foldr_
+            template <typename F, typename A, typename Cont>
+            auto operator()(F f, A acc, Cont &&xs) const
             {
-                using function_type = _b(_<_b(_a, _b)>, _b, _C<_a>);
+                for(auto it = std::rbegin(xs); it != std::rend(xs); ++it)
+                    acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
 
-                template <typename F, typename A, typename Cont>
-                auto operator()(F f, A acc, Cont &&xs) const
-                {
-                    for(auto it = std::rbegin(xs); it != std::rend(xs); ++it)
-                        acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
+                return acc;
+            }
+        };
 
-                    return acc;
-                }
-            };
+        struct Foldr1_
+        {
+            using function_type = _a(_<_a(_a, _a)>, _C<_a>);
 
-            struct Foldr1_
+            template <typename F, typename Cont>
+            auto operator()(F f, Cont &&xs) const
             {
-                using function_type = _a(_<_a(_a, _a)>, _C<_a>);
+                if (xs.empty())
+                    throw std::runtime_error("foldr1: empty container");
 
-                template <typename F, typename Cont>
-                auto operator()(F f, Cont &&xs) const
-                {
-                    if (xs.empty())
-                        throw std::runtime_error("foldr1: empty container");
+                auto acc = iterator_elem(forward_as<Cont>(*std::rbegin(xs)));
 
-                    auto acc = iterator_elem(forward_as<Cont>(*std::rbegin(xs)));
+                for(auto it = std::next(std::rbegin(xs)); it != std::rend(xs); ++it)
+                    acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
 
-                    for(auto it = std::next(std::rbegin(xs)); it != std::rend(xs); ++it)
-                        acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
+                return acc;
+            }
+        };
 
-                    return acc;
-                }
-            };
-        }
-
-        constexpr auto foldl  = details_::Foldl_{};
-        constexpr auto foldl1 = details_::Foldl1_{};
-        constexpr auto foldr  = details_::Foldr_{};
-        constexpr auto foldr1 = details_::Foldr1_{ };
+        constexpr auto foldl  = container::Foldl_{};
+        constexpr auto foldl1 = container::Foldl1_{};
+        constexpr auto foldr  = container::Foldr_{};
+        constexpr auto foldr1 = container::Foldr1_{ };
     }
-
 
 } // namespace cat
