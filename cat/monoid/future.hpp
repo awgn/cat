@@ -52,7 +52,7 @@ namespace cat
             return std::async(std::launch::deferred,
                               [](auto && a, auto && b)
                               {
-                                    return mappend(a.get(), b.get());
+                                    return cat::mappend(a.get(), b.get());
 
                               }, std::forward<M1>(a), std::forward<M2>(b));
         }
