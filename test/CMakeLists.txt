@@ -13,6 +13,7 @@ add_executable(test-infix test/infix.cpp)
 add_executable(test-tuple test/tuple.cpp)
 add_executable(test-functional test/functional.cpp)
 add_executable(test-iterator test/iterator.cpp)
+add_executable(test-optional test/optional.cpp)
 add_executable(test-forward test/forward.cpp)
 add_executable(test-string_view test/string_view.cpp)
 
