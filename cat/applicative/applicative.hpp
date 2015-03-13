@@ -86,7 +86,7 @@ namespace cat
 
         struct apply_
         {
-            using function_type = _F<_b>( _F<_<_b(_a)>>, _F<_a>);
+            using function_type = _F<_b>( _F<_f<_b(_a)>>, _F<_a>);
 
             template <typename Ff_, typename Fa_>
             auto operator()(Ff_ && fs, Fa_ &&xs) const
@@ -141,7 +141,7 @@ namespace cat
 
         struct fapply_
         {
-            using function_type = _F<_b>(_<_b(_a)>, _F<_a>);
+            using function_type = _F<_b>(_f<_b(_a)>, _F<_a>);
 
             template <typename F, typename Fa>
             auto operator()(F && f, Fa && xs) const

@@ -40,13 +40,12 @@ namespace cat
         struct _c { };
         struct _d { };
         struct _e { };
-        struct _f { };
         struct _g { };
         struct _h { };
         struct _i { };
-        struct _m { };  // monoid
+        struct _m { };                                      // monoid
 
-        template <typename T> struct _  { };                // generic function: _<_b(_a)>  =>  a -> b
+        template <typename T> struct _f  { };               // generic function: _f<_b(_a)>  => f :: a -> b
 
         template <typename T> struct _C { };                // container
         template <typename T> struct _F { };                // functor

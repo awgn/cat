@@ -70,7 +70,7 @@ namespace cat
 
         struct fmap_
         {
-            using function_type = _F<_b>(_<_b(_a)>, _F<_a> &&);
+            using function_type = _F<_b>(_f<_b(_a)>, _F<_a> &&);
 
             template <typename Fun, typename Fa_>
             auto operator()(Fun f, Fa_ && xs) const

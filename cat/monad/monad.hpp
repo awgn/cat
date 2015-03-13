@@ -118,7 +118,7 @@ namespace cat
 
         struct Mbind_
         {
-            using function_type = _M<_b>(_M<_a> &&, _<_M<_b>(_a)>);
+            using function_type = _M<_b>(_M<_a> &&, _f<_M<_b>(_a)>);
 
             template <typename Ma_, typename Fun>
             auto operator()(Ma_ && ma, Fun f) const

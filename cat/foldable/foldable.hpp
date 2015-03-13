@@ -75,7 +75,7 @@ namespace cat
 
         struct foldr_
         {
-            using function_type = _b(_<_b(_a, _b)>, _b, _F<_a> &&);
+            using function_type = _b(_f<_b(_a, _b)>, _b, _F<_a> &&);
 
             template <typename FunR, typename B, typename Fa_>
             auto operator()(FunR f, B value, Fa_ && xs) const
@@ -95,7 +95,7 @@ namespace cat
 
         struct foldr1_
         {
-            using function_type = _a(_<_a(_a, _a)>, _F<_a> &&);
+            using function_type = _a(_f<_a(_a, _a)>, _F<_a> &&);
 
             template <typename Fun, typename Fa_>
             auto operator()(Fun f, Fa_ && xs) const
@@ -114,7 +114,7 @@ namespace cat
 
         struct foldl_
         {
-            using function_type = _b(_<_b(_b, _a)>, _b, _F<_a> &&);
+            using function_type = _b(_f<_b(_b, _a)>, _b, _F<_a> &&);
 
             template <typename FunL, typename B, typename Fa_>
             auto operator()(FunL f, B value, Fa_ && xs) const
@@ -134,7 +134,7 @@ namespace cat
 
         struct foldl1_
         {
-            using function_type = _a(_<_a(_a, _a)>, _F<_a> &&);
+            using function_type = _a(_f<_a(_a, _a)>, _F<_a> &&);
 
             template <typename Fun, typename Fa_>
             auto operator()(Fun f, Fa_ && xs) const
