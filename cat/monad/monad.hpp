@@ -28,6 +28,7 @@
 
 #include <utility>
 #include <vector>
+#include <list>
 
 #include <cat/functor.hpp>
 #include <cat/type_traits.hpp>
@@ -201,70 +202,66 @@ namespace cat
     // operators
     //
 
-    template <template <typename ...> class M, typename Fun, typename A,
-              std::enable_if_t<is_monad<M>::value> * = nullptr>
-    auto operator>>=(M<A> && ma, Fun f)
+    template <typename Ma_, typename Fun,
+              std::enable_if_t<on_outer_type<is_monad, std::decay_t<Ma_>>::value> * = nullptr>
+    auto operator>>=(Ma_ && ma, Fun f)
     {
-        return mbind(std::move(ma), std::move(f));
-    }
-    template <template <typename ...> class M, typename Fun, typename A,
-              std::enable_if_t<is_monad<M>::value> * = nullptr>
-    auto operator>>=(M<A> const &ma, Fun f)
-    {
-        return mbind(ma, std::move(f));
+        return mbind(std::forward<Ma_>(ma), std::move(f));
     }
 
-
-    template <template <typename ...> class M, typename A, typename B,
-              std::enable_if_t<is_monad<M>::value> * = nullptr>
-    auto operator>>(M<A> && ma, M<B> const & mb)
+    template <typename Ma_, typename Mb_,
+              std::enable_if_t<
+                on_outer_type<is_monad, std::decay_t<Ma_>>::value &&
+                on_outer_type<is_monad, std::decay_t<Mb_>>::value> * = nullptr>
+    auto operator>>(Ma_ && ma, Mb_ && mb)
     {
-        return mbind(std::move(ma), constant(mb));
-    }
-    template <template <typename ...> class M, typename A, typename B,
-              std::enable_if_t<is_monad<M>::value> * = nullptr>
-    auto operator>>(M<A> const & ma, M<B> const & mb)
-    {
-        return mbind(ma, constant(mb));
+        return mbind(std::forward<Ma_>(ma), constant(std::forward<Mb_>(mb)));
     }
 
     //
     // sequence
     //
 
-    template <template <typename ...> class C, template <typename ...> class M, typename A>
-    auto sequence(C<M<A>> const &ms)
+    template <template <typename...> class C, typename Ma, typename ...Ts>
+    auto sequence(C<Ma, Ts...> const &ms)
     {
-        static_assert(is_monad_plus<M>::value, "Type M not a monad!");
+        static_assert(on_outer_type<is_monad_plus, Ma>::value, "Type M not a monad!");
+
+#ifdef _LIBCPP_VERSION
+        using Cont = C<inner_type_t<Ma>, std::allocator<inner_type_t<Ma>>>;
+#else
+        using Cont = C<inner_type_t<Ma>>;
+#endif
 
         auto k = [] (auto m, auto ms)
         {
             return (m >>= [&](auto x) {
                     return (ms >>= [&] (auto xs) {
-                            C<A> l{x};
+                            Cont l{x};
+
                             insert(l, std::begin(xs), std::end(xs));
-                            return mreturn.in<M>(std::move(l));
+                            return mreturn.as<Ma>(std::move(l));
                             });
                     });
         };
 
-        return container::foldr(k, mreturn.in<M>(C<A>{}), ms);
+        return container::foldr(k, mreturn.as<Ma>(Cont{}), ms);
     }
 
     //
     // mapM and forM
     //
 
-    template <template <typename ...> class C, typename A, typename F>
-    auto mapM(F f, C<A> const &xs)
+    template <typename Ma, typename F>
+    auto mapM(F f, Ma && xs)
     {
-        return sequence( fmap(f, xs) );
+        return sequence(fmap(f, std::forward<Ma>(xs)));
     }
 
-    template <template <typename ...> class C, typename A, typename F>
-    auto forM(C<A> const &ma, F f)
+    template <typename Ma, typename F>
+    auto forM(Ma && xs, F f)
     {
-        return mapM(f, ma);
+        return mapM(f, std::forward<Ma>(xs));
     }
 
     //
@@ -312,8 +309,8 @@ namespace cat
     // msum
     //
 
-    template <template <typename ...> class F, typename Ma>
-    auto msum (F<Ma> && xs)
+    template <typename Ma, template <typename ...> class C, typename ...Ts>
+    auto msum (C<Ma, Ts...> && xs)
     {
         auto acc = mzero<Ma>();
         for(auto & x : xs)
@@ -321,8 +318,8 @@ namespace cat
         return acc;
     }
 
-    template <template <typename ...> class F, typename Ma>
-    auto msum (F<Ma> const & xs)
+    template <typename Ma, template <typename ...> class C, typename ...Ts>
+    auto msum (C<Ma, Ts...> const & xs)
     {
         auto acc = mzero<Ma>();
         for(auto & x : xs)
