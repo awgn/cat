@@ -21,8 +21,8 @@ Context(iterator)
     {
         std::vector<int> v {1,2,3};
 
-        map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, v) == std::vector<int>{1,2,3};
-        map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, std::move(v)) == std::vector<int>{1,2,3};
+        Assert(map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, v) == std::vector<int>{1,2,3});
+        Assert(map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, std::move(v)) == std::vector<int>{1,2,3});
     }
 
     Test(cat_optionals)
@@ -32,8 +32,8 @@ Context(iterator)
                                       make_optional(3),
                                       optional<int>{} };
 
-        cat_optionals(v) == std::vector<int>{1,2,3};
-        cat_optionals(std::move(v)) == std::vector<int>{1,2,3};
+        Assert(cat_optionals(v) == std::vector<int>{1,2,3});
+        Assert(cat_optionals(std::move(v)) == std::vector<int>{1,2,3});
     }
 }
 
