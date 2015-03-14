@@ -489,9 +489,10 @@ namespace cat
         template <typename F>
         struct is_callable
         {
-            enum { value = std::is_function<F>::value  ||
-                           is_std_function<F>::value   ||
-                           has_function_type<F>::value ||
+            enum { value = std::is_function<F>::value        ||
+                           std::is_bind_expression<F>::value ||
+                           is_std_function<F>::value         ||
+                           has_function_type<F>::value       ||
                            has_call_operator<F>::value };
         };
     }
