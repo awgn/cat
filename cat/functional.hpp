@@ -184,7 +184,7 @@ namespace cat
         template <size_t ...N, typename ...Xs>
         auto eval_(std::integral_constant<size_t, 0>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return tuple_apply(fun_, std::tuple_cat(std::move(args_), std::forward_as_tuple(std::forward<Xs>(xs)...)));
+            return tuple_apply(fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, size_t ...N, typename ...Xs>

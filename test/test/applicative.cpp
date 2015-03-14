@@ -56,8 +56,8 @@ namespace cat
 Context(applicative)
 {
 
-    template <template <typename...> class F, typename T>
-    void applicative_constraint(F<T> const &)
+    template <template <typename...> class F, typename ...Ts>
+    void applicative_constraint(F<Ts...> const &)
     {
         static_assert(is_applicative<F>(), "F: not a applicative!");
     }
