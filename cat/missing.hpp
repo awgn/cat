@@ -27,8 +27,9 @@
 #pragma once
 
 #include <iterator>
+#include <ciso646>
 
-#ifdef CAT_CPP14_RBEGIN_MISSING
+#if defined(__clang__) && !defined(_LIBCPP_VERSION) || !defined(__clang__) && (__GNUC__ < 5)
 
 namespace std
 {
