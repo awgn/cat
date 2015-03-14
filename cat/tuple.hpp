@@ -129,7 +129,7 @@ namespace cat
     }
 
     //
-    //  tuple_apply: expand a tuple and pass as pack to a callable
+    //  tuple_apply: expand a tuple into a pack and pass it to a callable
     //
 
     template <typename Fun, typename TupleT>

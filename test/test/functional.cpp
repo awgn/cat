@@ -63,11 +63,13 @@ Context(currying_test)
     {
         int n = 1;
 
-        auto f = generic<_a(_a,_a)>([](auto && x, auto && y) { return (x++) + y;});
+        auto f = generic<_a(_a,_a)>([](auto x, auto y) { return (x++) + y;});
+
         Assert(f(n)(2), is_equal_to(3));
         Assert(n, is_equal_to(1));
 
-        auto g = generic<_a(_a &,_a &)>([](auto && x, auto && y) { return (x++) + y;});
+        auto g = generic<_a(_a &,_a)>([](auto & x, auto y) { return (x++) + y;});
+
         Assert(g(n)(2), is_equal_to(3));
         Assert(n, is_equal_to(2));
 
