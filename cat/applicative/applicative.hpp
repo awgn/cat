@@ -118,17 +118,14 @@ namespace cat
     // operator *
     //
 
-    template <template <typename ...> class F, typename Fun, typename Fa_,
-              std::enable_if_t<is_applicative<F>::value> * = nullptr>
-    auto operator*(F<Fun> const &fs, Fa_ &&xs)
+    template <typename Ff_, typename Fa_,
+              std::enable_if_t<
+                    on_outer_type<is_applicative, std::decay_t<Ff_>>::value &&
+                    on_outer_type<is_applicative, std::decay_t<Fa_>>::value
+              > * = nullptr>
+    auto operator*(Ff_  && fs, Fa_ &&xs)
     {
-        return apply(fs, std::forward<Fa_>(xs));
-    }
-    template <template <typename ...> class F, typename Fun, typename Fa_,
-              std::enable_if_t<is_applicative<F>::value> * = nullptr>
-    auto operator*(F<Fun> && fs, Fa_ &&xs)
-    {
-        return apply(std::move(fs), std::forward<Fa_>(xs));
+        return apply(std::forward<Ff_>(fs), std::forward<Fa_>(xs));
     }
 
     //
