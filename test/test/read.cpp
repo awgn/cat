@@ -111,7 +111,8 @@ Context(test_read)
         Assert(reads<std::chrono::system_clock::time_point>("x") == nullopt);
         Assert(reads<std::chrono::system_clock::time_point>("42") == nullopt);
         Assert(reads<std::chrono::system_clock::time_point>("42_") == nullopt);
-        Assert(reads<std::chrono::system_clock::time_point>("42_ns") == std::make_pair(std::chrono::system_clock::time_point(42ns), string_view{""}));
+        Assert(reads<std::chrono::system_clock::time_point>("42_us") == std::make_pair(std::chrono::system_clock::time_point(
+                    std::chrono::duration_cast<std::chrono::system_clock::duration>(42us)), string_view{""}));
     }
 
     Test(container)
