@@ -394,7 +394,7 @@ namespace cat
     //
 
     template <typename F>
-    struct arity : details::arity< function_type_t<F> >
+    struct function_arity : details::arity< function_type_t<F> >
     { };
 
 

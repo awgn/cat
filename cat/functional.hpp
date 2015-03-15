@@ -167,7 +167,7 @@ namespace cat
         template <typename ...Xs>
         auto operator()(Xs && ... xs) const
         {
-            constexpr size_t N = arity<F>::value - sizeof...(Ts);
+            constexpr size_t N = function_arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
             return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
@@ -175,7 +175,7 @@ namespace cat
         template <typename ...Xs>
         auto apply(Xs && ... xs) const
         {
-            constexpr size_t N = arity<F>::value - sizeof...(Ts);
+            constexpr size_t N = function_arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
             return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
@@ -250,7 +250,7 @@ namespace cat
     template <typename F, typename G, typename = void>  struct Compose_;
 
     template <typename F, typename G>
-    struct Compose_<F, G, std::enable_if_t<arity<G>::value != 0>>
+    struct Compose_<F, G, std::enable_if_t<function_arity<G>::value != 0>>
     {
        using function_type = compose_function_type_t<
                                 function_type_t<F>,
@@ -273,7 +273,7 @@ namespace cat
     };
 
     template <typename F, typename G>
-    struct Compose_<F, G, std::enable_if_t<arity<G>::value == 0>>
+    struct Compose_<F, G, std::enable_if_t<function_arity<G>::value == 0>>
     {
         using function_type = compose_function_type_t<
                                 function_type_t<F>,

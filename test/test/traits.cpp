@@ -28,9 +28,9 @@ Context(traits)
         Assert(std::is_same< function_type<decltype(f1)>::type, int(int)>::value);
         Assert(std::is_same< function_type<decltype(f2)>::type, int(int, char)>::value);
 
-        Assert(arity<decltype(f0)>::value == 0);
-        Assert(arity<decltype(f1)>::value == 1);
-        Assert(arity<decltype(f2)>::value == 2);
+        Assert(function_arity<decltype(f0)>::value == 0);
+        Assert(function_arity<decltype(f1)>::value == 1);
+        Assert(function_arity<decltype(f2)>::value == 2);
 
         // function pointer...
 
