@@ -34,8 +34,8 @@ functional programming (e.g. `is_container`, `is_associative_container`, `functi
 currying on-top-of any kind of callable types (including `std::bind` expressions 
 and generic lambdas).
 * provides functions that operate on `std::tuple` and generic containers. 
-* provides `forward_as` and `forward_iterator` that allow for perfect forwarding from
-containers in for-loop statements and via iterator.  
+* provides utilities that allow for perfect forwarding from containers in for-loop 
+statements with `forward_as` or via the iterator adaptor `forward_iterator`.  
 * includes an extensible framework for building type classes and provides the
 implementation of the following ones:
     * Functor
