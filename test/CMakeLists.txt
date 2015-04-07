@@ -7,6 +7,7 @@ include_directories(../.)
 
 add_executable(test-container test/container.cpp)
 add_executable(test-traits test/traits.cpp)
+add_executable(test-match test/match.cpp)
 add_executable(test-infix test/infix.cpp)
 add_executable(test-section test/section.cpp)
 add_executable(test-tuple test/tuple.cpp)
