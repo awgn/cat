@@ -139,7 +139,7 @@ namespace cat
         template <typename F, size_t Idx, typename T>
         struct currying_decay
         {
-            using Tp = arg_type_at_t<F, Idx>;
+            using Tp = arg_type_at_t<Idx, F>;
 
             using type = typename std::conditional<
                             std::is_lvalue_reference<Tp>::value,

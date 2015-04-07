@@ -569,14 +569,14 @@ namespace cat
     // arg_type_at
     //
 
-    template <typename F, size_t N> struct arg_type_at;
+    template <size_t N, typename F> struct arg_type_at;
 
-    template <typename R, typename ...Ts, size_t N>
-    struct arg_type_at<R(Ts...), N> : type_at<N, Ts...>
+    template <size_t N, typename R, typename ...Ts>
+    struct arg_type_at<N, R(Ts...)> : type_at<N, Ts...>
     { };
 
-    template <typename T, size_t N>
-    using arg_type_at_t = typename arg_type_at<T, N>::type;
+    template <size_t N, typename F>
+    using arg_type_at_t = typename arg_type_at<N, function_type_t<F>>::type;
 
 
     //////////////////////////////////////////////////////////////////////////////////

@@ -187,8 +187,8 @@ Context(traits)
         Assert( std::is_same<int,  type_at<0, int, char>::type>::value );
         Assert( std::is_same<char, type_at<1, int, char>::type>::value );
 
-        Assert( std::is_same<int,  arg_type_at<void(int,char), 0>::type>::value );
-        Assert( std::is_same<char, arg_type_at<void(int,char), 1>::type>::value );
+        Assert( std::is_same<int,  arg_type_at<0, void(int,char)>::type>::value );
+        Assert( std::is_same<char, arg_type_at<1, void(int,char)>::type>::value );
 
         Assert( std::is_same<int,  inner_type<std::vector<int>>::type >::value );
         Assert( std::is_same<int,  inner_type<std::map<char, int>, 1>::type >::value );
