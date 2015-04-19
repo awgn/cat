@@ -9,9 +9,14 @@ Context(traits)
 {
     Test(section_test)
     {
+
+#if defined(__clang__) || (__GNUC__ >= 5)
         auto a = sec(10, minus<int>);
         auto b = sec(minus<int>, 10);
-
+#else
+        auto a = sec(10, std::minus<int>{});
+        auto b = sec(std::minus<int>{}, 10);
+#endif
         Assert( a(5), is_equal_to(5) );
         Assert( b(5), is_equal_to(-5) );
 
