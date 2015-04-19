@@ -33,7 +33,6 @@
 #include <string>
 #include <cstring>
 
-#include <cat/tuple.hpp>
 #include <type_traits>
 
 namespace cat
@@ -49,55 +48,49 @@ namespace cat
         reads(string_view s) override
         {
             std::string str;
+
             bool quoted = false, escaped = false;
 
+            s = skipws(s);
             if (auto s_ = consume('"', s))
             {
                 s = std::move(s_.value());
                 quoted = true;
             }
-            else {
-                s = skipws(s);
-            }
 
-            while(!s.empty())
+            for(;!s.empty(); s.remove_prefix(1))
             {
                 auto c = s.front();
 
-                if (escaped)
-                {
+                if (escaped) {
                     escaped = false;
                     str.push_back(c);
+                    continue;
                 }
-                else
+
+                if (quoted && c == '"')
                 {
-                    if ((quoted && c == '"') || (!quoted && std::isspace(c)))
-                        break;
-                    else if (c == '\\')
-                        escaped = true;
-                    else
-                        str.push_back(c);
-                }
-
-                s.remove_prefix(1);
-            }
-
-            if (quoted)
-            {
-                if (!s.empty()) {
                     s.remove_prefix(1);
                     return std::make_pair(std::move(str), s);
                 }
-                else
-                    return nullopt;
-            }
-            else {
 
-                if (!str.empty())
+                if (!quoted && std::isspace(c))
+                {
                     return std::make_pair(std::move(str), s);
+                }
+
+                if (c == '\\')
+                    escaped = true;
                 else
-                    return nullopt;
+                    str.push_back(c);
             }
+
+            // end-of-string...
+            //
+            if (quoted || str.empty())
+                    return nullopt;
+
+            return std::make_pair(std::move(str), s);
         }
     };
 
