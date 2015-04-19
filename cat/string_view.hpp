@@ -183,4 +183,25 @@ namespace cat
         return ret;
     }
 
+    //
+    // split a line into words
+    //
+
+    inline std::vector<std::string>
+    words(string_view s)
+    {
+        return split(s, " \n\r\t");
+    }
+
+    //
+    // split a line into lines
+    //
+
+    inline std::vector<std::string>
+    lines(string_view s)
+    {
+        return split(s, "\n\r");
+    }
+
+
 } // namespace cat
