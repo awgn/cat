@@ -40,23 +40,31 @@ namespace cat
     template <typename T>
     struct ReadInstance<optional<T>> final : Read<optional<T>>
     {
-        optional<std::pair<optional<T>,string_view>>
-        reads(string_view v) override
+        using ret_type = optional<std::pair<optional<T>,string_view>>;
+
+        ret_type
+        reads(string_view s) override
         {
-            return consume_char('(', v) >>= [](string_view s1)
-                -> optional<std::pair< optional<T>, string_view>>
-            {
-                if (auto val = cat::reads<T>(s1) >>= [&] (auto const &t) {
-                        return consume_char(')', t.second) >>= [&](string_view left) {
-                            return mreturn.in<optional>(std::make_pair(make_optional(t.first), left));
-                        }; })
-                    return val;
+            if (auto nothing = ((mreturn.in<optional>(s)
+                        >>= currying(consume_char)('('))
+                        >>= currying(consume_char)(')'))
+                        >>= [](string_view s) -> ret_type
+                            {
+                                return mreturn_(std::make_pair(optional<T>{}, s));
+                            })
+                return nothing;
 
-                if (auto nothing = consume_char(')', s1))
-                    return mreturn.in<optional>(std::make_pair(optional<T>{}, std::move(nothing.value())));
-
-                return nullopt;
-            };
+            return (mreturn.in<optional>(s)
+                        >>= currying(consume_char)('('))
+                        >>= [](string_view s1) -> ret_type {
+                            return cat::reads<T>(s1) >>= [](auto const & p) {
+                                return consume_char(')', p.second)
+                                        >>= [&](string_view s2) -> ret_type
+                                        {
+                                            return mreturn_(std::make_pair(make_optional(p.first), s2));
+                                        };
+                                };
+                            };
         }
     };
 
