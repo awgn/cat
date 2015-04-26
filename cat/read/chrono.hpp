@@ -50,7 +50,7 @@ namespace cat
             using Duration = std::chrono::duration<Rep, Period>;
 
             return cat::reads<int64_t>(s) >>= [&] (auto const &value) {
-                return cat::consume('_', value.second) >>= [&] (auto const &l2) {
+                return cat::consume_char('_', value.second) >>= [&] (auto const &l2) {
                     return cat::reads<std::string>(l2) >>= [&] (auto const &unit)
                         -> optional<std::pair<std::chrono::duration<Rep, Period>, string_view>>
                     {

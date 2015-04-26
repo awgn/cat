@@ -16,13 +16,13 @@ Context(test_read)
         string_view spaces("    ");
         string_view s(" hello world ");
 
-        Assert( cat::consume('x', spaces) == nullopt);
-        Assert( cat::consume('x', s) == nullopt);
-        Assert( cat::consume('h', s).value() == string_view{"ello world "});
+        Assert( cat::consume_char('x', spaces) == nullopt);
+        Assert( cat::consume_char('x', s) == nullopt);
+        Assert( cat::consume_char('h', s).value() == string_view{"ello world "});
 
-        Assert( cat::consume("ciao", spaces) == nullopt);
-        Assert( cat::consume("ciao", s) == nullopt);
-        Assert( cat::consume("hello", s).value() == string_view{" world "});
+        Assert( cat::consume_string("ciao", spaces) == nullopt);
+        Assert( cat::consume_string("ciao", s) == nullopt);
+        Assert( cat::consume_string("hello", s).value() == string_view{" world "});
     }
 
     Test(trim)

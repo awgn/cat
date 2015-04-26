@@ -70,7 +70,7 @@ namespace cat
         optional<std::pair<C,string_view>>
         read_container(string_view s)
         {
-            if (auto s_ = consume('[', s))
+            if (auto s_ = consume_char('[', s))
             {
                 s = std::move(s_.value());
 
@@ -78,7 +78,7 @@ namespace cat
 
                 while(!s.empty())
                 {
-                    if (auto left = consume(']', s))
+                    if (auto left = consume_char(']', s))
                         return make_optional(std::make_pair(ret, std::move(left.value())));
 
                     if (auto elem_ = cat::reads<typename generic_decay<typename C::value_type>::type>(s))
@@ -102,7 +102,7 @@ namespace cat
         optional<std::pair<std::array<T,N>,string_view>>
         reads(string_view s) override
         {
-            if (auto s_ = cat::consume('[', s))
+            if (auto s_ = cat::consume_char('[', s))
             {
                 s = std::move(s_.value());
                 std::array<T, N> ret;
@@ -119,7 +119,7 @@ namespace cat
                         break;
                 }
 
-                if (auto x_ = cat::consume(']', s))
+                if (auto x_ = cat::consume_char(']', s))
                 {
                     return std::make_pair(std::move(ret), std::move(x_.value()));
                 }

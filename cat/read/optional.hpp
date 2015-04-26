@@ -43,16 +43,16 @@ namespace cat
         optional<std::pair<optional<T>,string_view>>
         reads(string_view v) override
         {
-            return consume('(', v) >>= [](string_view s1)
+            return consume_char('(', v) >>= [](string_view s1)
                 -> optional<std::pair< optional<T>, string_view>>
             {
                 if (auto val = cat::reads<T>(s1) >>= [&] (auto const &t) {
-                        return consume(')', t.second) >>= [&](string_view left) {
+                        return consume_char(')', t.second) >>= [&](string_view left) {
                             return mreturn.in<optional>(std::make_pair(make_optional(t.first), left));
                         }; })
                     return val;
 
-                if (auto nothing = consume(')', s1))
+                if (auto nothing = consume_char(')', s1))
                     return mreturn.in<optional>(std::make_pair(optional<T>{}, std::move(nothing.value())));
 
                 return nullopt;

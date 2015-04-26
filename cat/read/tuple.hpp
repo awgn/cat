@@ -47,7 +47,7 @@ namespace cat
             //
             // C++ way...
             //
-            // auto v1 = consume('(', v);
+            // auto v1 = consume_char('(', v);
             // if (!v1)
             //     return nullopt;
             // auto t1 = cat::reads<T1>(v1.value());
@@ -56,7 +56,7 @@ namespace cat
             // auto t2 = cat::reads<T2>(t1.value().second);
             // if (!t2)
             //     return nullopt;
-            // auto c2 = consume(')', t2.value().second);
+            // auto c2 = consume_char(')', t2.value().second);
             // if (!c2)
             //     return nullopt;
             // return make_optional(std::make_pair(std::make_pair(t1.value().first, t2.value().first), c2.value()));
@@ -65,10 +65,10 @@ namespace cat
             // The functional way... desugared monads!
             //
 
-            // return consume('(', v) >>= [](string_view s1) {
+            // return consume_char('(', v) >>= [](string_view s1) {
             //     return cat::reads<T1>(s1) >>= [&] (auto const &t1) {
             //         return cat::reads<T2>(t1.second) >>= [&] (auto const &t2) {
-            //             return consume(')', t2.second) >>= [&](string_view left) {
+            //             return consume_char(')', t2.second) >>= [&](string_view left) {
             //                 return mreturn.in<optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
             //             };
             //         };
@@ -79,10 +79,10 @@ namespace cat
             // sugared monad...
             //
 
-            return LET( s1,   (consume('(', v)),
+            return LET( s1,   (consume_char('(', v)),
                    LET( t1,   (cat::reads<T1>(s1)),
                    LET( t2,   (cat::reads<T2>(t1.second)),
-                   LET(left,  (consume(')', t2.second)),
+                   LET(left,  (consume_char(')', t2.second)),
                       (
                             mreturn.in<optional>(std::make_pair( std::make_pair(std::move(t1.first), std::move(t2.first)), std::move(left)));
                       )))));
@@ -96,7 +96,7 @@ namespace cat
         optional<std::pair<std::tuple<Ts...>,string_view>>
         reads(string_view s) override
         {
-            if (auto s_ = consume('(', s))
+            if (auto s_ = consume_char('(', s))
             {
                 s = std::move(s_.value());
 
@@ -112,7 +112,7 @@ namespace cat
                     }
                 }, ret);
 
-                if (auto left = consume(')', s))
+                if (auto left = consume_char(')', s))
                 {
                     if (cnt == sizeof...(Ts))
                         return make_optional(std::make_pair(ret, std::move(left.value())));

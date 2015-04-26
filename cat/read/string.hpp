@@ -52,7 +52,7 @@ namespace cat
             bool quoted = false, escaped = false;
 
             s = skipws(s);
-            if (auto s_ = consume('"', s))
+            if (auto s_ = consume_char('"', s))
             {
                 s = std::move(s_.value());
                 quoted = true;

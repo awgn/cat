@@ -120,7 +120,7 @@ namespace cat
     //
 
     inline optional<string_view>
-    consume(const char c, string_view s)
+    consume_char(char c, string_view s)
     {
         auto s1 = skipws(s);
         if (!s1.empty() && s1.front() == c)
@@ -137,7 +137,7 @@ namespace cat
     //
 
     inline optional<string_view>
-    consume(const char *str, string_view s)
+    consume_string(const char *str, string_view s)
     {
         auto size = std::strlen(str);
         auto s1 = skipws(s);
