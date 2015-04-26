@@ -79,12 +79,12 @@ namespace cat
             // sugared monad...
             //
 
-            return LET( s1,   (consume_char('(', v)),
-                   LET( t1,   (cat::reads<T1>(s1)),
-                   LET( t2,   (cat::reads<T2>(t1.second)),
-                   LET(left,  (consume_char(')', t2.second)),
+            return DO( s1,   (consume_char('(', v)),
+                   DO( t1,   (cat::reads<T1>(s1)),
+                   DO( t2,   (cat::reads<T2>(t1.second)),
+                   DO(left,  (consume_char(')', t2.second)),
                       (
-                            mreturn.in<optional>(std::make_pair( std::make_pair(std::move(t1.first), std::move(t2.first)), std::move(left)));
+                            mreturn.in<optional>(std::make_pair(std::make_pair(std::move(t1.first), std::move(t2.first)), std::move(left)));
                       )))));
         }
     };
