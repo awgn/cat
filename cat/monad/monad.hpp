@@ -117,6 +117,18 @@ namespace cat
             }
         };
 
+        template <typename T>
+        struct Return
+        {
+            T value;
+
+            template < template <typename ...> class M>
+            operator M<std::remove_reference_t<T>>()
+            {
+                return Mreturn_{}.in<M>(std::forward<T>(value));
+            }
+        };
+
         struct Mbind_
         {
             using function_type = _M<_b>(_M<_a> &&, _f<_M<_b>(_a)>);
@@ -130,10 +142,19 @@ namespace cat
                 return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
             }
         };
+
+
     }
 
     constexpr auto mreturn = details::Mreturn_{};
     constexpr auto mbind = details::Mbind_ {};
+
+    template <typename T>
+    details::Return<T>
+    mreturn_(T && value)
+    {
+        return details::Return<T>{ std::forward<T>(value) };
+    }
 
     //
     // monad plus
