@@ -57,11 +57,11 @@ namespace cat
             return (mreturn.in<optional>(s)
                         >>= currying(consume_char)('('))
                         >>= [](string_view s1) -> ret_type {
-                            return cat::reads<T>(s1) >>= [](auto const & p) {
+                            return cat::reads<T>(s1) >>= [](auto p) {
                                 return consume_char(')', p.second)
                                         >>= [&](string_view s2) -> ret_type
                                         {
-                                            return mreturn_(std::make_pair(make_optional(p.first), s2));
+                                            return mreturn_(std::make_pair(make_optional(std::move(p.first)), s2));
                                         };
                                 };
                             };

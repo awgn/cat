@@ -101,6 +101,7 @@ namespace cat
                 s = std::move(s_.value());
 
                 std::tuple<Ts...> ret;
+
                 size_t cnt = 0;
 
                 tuple_foreach([&](auto &elem) {
@@ -115,7 +116,7 @@ namespace cat
                 if (auto left = consume_char(')', s))
                 {
                     if (cnt == sizeof...(Ts))
-                        return make_optional(std::make_pair(ret, std::move(left.value())));
+                        return mreturn.in<optional>(std::make_pair(std::move(ret), std::move(left.value())));
                 }
             }
 
