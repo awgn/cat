@@ -58,7 +58,7 @@ namespace cat
     };
 
     //
-    // free function
+    // free functions
     //
 
     template <typename T>
@@ -72,45 +72,10 @@ namespace cat
     }
 
     template <typename T>
-    T read(std::string const &str)
-    {
-        static_assert(is_readable<T>::value, "T is not readable!");
-        return read<T>(string_view(str));
-    }
-
-    template <typename T>
-    T read(const char *str)
-    {
-        static_assert(is_readable<T>::value, "T is not readable!");
-        return read<T>(string_view(str));
-    }
-
-    //
-    // reads
-    //
-
-    template <typename T>
-    optional<std::pair<T, string_view>>
-    reads(std::string const &str)
-    {
-        static_assert(is_readable<T>::value, "T is not readable!");
-        return ReadInstance<T>{}.reads(string_view(str));
-    }
-
-    template <typename T>
     optional<std::pair<T, string_view>>
     reads(string_view str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
         return ReadInstance<T>{}.reads(str);
     }
-
-    template <typename T>
-    optional<std::pair<T, string_view>>
-    reads(const char *str)
-    {
-        static_assert(is_readable<T>::value, "T is not readable!");
-        return ReadInstance<T>{}.reads(string_view{str});
-    }
-
 }
