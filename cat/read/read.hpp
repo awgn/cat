@@ -78,4 +78,36 @@ namespace cat
         static_assert(is_readable<T>::value, "T is not readable!");
         return ReadInstance<T>{}.reads(str);
     }
+
+    namespace details
+    {
+        template <size_t N, typename ...Ts>
+        optional<std::pair<size_t, string_view>>
+        read_any(std::tuple<Ts...> &, string_view, std::false_type)
+        {
+            return nullopt;
+        }
+
+        template <size_t N, typename ...Ts>
+        optional<std::pair<size_t, string_view>>
+        read_any(std::tuple<Ts...> &t, string_view str, std::true_type)
+        {
+            auto n = cat::reads<cat::type_at_t<N, Ts...>>(str);
+            if (n)
+            {
+                std::get<N>(t) = std::move(n->first);
+                return make_optional(std::make_pair(N, n->second));
+            }
+
+            return read_any<N+1>(t, str, std::integral_constant<bool, (N+1) < sizeof...(Ts)>{});
+        }
+    }
+
+    template <typename ...Ts>
+    optional<std::pair<size_t, string_view>>
+    read_any(std::tuple<Ts...> &t, string_view s)
+    {
+        return details::read_any<0>(t, s, std::integral_constant<bool, true>{});
+    }
+
 }
