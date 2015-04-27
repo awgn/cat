@@ -65,6 +65,9 @@ namespace cat
             using type = std::tuple<std::decay_t<Ts>...>;
         };
 
+        template <typename T>
+        using generic_decay_t =typename generic_decay<T>::type;
+
 
         template <typename C>
         optional<std::pair<C,string_view>>
@@ -81,10 +84,10 @@ namespace cat
                     if (auto left = consume_char(']', s))
                         return make_optional(std::make_pair(ret, std::move(left.value())));
 
-                    if (auto elem_ = cat::reads<typename generic_decay<typename C::value_type>::type>(s))
+                    if (auto elem_ = cat::reads<generic_decay_t<typename C::value_type>>(s))
                     {
                         auto & elem = elem_.value();
-                        s = elem.second;
+                        s = std::move(elem.second);
                         cat::insert(ret, std::move(elem.first));
                     }
                     else
