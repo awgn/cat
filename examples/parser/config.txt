@@ -1,0 +1,46 @@
+#
+# material parser example:
+#
+
+key::unsigned_int = 42
+ 
+
+key::integers = [ 20 ]      
+
+# strings: use quotation " to include spaces, use \" to include
+#          quotation
+
+key::strings =  [ hello 
+            hello\ world
+           "hello world!"
+           "\"Hello, world!\"" 
+          ]
+
+key::booleans = [ false 1 ]  
+
+key::simple_pair = ( 0.2 2.3 )
+
+key::simple_tuple = (true 2 3.5 "hello!" )
+
+
+key::associative = [ ( goofy  1 )  
+                     ( mickey  2)   
+                 ( minnie  3 )
+              ]
+
+ 
+key::intset  = [2 3 4]
+  
+    key::optional_int   = (10)
+
+
+key::int_matrix = [[1 2] 
+              [3 4]]
+
+
+key::inline_doc = [ 
+             { key::first = 12 key::second = 42 }
+             { key::first = 2 key::second = 13 }
+        ]
+
+
