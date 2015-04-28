@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <cat/monad/string.hpp>
+
 #include <cat/monad/optional.hpp>
 #include <cat/monad/future.hpp>
 #include <cat/monad/shared_ptr.hpp>

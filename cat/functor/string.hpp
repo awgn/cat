@@ -26,17 +26,38 @@
 
 #pragma once
 
-#include <cat/functor/string.hpp>
-#include <cat/functor/vector.hpp>
-#include <cat/functor/deque.hpp>
-#include <cat/functor/list.hpp>
-#include <cat/functor/forward_list.hpp>
-#include <cat/functor/shared_ptr.hpp>
-#include <cat/functor/unique_ptr.hpp>
-#include <cat/functor/optional.hpp>
-#include <cat/functor/future.hpp>
+#include <string>
+#include <cat/functor/functor.hpp>
+#include <cat/utility.hpp>
 
-#include <cat/functor/map.hpp>
-#include <cat/functor/unordered_map.hpp>
-#include <cat/functor/pair.hpp>
+namespace cat
+{
+    // basic_string is a functor:
+    //
+
+    template <> struct is_functor<std::basic_string> : std::true_type { };
+
+    // basic_string instance:
+    //
+
+    template <typename A, typename Fun, typename Fa_>
+    struct FunctorInstance<std::basic_string<A>, Fun, Fa_> final : Functor<std::basic_string>::
+    template _<A, Fun, Fa_>
+    {
+        using B = std::result_of_t<Fun(A)>;
+
+        std::basic_string<B>
+        fmap(Fun f, Fa_ && xs) override
+        {
+            std::basic_string<B> out;
+            out.reserve(xs.size());
+
+            for(auto & x : xs)
+                out.push_back(f(forward_as<Fa_>(x)));
+
+            return out;
+        }
+    };
+
+} // namespace cat
 

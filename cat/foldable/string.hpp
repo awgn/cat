@@ -26,17 +26,49 @@
 
 #pragma once
 
-#include <cat/functor/string.hpp>
-#include <cat/functor/vector.hpp>
-#include <cat/functor/deque.hpp>
-#include <cat/functor/list.hpp>
-#include <cat/functor/forward_list.hpp>
-#include <cat/functor/shared_ptr.hpp>
-#include <cat/functor/unique_ptr.hpp>
-#include <cat/functor/optional.hpp>
-#include <cat/functor/future.hpp>
+#include <string>
+#include <cat/foldable/foldable.hpp>
+#include <cat/utility.hpp>
 
-#include <cat/functor/map.hpp>
-#include <cat/functor/unordered_map.hpp>
-#include <cat/functor/pair.hpp>
+#define CAT_FOLDABLE
+#include <cat/container.hpp>
+
+namespace cat
+{
+
+    // basic_string is a foldable:
+    //
+
+    template <> struct is_foldable<std::basic_string> : std::true_type { };
+
+    // basic_string instance:
+    //
+
+    template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
+    struct FoldableInstance<std::basic_string<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::basic_string>::
+    template _<A, B, FunR, FunL, Fun, Fa_>
+    {
+        B foldr(FunR f, B value, Fa_ && xs) override
+        {
+            return container::foldr(std::move(f), std::move(value), std::forward<Fa_>(xs));
+        }
+
+        B foldl(FunL f, B value, Fa_ && xs) override
+        {
+            return container::foldl(std::move(f), std::move(value), std::forward<Fa_>(xs));
+        }
+
+        A foldr1(Fun f, Fa_ && xs) override
+        {
+            return container::foldr1(std::move(f), std::forward<Fa_>(xs));
+        }
+
+        A foldl1(Fun f, Fa_ && xs) override
+        {
+            return container::foldl1(std::move(f), std::forward<Fa_>(xs));
+        }
+    };
+
+
+} // namespace cat
 

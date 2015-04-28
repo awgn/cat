@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/foldable/string.hpp>
 #include <cat/foldable/vector.hpp>
 #include <cat/foldable/deque.hpp>
 #include <cat/foldable/list.hpp>
