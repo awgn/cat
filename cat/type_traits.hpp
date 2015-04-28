@@ -533,7 +533,7 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // result_of_type: std::result_of meta-function adapter
+    // result_of_type: std::result_of meta-function adaptor
     //
 
     template <typename Fun, typename ...Ts>
@@ -740,7 +740,7 @@ namespace cat
     using on_function_type_t = typename on_function_type<F,G>::type;
 
 
-    //////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
     //
     // apply a meta-predicate on the outer type (type constructor, e.g. functor, monad)
     // of the given type
@@ -755,14 +755,14 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // curry_type traits
+    // meta_apply(s) arguments to a meta function
     //
 
-    template <template <typename ...> class F, typename T>
-    struct curry_type
+    template <template <typename ...> class F, typename ...Ts>
+    struct meta_apply
     {
-        template <typename ...Ts>
-        using type = F<T, Ts...>;
+        template <typename ...Rs>
+        using type = F<Ts..., Rs...>;
     };
 
 

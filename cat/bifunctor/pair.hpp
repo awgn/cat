@@ -46,8 +46,8 @@ namespace cat
     template _ <A, B, F, G, Fab_>
     {
         using R = fmap_type_t< std::decay_t<Fab_>,
-                                curry_type<result_of_type, F>::template type,
-                                curry_type<result_of_type, G>::template type
+                                meta_apply<result_of_type, F>::template type,
+                                meta_apply<result_of_type, G>::template type
                     >;
         R
         bimap(F f, G g, Fab_ && xs) override

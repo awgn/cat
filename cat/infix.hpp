@@ -32,7 +32,7 @@
 namespace cat
 {
     //
-    // infix adapters, inspired by FIT library
+    // infix adaptors, inspired by FIT library
     //
 
     template <typename F>

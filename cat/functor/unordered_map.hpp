@@ -40,7 +40,7 @@ namespace cat
     //
 
     template <typename K, typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<std::unordered_map<K,A>, Fun, Fa_> final : Functor<curry_type<std::unordered_map, K>:: template type>::
+    struct FunctorInstance<std::unordered_map<K,A>, Fun, Fa_> final : Functor<meta_apply<std::unordered_map, K>:: template type>::
     template _<A, Fun, Fa_, K>
     {
         using B = std::result_of_t<Fun(A)>;
@@ -67,7 +67,7 @@ namespace cat
     //
 
     template <typename K, typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<std::unordered_multimap<K,A>, Fun, Fa_> final : Functor<curry_type<std::unordered_multimap, K>::template type>::
+    struct FunctorInstance<std::unordered_multimap<K,A>, Fun, Fa_> final : Functor<meta_apply<std::unordered_multimap, K>::template type>::
     template _<A, Fun, Fa_, K>
     {
         using B = std::result_of_t<Fun(A)>;
