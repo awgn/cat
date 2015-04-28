@@ -120,8 +120,8 @@ namespace cat
 
     template <typename Ff_, typename Fa_,
               std::enable_if_t<
-                    on_outer_type<is_applicative, std::decay_t<Ff_>>::value &&
-                    on_outer_type<is_applicative, std::decay_t<Fa_>>::value
+                    meta::on_outer_type<is_applicative, std::decay_t<Ff_>>::value &&
+                    meta::on_outer_type<is_applicative, std::decay_t<Fa_>>::value
               > * = nullptr>
     auto operator*(Ff_  && fs, Fa_ &&xs)
     {
@@ -216,7 +216,7 @@ namespace cat
 
 
     template <typename Fl, typename Fr,
-              std::enable_if_t<on_outer_type<is_alternative, Fl>::value> * = nullptr >
+              std::enable_if_t<meta::on_outer_type<is_alternative, Fl>::value> * = nullptr >
     inline auto operator||(Fl && lhs, Fr && rhs)
     {
         return or_(std::forward<Fl>(lhs), std::forward<Fr>(rhs));

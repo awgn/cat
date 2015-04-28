@@ -155,7 +155,7 @@ namespace cat
     struct Currying_
     {
         using function_type =
-            typename partial_function_type<
+            typename meta::partial_function_type<
                 typename function_type<F>::type, sizeof...(Ts)>::type;
 
         template <typename ...Xs>
@@ -252,7 +252,7 @@ namespace cat
     template <typename F, typename G>
     struct Compose_<F, G, std::enable_if_t<function_arity<G>::value != 0>>
     {
-       using function_type = compose_function_type_t<
+       using function_type = meta::compose_function_type_t<
                                 function_type_t<F>,
                                 function_type_t<G>>;
 
@@ -275,7 +275,7 @@ namespace cat
     template <typename F, typename G>
     struct Compose_<F, G, std::enable_if_t<function_arity<G>::value == 0>>
     {
-        using function_type = compose_function_type_t<
+        using function_type = meta::compose_function_type_t<
                                 function_type_t<F>,
                                 function_type_t<G>>;
 
@@ -319,7 +319,7 @@ namespace cat
     template <typename F>
     struct Flip_
     {
-        using function_type = flip_function_type_t<function_type_t<F>>;
+        using function_type = meta::flip_function_type_t<function_type_t<F>>;
 
         constexpr Flip_(F fun)
         : fun_(std::move(fun))
@@ -353,7 +353,7 @@ namespace cat
     template <typename F, typename G>
     struct On_
     {
-        using function_type = on_function_type_t<function_type_t<F>,
+        using function_type = meta::on_function_type_t<function_type_t<F>,
                                                  function_type_t<G>>;
 
         constexpr On_(F f, G g)

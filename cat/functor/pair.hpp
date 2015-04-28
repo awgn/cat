@@ -40,7 +40,7 @@ namespace cat
     //
 
     template <typename K, typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<std::pair<K, A>, Fun, Fa_> final : Functor<meta_apply<std::pair, K>::template type>::
+    struct FunctorInstance<std::pair<K, A>, Fun, Fa_> final : Functor<meta::apply<std::pair, K>::template type>::
     template _<A, Fun, Fa_, K>
     {
         using B = std::result_of_t<Fun(A)>;

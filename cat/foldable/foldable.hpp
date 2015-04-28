@@ -83,7 +83,7 @@ namespace cat
                 using Fa = std::decay_t<Fa_>;
                 using A  = inner_value_type_t<Fa>;
 
-                static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
+                static_assert(meta::on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
 
                 return FoldableInstance<Fa, B,
                        FunR,
@@ -103,7 +103,7 @@ namespace cat
                 using Fa = std::decay_t<Fa_>;
                 using A  = inner_value_type_t<Fa>;
 
-                static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
+                static_assert(meta::on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
 
                 return FoldableInstance<Fa, A,
                        std::function<A(A,A)>,
@@ -122,7 +122,7 @@ namespace cat
                 using Fa = std::decay_t<Fa_>;
                 using A  = inner_value_type_t<Fa>;
 
-                static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
+                static_assert(meta::on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
 
                 return FoldableInstance<Fa, B,
                        std::function<B(A,B)>,
@@ -142,7 +142,7 @@ namespace cat
                 using Fa = std::decay_t<Fa_>;
                 using A  = inner_value_type_t<Fa>;
 
-                static_assert(on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
+                static_assert(meta::on_outer_type<is_foldable, Fa>::value, "Type not a foldable!");
                 return FoldableInstance<Fa, A,
                         std::function<A(A,A)>,
                         std::function<A(A,A)>,

@@ -77,7 +77,7 @@ namespace cat
             template <typename F, typename G, typename B_>
             auto operator()(F f, G g, B_ && xs) const
             {
-                static_assert(on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
+                static_assert(meta::on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
                 return BifunctorInstance<std::decay_t<B_>, F, G, B_>{}.bimap(std::move(f), std::move(g), std::forward<B_>(xs));
             }
         };
@@ -89,7 +89,7 @@ namespace cat
             template <typename F, typename B_>
             auto operator()(F f, B_ && xs) const
             {
-                static_assert(on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
+                static_assert(meta::on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
                 return BifunctorInstance<std::decay_t<B_>, F, Identity, B_>{}.bimap(std::move(f), identity, std::forward<B_>(xs));
             }
         };
@@ -101,7 +101,7 @@ namespace cat
             template <typename G, typename B_>
             auto operator()(G g, B_ && xs) const
             {
-                static_assert(on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
+                static_assert(meta::on_outer_type<is_bifunctor, std::decay_t<B_>>::value, "Type not a bifunctor!");
                 return BifunctorInstance<std::decay_t<B_>, Identity, G, B_>{}.bimap(identity, std::move(g), std::forward<B_>(xs));
             }
         };

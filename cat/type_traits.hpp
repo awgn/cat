@@ -30,6 +30,7 @@
 #include <memory>
 #include <type_traits>
 
+#include <cat/meta.hpp>
 
 #define CAT_CLASS_HAS_TYPEDEF(typedef_) \
     template <typename T> \
@@ -56,19 +57,6 @@
 
 namespace cat
 {
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // the identity meta-function
-    //
-
-    template <typename T>
-    struct identity_type
-    {
-        using type = T;
-    };
-
-
     //////////////////////////////////////////////////////////////////////////////////
     //
     // boolean type
@@ -505,46 +493,6 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // apply a meta-function(s) over the inner types
-    //
-
-    template <typename Functor, template <typename...> class ...Fs>
-    struct fmap_type;
-
-    template <template <typename ...> class Functor, typename T, typename ...Ts, template <typename...> class F>
-    struct fmap_type<Functor<T,Ts...>, F>
-    {
-        using type = Functor<typename F<T>::type, Ts...>;
-    };
-    template <template <typename ...> class Functor, typename T0, typename T, typename ...Ts, template <typename...> class F0, template <typename...> class F>
-    struct fmap_type<Functor<T0, T, Ts...>, F0, F>
-    {
-        using type = Functor<typename F0<T0>::type, typename F<T>::type, Ts...>;
-    };
-    template <template <typename ...> class Functor, typename T0, typename T1, typename T, typename ...Ts, template <typename...> class F0, template <typename...> class F1, template <typename...> class F>
-    struct fmap_type<Functor<T0, T1, T, Ts...>, F0, F1, F>
-    {
-        using type = Functor<typename F0<T0>::type, typename F1<T1>::type, typename F<T>::type, Ts...>;
-    };
-
-    template <typename Functor, template <typename...> class ...Fs>
-    using fmap_type_t = typename fmap_type<Functor, Fs...>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // result_of_type: std::result_of meta-function adaptor
-    //
-
-    template <typename Fun, typename ...Ts>
-    struct result_of_type
-    {
-        using type = typename std::result_of<Fun(Ts...)>::type;
-    };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
     // type_at
     //
 
@@ -563,6 +511,22 @@ namespace cat
     template <size_t N, typename ...Ts>
     using type_at_t = typename type_at<N, Ts...>::type;
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // rebind_type ....
+    //
+
+    template <typename F, typename V> struct rebind_type;
+
+    template <template <typename ...> class F, typename V, typename ...Ts>
+    struct rebind_type<F<Ts...>, V>
+    {
+        using type = F<V>;
+    };
+
+    template <typename T, typename V>
+    using rebind_type_t = typename rebind_type<T, V>::type;
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -644,126 +608,6 @@ namespace cat
 
     template <typename T>
     using inner_value_type_t = typename inner_value_type<T>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // rebind_type ....
-    //
-
-    template <typename F, typename V> struct rebind_type;
-
-    template <template <typename ...> class F, typename V, typename ...Ts>
-    struct rebind_type<F<Ts...>, V>
-    {
-        using type = F<V>;
-    };
-
-    template <typename T, typename V>
-    using rebind_type_t = typename rebind_type<T, V>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // partial_function_type
-    //
-
-    template <typename F, size_t N, typename = void > struct partial_function_type;
-
-    template <typename R, typename T, typename ...Ts, size_t N>
-    struct partial_function_type<R(T, Ts...), N, std::enable_if_t<(N != 0)>>
-        : partial_function_type<R(Ts...), N-1> { };
-
-    template <typename R, typename ...Ts, size_t N>
-    struct partial_function_type<R(Ts...), N, std::enable_if_t<(N == 0)>>
-    {
-        using type = R(Ts...);
-    };
-
-    template <typename F, size_t N>
-    using partial_function_type_t = typename partial_function_type<F, N>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // compose_function_type
-    //
-
-    template <typename F, typename G> struct compose_function_type;
-
-    template <typename Fr, typename Fx, typename ...Fxs, typename Gr, typename Gx, typename ...Gxs>
-    struct compose_function_type<Fr(Fx, Fxs...), Gr(Gx, Gxs...)>
-    {
-        using type = Fr(Gx, Fxs...);
-    };
-    template <typename Fr, typename Fx, typename ...Fxs, typename Gr>
-    struct compose_function_type<Fr(Fx, Fxs...), Gr()>
-    {
-        using type = Fr(Fxs...);
-    };
-
-    template <typename F, typename G>
-    using compose_function_type_t = typename compose_function_type<F, G>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // flip_function_type
-    //
-
-    template <typename F> struct flip_function_type;
-
-    template <typename R, typename T0, typename T1, typename ...Ts>
-    struct flip_function_type<R(T0, T1, Ts...)>
-    {
-        using type = R(T1, T0, Ts...);
-    };
-
-    template <typename F>
-    using flip_function_type_t = typename flip_function_type<F>::type;
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // on_function_type
-    //
-
-    template <typename F, typename G> struct on_function_type;
-
-    template <typename R, typename T1, typename T2, typename ...Ts, typename T, typename Gx>
-    struct on_function_type<R(T1, T2, Ts...), T(Gx)>
-    {
-        using type = R(Gx, Gx, Ts...);
-    };
-
-    template <typename F, typename G>
-    using on_function_type_t = typename on_function_type<F,G>::type;
-
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    //
-    // apply a meta-predicate on the outer type (type constructor, e.g. functor, monad)
-    // of the given type
-    //
-
-    template < template <template <typename ...> class> class Trait, typename T>
-    struct on_outer_type;
-
-    template < template <template <typename ...> class> class Trait, template <typename ...> class Outer, typename ...Ts>
-    struct on_outer_type<Trait, Outer<Ts...>> : Trait<Outer> { };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // meta_apply(s) arguments to a meta function
-    //
-
-    template <template <typename ...> class F, typename ...Ts>
-    struct meta_apply
-    {
-        template <typename ...Rs>
-        using type = F<Ts..., Rs...>;
-    };
 
 
     //////////////////////////////////////////////////////////////////////////////////

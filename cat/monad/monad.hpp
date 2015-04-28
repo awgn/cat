@@ -110,7 +110,7 @@ namespace cat
             template <typename Mx, typename A_>
             auto as (A_ && a) const
             {
-                static_assert(on_outer_type<is_monad,std::decay_t<Mx>>::value, "Type M not a monad!");
+                static_assert(meta::on_outer_type<is_monad,std::decay_t<Mx>>::value, "Type M not a monad!");
 
                 using Ma = rebind_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
                 return MonadInstance<Ma, details::MreturnAs<Ma>, Ma, A_>{}.mreturn(std::forward<A_>(a));
@@ -137,7 +137,7 @@ namespace cat
             auto operator()(Ma_ && ma, Fun f) const
             {
                 using Ma = std::decay_t<Ma_>;
-                static_assert(on_outer_type<is_monad,std::decay_t<Ma>>::value, "Type M not a monad!");
+                static_assert(meta::on_outer_type<is_monad,std::decay_t<Ma>>::value, "Type M not a monad!");
 
                 return MonadInstance<Ma, Fun, Ma_, inner_type_t<Ma> >{}.mbind(std::forward<Ma_>(ma), std::move(f));
             }
@@ -163,7 +163,7 @@ namespace cat
     template <typename  Ma>
     auto mzero()
     {
-         static_assert(on_outer_type<is_monad_plus,std::decay_t<Ma>>::value, "Type M not a monad plus!");
+         static_assert(meta::on_outer_type<is_monad_plus,std::decay_t<Ma>>::value, "Type M not a monad plus!");
          return MonadPlusInstance<Ma, Ma, Ma>{}.mzero();
     }
 
@@ -180,7 +180,7 @@ namespace cat
             {
                  using Ma = std::decay_t<Ma_>;
 
-                 static_assert(on_outer_type<is_monad_plus, Ma>::value, "Type M not a monad plus!");
+                 static_assert(meta::on_outer_type<is_monad_plus, Ma>::value, "Type M not a monad plus!");
                  return MonadPlusInstance<Ma, Ma_, Mb_>{}.mplus(std::forward<Ma_>(a), std::forward<Mb_>(b));
             }
         };
@@ -224,7 +224,7 @@ namespace cat
     //
 
     template <typename Ma_, typename Fun,
-              std::enable_if_t<on_outer_type<is_monad, std::decay_t<Ma_>>::value> * = nullptr>
+              std::enable_if_t<meta::on_outer_type<is_monad, std::decay_t<Ma_>>::value> * = nullptr>
     auto operator>>=(Ma_ && ma, Fun f)
     {
         return mbind(std::forward<Ma_>(ma), std::move(f));
@@ -232,8 +232,8 @@ namespace cat
 
     template <typename Ma_, typename Mb_,
               std::enable_if_t<
-                on_outer_type<is_monad, std::decay_t<Ma_>>::value &&
-                on_outer_type<is_monad, std::decay_t<Mb_>>::value> * = nullptr>
+                meta::on_outer_type<is_monad, std::decay_t<Ma_>>::value &&
+                meta::on_outer_type<is_monad, std::decay_t<Mb_>>::value> * = nullptr>
     auto operator>>(Ma_ && ma, Mb_ && mb)
     {
         return mbind(std::forward<Ma_>(ma), constant(std::forward<Mb_>(mb)));
@@ -246,7 +246,7 @@ namespace cat
     template <template <typename...> class C, typename Ma, typename ...Ts>
     auto sequence(C<Ma, Ts...> const &ms)
     {
-        static_assert(on_outer_type<is_monad_plus, Ma>::value, "Type M not a monad!");
+        static_assert(meta::on_outer_type<is_monad_plus, Ma>::value, "Type M not a monad!");
 
 #ifdef _LIBCPP_VERSION
         using Cont = C<inner_type_t<Ma>, std::allocator<inner_type_t<Ma>>>;

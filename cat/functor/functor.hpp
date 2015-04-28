@@ -75,7 +75,7 @@ namespace cat
             template <typename Fun, typename Fa_>
             auto operator()(Fun f, Fa_ && xs) const
             {
-                static_assert(on_outer_type<is_functor, std::decay_t<Fa_>>::value, "Type not a functor!");
+                static_assert(meta::on_outer_type<is_functor, std::decay_t<Fa_>>::value, "Type not a functor!");
 
                 return FunctorInstance<std::decay_t<Fa_>, Fun, Fa_>{}.fmap(std::move(f), std::forward<Fa_>(xs));
             }
