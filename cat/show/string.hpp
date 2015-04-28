@@ -38,6 +38,19 @@ namespace cat
     // Instances...
     //
 
+    template <typename T>
+    struct ShowInstance<std::basic_string<T>> final : Show<std::basic_string<T>>
+    {
+        std::string
+        show(std::basic_string<T> const &str) override
+        {
+            std::string ret("[ ");
+            for(auto e : str)
+                ret += ::cat::show(e) + " ";
+            return ret + ']';
+        }
+    };
+
     template <>
     struct ShowInstance<std::string> final : Show<std::string>
     {

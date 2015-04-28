@@ -36,6 +36,7 @@ Context(test_show)
         print(42.0l);
 
         print(std::string("Hello World"));
+        print(std::basic_string<int>{1,2,3});
         print(string_view("Hello World"));
 
         print('f');
