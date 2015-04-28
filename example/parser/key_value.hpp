@@ -28,6 +28,7 @@
 
 #include <cat/read.hpp>
 #include <cat/show.hpp>
+#include <cat/functor.hpp>
 #include <cat/monad.hpp>
 #include <cat/functional.hpp>
 #include <cat/type_traits.hpp>
@@ -138,7 +139,7 @@ namespace parser
     //
 
     inline std::string
-    remove_comments(std::string data, char commkey)
+    remove_comments(std::string const & data, char commkey)
     {
         struct par_state
         {
@@ -197,12 +198,7 @@ namespace parser
 
         } parser(commkey);
 
-        for (auto & c: data)
-        {
-            c = parser(c);
-        }
-
-        return data;
+        return fmap(parser, data);
     }
 }
 

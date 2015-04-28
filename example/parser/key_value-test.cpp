@@ -30,7 +30,6 @@ namespace key
 
     DECLARE_KEY( optional_int );
     DECLARE_KEY( int_matrix );
-
     DECLARE_KEY( inline_doc );
 
     DECLARE_KEY( first );
@@ -72,7 +71,7 @@ main(int, char *[])
     auto str_ = parser::remove_comments(str, '#');
     auto doc  = read<this_document>(str_);
 
-    std::cout << "document       :" << show(doc) << std::endl;
+    std::cout << "document       : " << show(doc) << std::endl;
     std::cout << "unsigned_int   : " << show( doc.get<key::associative>() ) << std::endl;
     std::cout << "integers vector: " << show( doc.get<key::integers>() ) << std::endl;
     std::cout << "booleans       : " << show( doc.get<key::booleans>() ) << std::endl;
