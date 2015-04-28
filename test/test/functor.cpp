@@ -45,6 +45,16 @@ Context(functor)
     }
 
 
+    Test(functor_string)
+    {
+        std::string x("ABC");
+        auto y = fmap([](char const &c) -> char { return c+32; }, x);
+
+        Assert(y.size(), is_equal_to(3));
+        Assert(y, is_equal_to(std::string("abc")));
+    }
+
+
     Test(functor_vector)
     {
         std::vector<std::string> vec { "one", "two", "three" };

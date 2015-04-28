@@ -52,6 +52,19 @@ Context(monad)
         Assert( (q >> v) == std::vector<int> {1, 2, 3, 1, 2, 3});
     }
 
+    Test(monad_string)
+    {
+        std::string v {"123"};
+
+        auto f = [](char c) { return std::string(2,c); };
+
+        Assert( (v >>= f) == std::string("112233") );
+        Assert( ((v >>= f) >>= f) == std::string("111122223333") );
+
+        std::string q{"12"};
+
+        Assert( (q >> v) == std::string("123123"));
+    }
 
     Test(monad_deque)
     {
