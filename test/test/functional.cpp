@@ -235,7 +235,7 @@ Context(currying_test)
         Assert(first(v[0]) == 1);
         Assert(first(v[1]) == 2);
 
-#ifdef __clang
+#if defined(__clang__) || (__GNUC__ >= 5)
         std::sort(std::begin(v), std::end(v), std::less<std::string>{} -on- elem<1>);
         Assert(first(v[0]) == 2);
         Assert(first(v[1]) == 1);

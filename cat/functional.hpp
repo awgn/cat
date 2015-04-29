@@ -118,7 +118,8 @@ namespace cat
         }
     };
 
-#ifdef __clang
+
+#if defined(__clang__) || (__GNUC__ >= 5)
 
     template <size_t N>
     constexpr auto elem = Elem_<N>{};
@@ -220,6 +221,10 @@ namespace cat
     struct Generic_
     {
         using function_type = Fun;
+
+        constexpr Generic_()
+        : fun_{}
+        { }
 
         constexpr Generic_(F f)
         : fun_(std::move(f))

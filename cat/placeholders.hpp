@@ -35,6 +35,8 @@ namespace cat
         struct void_  { };
         struct num    { };
 
+        struct __ { };
+
         struct _a { };
         struct _b { };
         struct _c { };
@@ -51,7 +53,10 @@ namespace cat
         template <typename T> struct _F { };                // functor
         template <typename T> struct _M { };                // monad
         template <typename T, typename V> struct _B { };    // bifunctor
+
     };
+
+    constexpr auto _ = placeholders::__ {};
 
 } // namespace cat
 
