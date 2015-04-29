@@ -1,6 +1,7 @@
 #include <cat/functional.hpp>
 #include <cat/placeholders.hpp>
 #include <cat/bits/constexpr.hpp>
+#include <cat/bits/type.hpp>
 
 #include <algorithm>
 #include <string>
@@ -33,21 +34,21 @@ Context(currying_test)
 
     Test(basic_currying)
     {
-        auto val = currying(negate)(1);
+        auto val = curry(negate)(1);
         Assert(val, is_equal_to(-1));
     }
 
 
     Test(simple_currying)
     {
-        auto add_ = currying(add)(1);
+        auto add_ = curry(add)(1);
         Assert(add_(2), is_equal_to(3));
     }
 
 
     Test(mixed_currying)
     {
-        auto f1 = currying(f0)(42, "hello");
+        auto f1 = curry(f0)(42, "hello");
         auto f2 = f1('x');
 
         Assert(f2(true), is_equal_to(42));
@@ -55,7 +56,7 @@ Context(currying_test)
 
     Test(total_currying)
     {
-        Assert(currying(f0)(42)("hello")('x')(true), is_equal_to(42));
+        Assert(curry(f0)(42)("hello")('x')(true), is_equal_to(42));
     }
 
 
@@ -63,12 +64,12 @@ Context(currying_test)
     {
         int n = 1;
 
-        auto f = generic<_a(_a,_a)>([](auto x, auto y) { return (x++) + y;});
+        auto f = curry_as<_a(_a,_a)>([](auto x, auto y) { return (x++) + y;});
 
         Assert(f(n)(2), is_equal_to(3));
         Assert(n, is_equal_to(1));
 
-        auto g = generic<_a(_a &,_a)>([](auto & x, auto y) { return (x++) + y;});
+        auto g = curry_as<_a(_a &,_a)>([](auto & x, auto y) { return (x++) + y;});
 
         Assert(g(n)(2), is_equal_to(3));
         Assert(n, is_equal_to(2));
@@ -80,12 +81,18 @@ Context(currying_test)
         n++;
     }
 
-    Test(lvalue)
+    Test(curry_lvalue)
     {
         int a = 0;
-        currying(increment)(a);
+        curry(increment)(a);
         Assert(a, is_equal_to(1));
+
+        auto f = curry(increment,a);
+        f();
+
+        Assert(a, is_equal_to(2));
     }
+
 
     void temporary(int &&n)
     {
@@ -96,13 +103,13 @@ Context(currying_test)
     {
         int a = 0;
 
-        currying(temporary)(std::move(a));
+        curry(temporary)(std::move(a));
         Assert(a, is_equal_to(1));
     }
 
     Test(apply)
     {
-        auto f = currying(f0);
+        auto f = curry(f0);
         auto f1 = f.apply(0);
         auto f2 = f1.apply("hello",'x');
         auto f3 = f2.apply(true);
@@ -131,8 +138,8 @@ Context(currying_test)
         constexpr auto diff = Diff{};
 
         assert_constexpr(identity);
-        assert_constexpr(currying(identity));
-        assert_constexpr(generic<int(int)>(identity));
+        assert_constexpr(curry(identity));
+        assert_constexpr(curry_as<int(int)>(identity));
         assert_constexpr(compose(identity, identity));
         assert_constexpr(flip(diff));
     }
@@ -153,16 +160,16 @@ Context(currying_test)
     Test(composition)
     {
         auto h1 = compose(sum,next);
-        auto h2 = compose(currying(sum),next);
-        auto h3 = compose(sum,currying(next));
-        auto h4 = compose(currying(sum),currying(next));
+        auto h2 = compose(curry(sum),next);
+        auto h3 = compose(sum,curry(next));
+        auto h4 = compose(curry(sum),curry(next));
 
         Assert(h1(10,1)   == 12);
         Assert(h2(10)(1)  == 12);
         Assert(h3(10,1)   == 12);
         Assert(h4(10)(1)  == 12);
 
-        auto l1 = compose(currying(sum), [](int n) { return n+1; });
+        auto l1 = compose(curry(sum), [](int n) { return n+1; });
         auto l2 = l1(10);
 
         Assert( l2(1) == 12);
@@ -170,7 +177,7 @@ Context(currying_test)
         auto x1 = compose(sum, constant);
         Assert(x1(1) == 43);
 
-        auto x2 = currying(sum) ^ (constant);
+        auto x2 = curry(sum) ^ (constant);
         Assert(x2(1) == 43);
     }
 
@@ -185,9 +192,9 @@ Context(currying_test)
     }
 
 
-    Test(generic)
+    Test(curry_as)
     {
-        auto h1 = generic<int(int, int)>([](auto a, auto b) { return a+b;});
+        auto h1 = curry_as<int(int, int)>([](auto a, auto b) { return a+b;});
 
         Assert(h1(1,2) == 3);
         Assert(h1(1)(2) == 3);
@@ -230,7 +237,7 @@ Context(currying_test)
         // std::sort(std::begin(v), std::end(v), on(std::less<int>(), first)); or better...
 
         std::sort(std::begin(v), std::end(v), std::less<int>() |on| first);
-        std::sort(std::begin(v), std::end(v), currying(generic<bool(int,int)>(std::less<int>()) |on| first));
+        std::sort(std::begin(v), std::end(v), curry(curry_as<bool(int,int)>(std::less<int>()) |on| first));
 
         Assert(first(v[0]) == 1);
         Assert(first(v[1]) == 2);
@@ -256,9 +263,9 @@ Context(currying_test)
         f1(p1);
         f2(std::move(p1));
 
-        currying(f0)(std::move(p2));
-        currying(f1)(p2);
-        currying(f2)(std::move(p2));
+        curry(f0)(std::move(p2));
+        curry(f1)(p2);
+        curry(f2)(std::move(p2));
     }
 
     Test(currying_advanced)
@@ -270,15 +277,15 @@ Context(currying_test)
 
         int a = 1, b = 1;
 
-        Assert( f1(a) == currying(f1)(b) );
-        Assert( f2(a) == currying(f2)(b) );
-        Assert( f3(a) == currying(f3)(b) );
+        Assert( f1(a) == curry(f1)(b) );
+        Assert( f2(a) == curry(f2)(b) );
+        Assert( f3(a) == curry(f3)(b) );
 
         Assert(a, is_equal_to(b));
 
-        Assert( f1(std::move(a)) == currying(f1)(std::move(b)) );
-        Assert( f3(std::move(a)) == currying(f3)(std::move(b)) );
-        Assert( f4(std::move(a)) == currying(f4)(std::move(b)) );
+        Assert( f1(std::move(a)) == curry(f1)(std::move(b)) );
+        Assert( f3(std::move(a)) == curry(f3)(std::move(b)) );
+        Assert( f4(std::move(a)) == curry(f4)(std::move(b)) );
 
         Assert(a, is_equal_to(b));
 
@@ -293,13 +300,13 @@ Context(currying_test)
         auto x = std::make_unique<int>(42);
         auto y = std::make_unique<int>(42);
 
-        Assert (g1(x)  == currying(g1)(y));
-        Assert (g2(x)  == currying(g2)(y));
-        Assert (g3(std::move(x)) == currying(g3)(std::move(y)));
+        Assert (g1(x)  == curry(g1)(y));
+        Assert (g2(x)  == curry(g2)(y));
+        Assert (g3(std::move(x)) == curry(g3)(std::move(y)));
 
         Assert (*x == *y);
 
-        Assert (g4(std::move(x)) == currying(g4)(std::move(y)));
+        Assert (g4(std::move(x)) == curry(g4)(std::move(y)));
         Assert(!x and !y);
     }
 

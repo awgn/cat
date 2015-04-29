@@ -70,12 +70,12 @@ Context(traits)
         Assert(std::is_same< function_type<decltype(l1)>::type, int(int)>::value);
         Assert(std::is_same< function_type<decltype(l2)>::type, int(int, char)>::value);
 
-        // cat::currying
+        // cat::curry
 
-        auto c0 = currying(f0);
-        auto c1 = currying(f1);
-        auto c2 = currying(f2);
-        auto c3 = currying(f2)(42);
+        auto c0 = curry(f0);
+        auto c1 = curry(f1);
+        auto c2 = curry(f2);
+        auto c3 = curry(f2)(42);
 
         Assert(std::is_same< function_type<decltype(c0)>::type, int()>::value);
         Assert(std::is_same< function_type<decltype(c1)>::type, int(int)>::value);
@@ -135,19 +135,19 @@ Context(traits)
         Assert(is_callable< decltype(l1)>::value, is_true());
         Assert(is_callable< decltype(l2)>::value, is_true());
 
-        // Generic lambda needs a currying wrapper:
+        // Generic lambda needs a curry wrapper:
         //
 
-        auto g1 = generic<int(int)>([](auto n) { return n+1; });
+        auto g1 = curry_as<int(int)>([](auto n) { return n+1; });
         Assert(is_callable< decltype(g1)>::value, is_true());
 
 
-        // currying...
+        // curry...
 
-        auto c0 = currying(f0);
-        auto c1 = currying(f1);
-        auto c2 = currying(f2);
-        auto c3 = currying(f2)(42);
+        auto c0 = curry(f0);
+        auto c1 = curry(f1);
+        auto c2 = curry(f2);
+        auto c3 = curry(f2)(42);
 
         Assert(is_callable<decltype(c0)>::value, is_true());
         Assert(is_callable<decltype(c1)>::value, is_true());

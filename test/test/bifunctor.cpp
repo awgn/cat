@@ -38,12 +38,12 @@ Context(functor)
     {
         auto p = std::make_pair(std::string("hello"), std::string("world!"));
 
-        auto b = currying(bimap)([](const std::string &s) -> size_t { return s.size();})
+        auto b = curry(bimap)([](const std::string &s) -> size_t { return s.size();})
                                 ([](const std::string &s) -> size_t { return s.size(); })
                                 (p);
 
-        auto f = currying(bifirst)([](const std::string &s) -> size_t { return s.size(); }, p);
-        auto s = currying(bisecond)([](const std::string &s) -> size_t { return s.size(); }, p);
+        auto f = curry(bifirst)([](const std::string &s) -> size_t { return s.size(); }, p);
+        auto s = curry(bisecond)([](const std::string &s) -> size_t { return s.size(); }, p);
 
         Assert(b, is_equal_to(std::pair<size_t, size_t>{5, 6}));
         Assert(f, is_equal_to(std::pair<size_t, std::string>{5, "world!"}));

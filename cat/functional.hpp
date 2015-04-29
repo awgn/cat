@@ -129,12 +129,13 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // Currying_ with partial application support
+    // Callable_ with partial application support
     //
 
     namespace details
     {
-        // Decay on the basis of the callable signature.
+        //
+        // Argument decay on the basis of the target signature.
         //
 
         template <typename F, size_t Idx, typename T>
@@ -153,14 +154,14 @@ namespace cat
 
 
     template <typename F, typename ...Ts>
-    struct Currying_
+    struct Callable_
     {
         using function_type =
             typename meta::partial_function_type<
                 typename function_type<F>::type, sizeof...(Ts)>::type;
 
         template <typename ...Xs>
-        constexpr explicit Currying_(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
+        constexpr explicit Callable_(F fun, std::tuple<Xs...> args = std::tuple<Xs...>{})
         : fun_(std::move(fun))
         , args_(std::move(args))
         { }
@@ -191,14 +192,14 @@ namespace cat
         template <size_t I, size_t ...N, typename ...Xs>
         auto eval_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Currying_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
+            return Callable_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
         template <size_t I, size_t ...N, typename ...Xs>
         auto apply_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
-            return Currying_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
+            return Callable_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
@@ -206,11 +207,18 @@ namespace cat
         std::tuple<Ts...> args_;
     };
 
+
     template<typename F>
-    constexpr auto currying(F && f)
+    constexpr auto curry(F && f)
     {
-        return Currying_<std::decay_t<F>>(std::forward<F>(f));
+        return Callable_<std::decay_t<F>>(std::forward<F>(f));
     }
+    template<typename F, typename ...Ts>
+    constexpr auto curry(F && f, Ts&& ...xs)
+    {
+        return curry(std::forward<F>(f)).apply(std::forward<Ts>(xs)...);
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -218,15 +226,15 @@ namespace cat
     //
 
     template <typename Fun, typename F>
-    struct Generic_
+    struct Callable_as_
     {
         using function_type = Fun;
 
-        constexpr Generic_()
+        constexpr Callable_as_()
         : fun_{}
         { }
 
-        constexpr Generic_(F f)
+        constexpr Callable_as_(F f)
         : fun_(std::move(f))
         { }
 
@@ -241,9 +249,14 @@ namespace cat
     };
 
     template <typename Fun, typename F>
-    constexpr auto generic(F && f)
+    constexpr auto curry_as(F && f)
     {
-        return currying(Generic_<Fun, std::decay_t<F>>(std::forward<F>(f)));
+        return curry(Callable_as_<Fun, std::decay_t<F>>(std::forward<F>(f)));
+    };
+    template <typename Fun, typename F, typename ...Ts>
+    constexpr auto curry_as(F && f, Ts && ... xs)
+    {
+        return curry_as<Fun>(std::forward<F>(f)).apply(std::forward<Ts>(xs)...);
     };
 
 
@@ -415,6 +428,5 @@ namespace cat
     {
         return Constant_<std::decay_t<T>>{ std::forward<T>(value) };
     }
-
 
 } // namespace cat

@@ -46,8 +46,8 @@ namespace cat
         reads(string_view s) override
         {
             if (auto nothing = ((mreturn.in<optional>(s)
-                        >>= currying(consume_char)('('))
-                        >>= currying(consume_char)(')'))
+                        >>= curry(consume_char)('('))
+                        >>= curry(consume_char)(')'))
                         >>= [](string_view s) -> ret_type
                             {
                                 return mreturn_(std::make_pair(optional<T>{}, s));
@@ -55,7 +55,7 @@ namespace cat
                 return nothing;
 
             return (mreturn.in<optional>(s)
-                        >>= currying(consume_char)('('))
+                        >>= curry(consume_char)('('))
                         >>= [](string_view s1) -> ret_type {
                             return cat::reads<T>(s1) >>= [](auto p) {
                                 return consume_char(')', p.second)

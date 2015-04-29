@@ -176,7 +176,7 @@ Context(monad)
 
         Assert( *((mreturn.in<std::unique_ptr>(10) >>= f) >>= g) == 12 );
 
-        auto h = currying(f) <kleisli> g;
+        auto h = curry(f) <kleisli> g;
 
         Assert( *(mreturn.in<std::unique_ptr>(10) >>= h) == 12 );
     }

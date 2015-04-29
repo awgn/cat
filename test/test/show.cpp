@@ -81,8 +81,8 @@ Context(test_show)
         print(optional<int>());
         print(nullopt);
 
-        std::cout << "currying: ";
-        currying(cat::print)(make_optional(42));
+        std::cout << "curry: ";
+        curry(cat::print)(make_optional(42));
     }
 }
 

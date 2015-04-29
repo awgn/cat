@@ -230,7 +230,7 @@ namespace cat
         reads(string_view s) override
         {
             return ((cat::consume_string(K::name().c_str(), s)
-                    >>= currying(cat::consume_char) ('='))
+                    >>= curry(cat::consume_char) ('='))
                     >>= cat::reads<V>)
                     >>= [](auto val) -> ret_type
                         {
@@ -275,7 +275,7 @@ namespace cat
                             return mreturn_(s1);
                         };
 
-            auto p1 = ((mreturn.in<optional>(s) >>= currying(cat::consume_char)('{')) >>= body) >>= currying(cat::consume_char)('}');
+            auto p1 = ((mreturn.in<optional>(s) >>= curry(cat::consume_char)('{')) >>= body) >>= curry(cat::consume_char)('}');
             auto p2 =   mreturn.in<optional>(s) >>= body;
 
             if (p1)

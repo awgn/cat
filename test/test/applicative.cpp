@@ -243,7 +243,7 @@ Context(applicative)
         Assert(z.get() == 42 );
 
         auto x  = pure.in<std::future>(42);
-        auto f  = pure.in<std::future>(currying([](int n) { return n+1; }));
+        auto f  = pure.in<std::future>(curry([](int n) { return n+1; }));
 
         auto r  = std::move(f) * std::move(x);  // std::future is non-copyable!
 
@@ -256,7 +256,7 @@ Context(applicative)
 
     Test(applicative_currying)
     {
-        auto sum = currying(sum_f);
+        auto sum = curry(sum_f);
 
         auto x = make_optional(21);
 
