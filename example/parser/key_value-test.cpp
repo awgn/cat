@@ -69,13 +69,13 @@ main(int, char *[])
 {
     auto str  = parser::read_file("./config.txt");
     auto str_ = parser::remove_comments(str, '#');
-    auto doc  = read<this_document>(str_);
+    auto doc  = cat::read<this_document>(str_);
 
-    std::cout << "document       : " << show(doc) << std::endl;
-    std::cout << "unsigned_int   : " << show( doc.get<key::associative>() ) << std::endl;
-    std::cout << "integers vector: " << show( doc.get<key::integers>() ) << std::endl;
-    std::cout << "booleans       : " << show( doc.get<key::booleans>() ) << std::endl;
-    std::cout << "strings        : " << show( doc.get<key::strings>() ) << std::endl;
+    std::cout << "document       : " << cat::show(doc) << std::endl;
+    std::cout << "unsigned_int   : " << cat::show( doc.get<key::associative>() ) << std::endl;
+    std::cout << "integers vector: " << cat::show( doc.get<key::integers>() ) << std::endl;
+    std::cout << "booleans       : " << cat::show( doc.get<key::booleans>() ) << std::endl;
+    std::cout << "strings        : " << cat::show( doc.get<key::strings>() ) << std::endl;
 
     return 0;
 }

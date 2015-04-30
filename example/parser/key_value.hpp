@@ -45,8 +45,6 @@
 
 namespace parser
 {
-    using namespace cat;
-
     template <typename T>
     struct key_name
     {
@@ -198,7 +196,7 @@ namespace parser
 
         } parser(commkey);
 
-        return fmap(parser, data);
+        return cat::fmap(parser, data);
     }
 }
 
