@@ -27,9 +27,10 @@
 #pragma once
 
 #include <cat/type_traits.hpp>
-#include <cat/missing.hpp>
 #include <cat/utility.hpp>
 #include <cat/placeholders.hpp>
+
+#include <cat/bits/missing.hpp>
 
 #include <utility>
 #include <forward_list>

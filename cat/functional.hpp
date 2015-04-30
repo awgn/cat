@@ -35,7 +35,8 @@
 #include <cat/type_traits.hpp>
 #include <cat/infix.hpp>
 #include <cat/utility.hpp>
-#include <cat/missing.hpp>
+
+#include <cat/bits/missing.hpp>
 
 namespace cat
 {
