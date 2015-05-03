@@ -55,13 +55,38 @@ namespace cat
     //
 
     template <typename Tp>
-    std::string type_name()
+    std::string add_cv_qualifier(std::string name)
     {
-        auto name = demangle(typeid(Tp).name());
+        if (std::is_volatile<Tp>::value)
+            name += " volatile";
+        if (std::is_const<Tp>::value)
+            name += " const";
+        return name;
+    }
+
+    template <typename Tp>
+    std::string add_ref_qualifier(std::string name)
+    {
         if (std::is_lvalue_reference<Tp>::value)
             name += "&";
         else if (std::is_rvalue_reference<Tp>::value)
             name += "&&";
+        return name;
+    }
+
+    template <typename Tp>
+    std::string type_name()
+    {
+        using T = std::remove_reference_t<Tp>;
+
+        auto name = add_cv_qualifier<Tp>(demangle(typeid(T).name()));
+
+        if (std::is_reference<Tp>::value)
+        {
+            name = add_cv_qualifier<T>(std::move(name));
+            name = add_ref_qualifier<Tp>(std::move(name));
+        }
+
         return name;
     }
 
@@ -73,19 +98,7 @@ namespace cat
     std::string
     type_of(Tp &&)
     {
-        auto name = demangle(typeid(Tp).name());
-
-        if (std::is_const<std::remove_reference_t<Tp>>::value)
-            name.append(" const");
-        if (std::is_volatile<std::remove_reference_t<Tp>>::value)
-            name.append(" volatile");
-
-        if (std::is_reference<Tp>::value)
-            name.append("&");
-        else
-            name.append("&&");
-
-        return name;
+        return type_name<Tp &&>();
     }
 
     //
