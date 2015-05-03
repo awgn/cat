@@ -32,13 +32,16 @@ namespace cat
 {
     template <typename T>
     decltype(auto)
-    forward(T &&value)
+    const_forward(typename std::remove_reference<T>::type &value)
     {
-        return static_cast<
-            std::conditional_t<
-                std::is_lvalue_reference<T>::value,
-                const std::remove_reference_t<T> &,
-                      std::remove_reference_t<T> &&>>(value);
+        return static_cast<const std::remove_reference_t<T> &>(value);
+    }
+
+    template <typename T>
+    decltype(auto)
+    const_forward(typename std::remove_reference<T>::type &&value)
+    {
+        return static_cast<T &&>(value);
     }
 
 
