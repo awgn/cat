@@ -179,18 +179,18 @@ namespace cat
     namespace container
     {
         template <typename T,
-                 std::enable_if_t<!is_pair<std::decay_t<T>>::value> * = nullptr>
-                 decltype(auto) iterator_elem(T &&value)
-                 {
-                     return std::forward<T>(value);
-                 }
+                  std::enable_if_t<!is_pair<std::decay_t<T>>::value> * = nullptr>
+        decltype(auto) iterator_elem(T &&value)
+        {
+            return std::forward<T>(value);
+        }
 
         template <typename T,
-                 std::enable_if_t<is_pair<std::decay_t<T>>::value> * = nullptr>
-                 decltype(auto) iterator_elem(T &&value)
-                 {
-                     return forward_as<T>(value.second);
-                 }
+                  std::enable_if_t<is_pair<std::decay_t<T>>::value> * = nullptr>
+        decltype(auto) iterator_elem(T &&value)
+        {
+            return forward_as<T>(value.second);
+        }
 
         //
         // foldl, foldl1, foldr, foldr1
