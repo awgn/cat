@@ -27,6 +27,8 @@ add_executable(test-foldable test/foldable.cpp)
 add_executable(test-show test/show.cpp)
 add_executable(test-read test/read.cpp)
 
+add_executable(test-bits_type test/bits_type.cpp)
+
 target_link_libraries(test-functor -pthread)
 target_link_libraries(test-applicative -pthread)
 target_link_libraries(test-monad -pthread)
