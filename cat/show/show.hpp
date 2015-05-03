@@ -81,11 +81,11 @@ namespace cat
             using function_type = std::string(placeholders::_a);
 
             template <typename T>
-            placeholders::void_
+            std::tuple<>
             operator()(T const &elem) const
             {
                 std::cout << show(elem) << std::endl;
-                return placeholders::void_{};
+                return {};
             }
         };
     }

@@ -32,8 +32,6 @@ namespace cat
     namespace placeholders
     {
         struct unspec { };
-        struct void_  { };
-        struct num    { };
 
         struct __ { };
 
@@ -45,15 +43,30 @@ namespace cat
         struct _g { };
         struct _h { };
         struct _i { };
+        struct _j { };
+        struct _k { };
+        struct _l { };
         struct _m { };                                      // monoid
+        struct _n { };
+        struct _o { };
+        struct _p { };
+        struct _q { };
+        struct _r { };
+        struct _s { };
+        struct _t { };
+        struct _u { };
+        struct _v { };
+        struct _w { };
+        struct _x { };
+        struct _y { };
+        struct _z { };
 
-        template <typename T> struct _f  { };               // generic function: _f<_b(_a)>  => f :: a -> b
+        template <typename T> struct _f { };               // generic function: _f<_b(_a)>  => f :: a -> b
 
         template <typename T> struct _C { };                // container
         template <typename T> struct _F { };                // functor
         template <typename T> struct _M { };                // monad
         template <typename T, typename V> struct _B { };    // bifunctor
-
     };
 
     constexpr auto _ = placeholders::__ {};
