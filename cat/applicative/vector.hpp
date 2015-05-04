@@ -43,7 +43,7 @@ namespace cat
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
     struct ApplicativeInstance<std::vector<F>, std::vector<A>, Ff_, Fa_, A_>  final : Applicative<std::vector>::
-    template _<F, A, Ff_, Fa_, A_>
+    template where<F, A, Ff_, Fa_, A_>
     {
         using B = std::result_of_t<F(A_)>;
 
@@ -77,7 +77,7 @@ namespace cat
 
     template <typename A, typename Fl_, typename Fr_>
     struct AlternativeInstance<std::vector<A>, Fl_, Fr_> final : Alternative<std::vector>::
-    template _<std::vector<A>, Fl_, Fr_>
+    template where<std::vector<A>, Fl_, Fr_>
     {
         std::vector<A>
         empty() override

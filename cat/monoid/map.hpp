@@ -39,7 +39,7 @@ namespace cat
 
     template <typename F, typename M1, typename M2, typename K, typename V>
     struct MonoidInstance<std::map<K, V>, F, M1, M2> final : Monoid<std::map<K, V>>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         virtual std::map<K,V> mempty() override
         {

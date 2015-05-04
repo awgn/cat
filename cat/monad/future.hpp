@@ -41,7 +41,7 @@ namespace cat
 
     template <typename A, typename Fun, typename Ma_, typename A_>
     struct MonadInstance<std::future<A>, Fun, Ma_, A_> final : Monad<std::future>::
-    template _<Fun, A, Ma_, A_>
+    template where<Fun, A, Ma_, A_>
     {
         using B = inner_type_t<std::result_of_t<Fun(A)>>;
 

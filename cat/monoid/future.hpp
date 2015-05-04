@@ -36,7 +36,7 @@ namespace cat
 
     template <typename F, typename M1, typename M2, typename T>
     struct MonoidInstance<std::future<T>, F, M1, M2> final : Monoid<std::future<T>>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         static_assert(is_monoid<T>::value, "std::future<T>: T must be a monoid");
 

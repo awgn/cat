@@ -41,7 +41,7 @@ namespace cat
 
     template <typename A, typename Fun, typename Ma_, typename A_>
     struct MonadInstance<std::deque<A>, Fun, Ma_, A_> final : Monad<std::deque>::
-    template _<Fun, A, Ma_, A_>
+    template where<Fun, A, Ma_, A_>
     {
         using B = inner_type_t<std::result_of_t<Fun(A)>>;
 
@@ -73,7 +73,7 @@ namespace cat
 
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::deque<A>, Ma_, Mb_> final : MonadPlus<std::deque>::
-    template _<A, Ma_, Mb_>
+    template where<A, Ma_, Mb_>
     {
         std::deque<A>
         mzero() override

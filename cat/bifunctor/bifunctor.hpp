@@ -48,7 +48,7 @@ namespace cat
     struct Bifunctor
     {
         template <typename A, typename B, typename F, typename G, typename B_>
-        struct _
+        struct where
         {
             virtual auto bimap(F f, G g, B_ && bf)
                 -> BF< std::result_of_t<F(A)>,

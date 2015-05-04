@@ -44,7 +44,7 @@ namespace cat
 
     template <typename A, typename Fun, typename Fa_>
     struct FunctorInstance<std::forward_list<A>, Fun, Fa_> final : Functor<std::forward_list>::
-    template _<A, Fun, Fa_>
+    template where<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 

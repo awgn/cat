@@ -46,7 +46,7 @@ namespace cat
 
     template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
     struct FoldableInstance<optional<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<optional>::
-    template _<A, B, FunR, FunL, Fun, Fa_>
+    template where<A, B, FunR, FunL, Fun, Fa_>
     {
         B foldr(FunR f, B value, Fa_ && xs) override
         {

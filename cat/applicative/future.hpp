@@ -41,7 +41,7 @@ namespace cat
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
     struct ApplicativeInstance<std::future<F>, std::future<A>, Ff_, Fa_, A_>  final : Applicative<std::future>::
-    template _<F, A, Ff_, Fa_, A_>
+    template where<F, A, Ff_, Fa_, A_>
     {
         using B = std::result_of_t<F(A_)>;
 

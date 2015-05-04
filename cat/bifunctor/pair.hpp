@@ -43,7 +43,7 @@ namespace cat
 
     template <typename A, typename B, typename F, typename G, typename Fab_>
     struct BifunctorInstance<std::pair<A,B>, F, G, Fab_> final : Bifunctor<std::pair>::
-    template _ <A, B, F, G, Fab_>
+    template where <A, B, F, G, Fab_>
     {
         using R = meta::fmap_t< std::decay_t<Fab_>,
                                 meta::apply<meta::result_of, F>::template type,

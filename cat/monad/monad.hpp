@@ -196,7 +196,7 @@ namespace cat
     struct Monad
     {
         template <typename Fun, typename A, typename Ma_, typename A_>
-        struct _
+        struct where
         {
             virtual auto mbind(Ma_ && ma, Fun f) -> std::result_of_t<Fun(A)> = 0;
 
@@ -212,7 +212,7 @@ namespace cat
     struct MonadPlus : Monad<M>
     {
         template <typename A, typename Ma_, typename Mb_>
-        struct _
+        struct where
         {
             virtual M<A> mzero() = 0;
             virtual M<A> mplus(Ma_ &&, Mb_ &&)  = 0;

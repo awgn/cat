@@ -36,7 +36,7 @@ namespace cat
 
     template <typename F, typename M1, typename M2, typename T>
     struct MonoidInstance<std::forward_list<T>, F, M1, M2> final : Monoid<std::forward_list<T>>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         virtual std::forward_list<T> mempty() override
         {

@@ -51,7 +51,7 @@ namespace cat
 
     template <typename F, typename M1, typename M2>
     struct MonoidInstance<Any, F, M1, M2> final : Monoid<Any>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         virtual Any mempty() override
         {
@@ -93,7 +93,7 @@ namespace cat
 
     template <typename F, typename M1, typename M2>
     struct MonoidInstance<All, F, M1, M2> final : Monoid<All>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         virtual All mempty() override
         {
@@ -141,7 +141,7 @@ namespace cat
 
     template <typename T, typename F, typename M1, typename M2>
     struct MonoidInstance<Sum<T>, F, M1, M2> final : Monoid<Sum<T>>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         virtual Sum<T> mempty() override
         {
@@ -190,7 +190,7 @@ namespace cat
 
     template <typename T, typename F, typename M1, typename M2>
     struct MonoidInstance<Product<T>, F, M1, M2> final : Monoid<Product<T>>::
-    template _<F, M1, M2>
+    template where<F, M1, M2>
     {
         virtual Product<T> mempty() override
         {

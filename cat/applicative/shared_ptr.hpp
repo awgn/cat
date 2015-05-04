@@ -41,7 +41,7 @@ namespace cat
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
     struct ApplicativeInstance<std::shared_ptr<F>, std::shared_ptr<A>, Ff_, Fa_, A_>  final : Applicative<std::shared_ptr>::
-    template _<F, A, Ff_, Fa_, A_>
+    template where<F, A, Ff_, Fa_, A_>
     {
         using B = std::result_of_t<F(A_)>;
 
@@ -71,7 +71,7 @@ namespace cat
 
     template <typename A, typename Fl_, typename Fr_>
     struct AlternativeInstance<std::shared_ptr<A>, Fl_, Fr_> final : Alternative<std::shared_ptr>::
-    template _<std::shared_ptr<A>, Fl_, Fr_>
+    template where<std::shared_ptr<A>, Fl_, Fr_>
     {
         std::shared_ptr<A>
         empty() override

@@ -44,7 +44,7 @@ namespace cat
     struct Applicative
     {
         template <typename Fun, typename A, typename Ff_, typename Fa_, typename A_>
-        struct _
+        struct where
         {
             virtual auto pure(A_ &&) -> F<A> = 0; // lift a value.
             virtual auto apply(Ff_ &&, Fa_ &&) -> F<std::result_of_t<Fun(A_)>> = 0;
@@ -159,7 +159,7 @@ namespace cat
     struct Alternative : Applicative<F>
     {
         template <typename Fa, typename Fl_, typename Fr_>
-        struct _
+        struct where
         {
             virtual auto empty() -> Fa = 0;   // identity of or_
             virtual auto or_(Fl_ &&, Fr_ &&) -> Fa = 0;

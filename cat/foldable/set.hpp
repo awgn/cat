@@ -45,7 +45,7 @@ namespace cat
 
     template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
     struct FoldableInstance<std::set<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::set>::
-    template _<A, B, FunR, FunL, Fun, Fa_>
+    template where<A, B, FunR, FunL, Fun, Fa_>
     {
         B foldr(FunR f, B value, Fa_ && xs) override
         {
@@ -78,7 +78,7 @@ namespace cat
 
     template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
     struct FoldableInstance<std::multiset<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::multiset>::
-    template _<A, B, FunR, FunL, Fun, Fa_>
+    template where<A, B, FunR, FunL, Fun, Fa_>
     {
         B foldr(FunR f, B value, Fa_ && xs) override
         {

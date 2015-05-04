@@ -43,7 +43,7 @@ namespace cat
 
     template <typename A, typename Fun, typename Fa_>
     struct FunctorInstance<std::future<A>, Fun, Fa_> final : Functor<std::future>::
-    template _<A, Fun, Fa_>
+    template where<A, Fun, Fa_>
     {
         using B = std::result_of_t<Fun(A)>;
 

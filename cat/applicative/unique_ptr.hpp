@@ -41,7 +41,7 @@ namespace cat
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
     struct ApplicativeInstance<std::unique_ptr<F>, std::unique_ptr<A>, Ff_, Fa_, A_>  final : Applicative<std::unique_ptr>::
-    template _<F, A, Ff_, Fa_, A_>
+    template where<F, A, Ff_, Fa_, A_>
     {
         using B = std::result_of_t<F(A_)>;
 
@@ -71,7 +71,7 @@ namespace cat
 
     template <typename A, typename Fl_, typename Fr_>
     struct AlternativeInstance<std::unique_ptr<A>, Fl_, Fr_> final : Alternative<std::unique_ptr>::
-    template _<std::unique_ptr<A>, Fl_, Fr_>
+    template where<std::unique_ptr<A>, Fl_, Fr_>
     {
         std::unique_ptr<A>
         empty() override

@@ -41,7 +41,7 @@ namespace cat
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
     struct ApplicativeInstance<std::forward_list<F>, std::forward_list<A>, Ff_, Fa_, A_>  final : Applicative<std::forward_list>::
-    template _<F, A, Ff_, Fa_, A_>
+    template where<F, A, Ff_, Fa_, A_>
     {
         using B = std::result_of_t<F(A_)>;
 
@@ -76,7 +76,7 @@ namespace cat
 
     template <typename A, typename Fl_, typename Fr_>
     struct AlternativeInstance<std::forward_list<A>, Fl_, Fr_> final : Alternative<std::forward_list>::
-    template _<std::forward_list<A>, Fl_, Fr_>
+    template where<std::forward_list<A>, Fl_, Fr_>
     {
         std::forward_list<A>
         empty() override

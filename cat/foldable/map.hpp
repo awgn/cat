@@ -45,7 +45,7 @@ namespace cat
 
     template <typename K, typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
     struct FoldableInstance<std::map<K, A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::map>::
-    template _<A, B, FunR, FunL, Fun, Fa_>
+    template where<A, B, FunR, FunL, Fun, Fa_>
     {
         B foldr(FunR f, B value, Fa_ && xs) override
         {
@@ -78,7 +78,7 @@ namespace cat
 
     template <typename K, typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
     struct FoldableInstance<std::multimap<K, A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::multimap>::
-    template _<A, B, FunR, FunL, Fun, Fa_>
+    template where<A, B, FunR, FunL, Fun, Fa_>
     {
         B foldr(FunR f, B value, Fa_ && xs) override
         {

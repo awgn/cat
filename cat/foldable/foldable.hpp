@@ -50,7 +50,7 @@ namespace cat
     struct Foldable
     {
         template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
-        struct _
+        struct where
         {
             virtual auto foldr (FunR fun, B, Fa_ && fa) -> B = 0;
             virtual auto foldl (FunL fun, B, Fa_ && fa) -> B = 0;

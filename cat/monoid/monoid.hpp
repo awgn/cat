@@ -109,7 +109,7 @@ namespace cat
     struct Monoid
     {
         template <typename  F, typename M1, typename M2>
-        struct _
+        struct where
         {
             virtual M mempty() = 0;
             virtual M mappend(M1 &&, M2 &&) = 0;

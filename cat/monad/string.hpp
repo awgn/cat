@@ -41,7 +41,7 @@ namespace cat
 
     template <typename A, typename Fun, typename Ma_, typename A_>
     struct MonadInstance<std::basic_string<A>, Fun, Ma_, A_> final : Monad<std::basic_string>::
-    template _<Fun, A, Ma_, A_>
+    template where<Fun, A, Ma_, A_>
     {
         using B = inner_type_t<std::result_of_t<Fun(A)>>;
 
@@ -72,7 +72,7 @@ namespace cat
 
     template <typename A, typename Ma_, typename Mb_>
     struct MonadPlusInstance<std::basic_string<A>, Ma_, Mb_> final : MonadPlus<std::basic_string>::
-    template _<A, Ma_, Mb_>
+    template where<A, Ma_, Mb_>
     {
         std::basic_string<A>
         mzero() override

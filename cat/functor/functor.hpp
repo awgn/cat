@@ -48,7 +48,7 @@ namespace cat
     struct Functor
     {
         template <typename A, typename Fun, typename Fa_, typename = void>
-        struct _
+        struct where
         {
             virtual auto fmap(Fun fun, Fa_ && fa) -> F<std::result_of_t<Fun(A)>> = 0;
         };
