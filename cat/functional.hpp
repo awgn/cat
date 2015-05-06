@@ -120,13 +120,12 @@ namespace cat
     };
 
 
-#if defined(__clang__) || (__GNUC__ >= 5)
+#if defined(__clang__)
 
     template <size_t N>
     constexpr auto elem = Elem_<N>{};
 
 #endif
-
 
     //////////////////////////////////////////////////////////////////////////////////
     //

@@ -130,7 +130,7 @@ namespace cat
     inline auto operator||(placeholders::__, placeholders::__) { return curry_as<placeholders::_a(placeholders::_a, placeholders::_a)>(std::logical_or<>{}); }
 
 
-#if defined(__clang__) || (__GNUC__ >= 5)
+#if defined(__clang__)
     template <typename T = void> constexpr auto minus         = std::conditional_t<std::is_same<T,void>::value, Callable_as_<placeholders::_a(placeholders::_a, placeholders::_a), std::minus<T>>, std::minus<T>> {};
     template <typename T = void> constexpr auto plus          = std::conditional_t<std::is_same<T,void>::value, Callable_as_<placeholders::_a(placeholders::_a, placeholders::_a), std::plus<T>>, std::plus<T>> {};
     template <typename T = void> constexpr auto multiplies    = std::conditional_t<std::is_same<T,void>::value, Callable_as_<placeholders::_a(placeholders::_a, placeholders::_a), std::multiplies<T>>, std::multiplies<T>> {};

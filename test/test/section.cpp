@@ -11,7 +11,7 @@ Context(traits)
     Test(section_test)
     {
 
-#if defined(__clang__) || (__GNUC__ >= 5)
+#if defined(__clang__)
         auto a = sec(10, minus<int>);
         auto b = sec(minus<int>, 10);
 #else
