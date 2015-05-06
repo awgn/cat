@@ -29,7 +29,12 @@
 #include <iterator>
 #include <ciso646>
 
-#if defined(__clang__) && !defined(_LIBCPP_VERSION) || !defined(__clang__) && (__GNUC__ < 5)
+//
+// The date 20150119 is learned from ranges-v3 library (as it performs a similar test)...
+//
+
+#if (defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION > 1101)) || \
+    ( defined(__GLIBCXX__) && (__GLIBCXX__ < 20150119))
 
 namespace std
 {
