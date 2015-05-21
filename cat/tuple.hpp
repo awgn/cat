@@ -141,4 +141,24 @@ namespace cat
                                         std::tuple_size<std::decay_t<TupleT>>::value>());
     }
 
+    //
+    // make_tuple: like make_tuple but possibly accepts a fewer number of arguments.
+    // Missing arguments are default constructed.
+    //
+
+    template <typename ...Ts>
+    inline std::tuple<Ts...>
+    make_tuple()
+    {
+        return std::make_tuple(Ts{}...);
+    }
+
+    template <typename T, typename ...Ts, typename X, typename ...Xs>
+    inline std::tuple<T, Ts...>
+    make_tuple(X && x, Xs&& ... xs)
+    {
+        return std::tuple_cat(std::make_tuple(std::forward<X>(x)),
+                              cat::make_tuple<Ts...>(std::forward<Xs>(xs)...));
+    }
+
 } // namespace cat

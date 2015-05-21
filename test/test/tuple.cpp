@@ -147,6 +147,19 @@ Context(tuple)
         tuple_assign_from<1>(a, 'y', "world!");
         Assert(a == std::make_tuple(1, 'y', "world!"));
     }
+
+
+    Test(make_tuple)
+    {
+        auto t1 = cat::make_tuple<int, double>();
+        Assert (t1 == std::make_tuple(0,0.0));
+
+        auto t2 = cat::make_tuple<int, double>(42);
+        Assert (t2 == std::make_tuple(42,0.0));
+
+        auto t3 = cat::make_tuple<int, double>(42, 3.14);
+        Assert (t3 == std::make_tuple(42, 3.14));
+    }
 }
 
 
