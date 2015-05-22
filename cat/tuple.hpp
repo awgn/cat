@@ -72,6 +72,14 @@ namespace cat
     }
 
     //
+    // index_tuple: create indexes for a tuple
+    //
+
+    template <typename TupleT>
+    using index_tuple = std::make_index_sequence<std::tuple_size<std::decay_t<TupleT>>::value>;
+
+
+    //
     // tuple_assign: assign a pack to a tuple
     //
 
@@ -95,10 +103,7 @@ namespace cat
     template <typename Fun, typename TupleT>
     void tuple_foreach(Fun fun, TupleT &&tup)
     {
-        return details::tuple_foreach(fun,
-                                      std::forward<TupleT>(tup),
-                                      std::make_index_sequence<
-                                        std::tuple_size<std::decay_t<TupleT>>::value>());
+        return details::tuple_foreach(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
 
 
@@ -109,11 +114,9 @@ namespace cat
     template <typename Fun, typename TupleT>
     void tuple_foreach_index(Fun fun, TupleT &&tup)
     {
-        return details::tuple_foreach_index(fun,
-                                            std::forward<TupleT>(tup),
-                                            std::make_index_sequence<
-                                                std::tuple_size<std::decay_t<TupleT>>::value>());
+        return details::tuple_foreach_index(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
+
 
     //
     // tuple_map: fmap over tuple
@@ -122,11 +125,9 @@ namespace cat
     template <typename Fun, typename TupleT>
     auto tuple_map(Fun fun, TupleT &&tup)
     {
-        return details::tuple_map(fun,
-                                  std::forward<TupleT>(tup),
-                                  std::make_index_sequence<
-                                        std::tuple_size<std::decay_t<TupleT>>::value>());
+        return details::tuple_map(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
+
 
     //
     //  tuple_apply: expand a tuple into a pack and pass it to a callable
@@ -135,14 +136,12 @@ namespace cat
     template <typename Fun, typename TupleT>
     auto tuple_apply(Fun fun, TupleT && tup)
     {
-        return details::tuple_apply(fun,
-                                   std::forward<TupleT>(tup),
-                                   std::make_index_sequence<
-                                        std::tuple_size<std::decay_t<TupleT>>::value>());
+        return details::tuple_apply(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
 
+
     //
-    // make_tuple: like make_tuple but possibly accepts a fewer number of arguments.
+    // make_tuple: like std::make_tuple but possibly accepts a fewer number of arguments.
     // Missing arguments are default constructed.
     //
 
