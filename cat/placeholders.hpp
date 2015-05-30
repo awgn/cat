@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 
 namespace cat
 {

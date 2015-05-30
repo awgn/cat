@@ -26,11 +26,13 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
+#include <cat/meta.hpp>
+
 #include <iostream>
 #include <memory>
 #include <type_traits>
 
-#include <cat/meta.hpp>
 
 #define CAT_CLASS_HAS_TYPEDEF(typedef_) \
     template <typename T> \

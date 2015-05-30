@@ -26,5 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
+
 #define assert_constexpr(expr)     { constexpr auto test_constexpr = expr; (void)test_constexpr; }
 

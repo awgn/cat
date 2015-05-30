@@ -26,12 +26,12 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/bits/type.hpp>
 #include <cat/optional.hpp>
 
-#include <type_traits>
 #include <experimental/string_view>
-
+#include <type_traits>
 #include <cctype>
 #include <vector>
 #include <limits>

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/bits/type.hpp>
 #include <cat/container.hpp>
 #include <cat/placeholders.hpp>

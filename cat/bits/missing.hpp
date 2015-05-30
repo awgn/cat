@@ -26,8 +26,11 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
+
 #include <iterator>
 #include <ciso646>
+
 
 //
 // The date 20150119 is learned from ranges-v3 library (as it performs a similar test)...

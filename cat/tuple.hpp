@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
+
 #include <tuple>
 #include <utility>
 

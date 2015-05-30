@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/read/fundamental.hpp>
 #include <cat/read/container.hpp>
 #include <cat/read/optional.hpp>

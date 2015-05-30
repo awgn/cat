@@ -26,10 +26,10 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/utility.hpp>
 #include <cat/placeholders.hpp>
-
 #include <cat/bits/missing.hpp>
 
 #include <utility>

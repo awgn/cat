@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/show/chrono.hpp>
 #include <cat/show/container.hpp>
 #include <cat/show/fundamental.hpp>

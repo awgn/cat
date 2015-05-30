@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
+
 #include <experimental/string_view>
 #include <vector>
 

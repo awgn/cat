@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/functor/string.hpp>
 #include <cat/functor/vector.hpp>
 #include <cat/functor/deque.hpp>
@@ -35,7 +36,6 @@
 #include <cat/functor/unique_ptr.hpp>
 #include <cat/functor/optional.hpp>
 #include <cat/functor/future.hpp>
-
 #include <cat/functor/map.hpp>
 #include <cat/functor/unordered_map.hpp>
 #include <cat/functor/pair.hpp>

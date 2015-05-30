@@ -26,9 +26,11 @@
 
 #pragma once
 
-#include <functional>
+#include <cat/__config.hpp>
 #include <cat/functional.hpp>
 #include <cat/placeholders.hpp>
+
+#include <functional>
 
 namespace cat
 {

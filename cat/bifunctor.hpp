@@ -26,5 +26,6 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/bifunctor/pair.hpp>
 

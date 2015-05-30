@@ -24,14 +24,9 @@
  *
  ******************************************************************************/
 
-#pragma once
+#ifndef _CAT_CONFIG
+#define _CAT_CONFIG
 
-#include <cat/__config.hpp>
-#include <cat/monad/string.hpp>
-#include <cat/monad/optional.hpp>
-#include <cat/monad/future.hpp>
-#include <cat/monad/shared_ptr.hpp>
-#include <cat/monad/unique_ptr.hpp>
-#include <cat/monad/vector.hpp>
-#include <cat/monad/deque.hpp>
-#include <cat/monad/list.hpp>
+#define _LIBCAT_VERSION 0100
+
+#endif /* _CAT_CONFIG */

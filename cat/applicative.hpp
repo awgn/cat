@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <cat/__config.hpp>
 #include <cat/applicative/vector.hpp>
 #include <cat/applicative/deque.hpp>
 #include <cat/applicative/list.hpp>

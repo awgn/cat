@@ -30,6 +30,7 @@
 #include <iterator>
 #include <functional>
 
+#include <cat/__config.hpp>
 #include <cat/tuple.hpp>
 #include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
