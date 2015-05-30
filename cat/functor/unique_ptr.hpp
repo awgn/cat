@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <memory>
 #include <cat/functor/functor.hpp>
+
+#include <memory>
 
 namespace cat
 {

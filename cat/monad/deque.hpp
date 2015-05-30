@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <deque>
 #include <cat/monad/monad.hpp>
+
+#include <deque>
 
 namespace cat
 {

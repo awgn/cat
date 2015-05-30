@@ -26,9 +26,10 @@
 
 #pragma once
 
-#include <list>
 #include <cat/monoid/monoid.hpp>
 #include <cat/iterator.hpp>
+
+#include <list>
 
 namespace cat
 {

@@ -26,16 +26,15 @@
 
 #pragma once
 
-#include <utility>
-#include <vector>
-#include <list>
-
 #include <cat/functor.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/functional.hpp>
 #include <cat/container.hpp>
 #include <cat/infix.hpp>
 
+#include <utility>
+#include <vector>
+#include <list>
 
 //
 // Sugaring monads...

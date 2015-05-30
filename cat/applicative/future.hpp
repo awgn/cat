@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <future>
 #include <cat/applicative/applicative.hpp>
+
+#include <future>
 
 namespace cat
 {

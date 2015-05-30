@@ -26,9 +26,10 @@
 
 #pragma once
 
-#include <utility>
 #include <cat/functional.hpp>
 #include <cat/type_traits.hpp>
+
+#include <utility>
 
 namespace cat
 {

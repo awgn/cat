@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <future>
 #include <cat/monad/monad.hpp>
+
+#include <future>
 
 namespace cat
 {

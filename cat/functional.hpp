@@ -26,9 +26,6 @@
 
 #pragma once
 
-#include <utility>
-#include <iterator>
-#include <functional>
 
 #include <cat/__config.hpp>
 #include <cat/tuple.hpp>
@@ -36,8 +33,11 @@
 #include <cat/type_traits.hpp>
 #include <cat/infix.hpp>
 #include <cat/utility.hpp>
-
 #include <cat/bits/missing.hpp>
+
+#include <utility>
+#include <iterator>
+#include <functional>
 
 namespace cat
 {

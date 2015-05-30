@@ -26,13 +26,12 @@
 
 #pragma once
 
-#include <utility>
-
 #include <cat/utility.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/functional.hpp>
 #include <cat/infix.hpp>
 
+#include <utility>
 
 namespace cat
 {

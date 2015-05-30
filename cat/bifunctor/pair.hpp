@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <tuple>
-
 #include <cat/bifunctor/bifunctor.hpp>
 #include <cat/utility.hpp>
+
+#include <tuple>
 
 namespace cat
 {

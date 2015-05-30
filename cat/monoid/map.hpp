@@ -26,10 +26,10 @@
 
 #pragma once
 
+#include <cat/monoid/monoid.hpp>
+
 #include <map>
 #include <algorithm>
-
-#include <cat/monoid/monoid.hpp>
 
 namespace cat
 {

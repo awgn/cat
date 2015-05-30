@@ -26,12 +26,12 @@
 
 #pragma once
 
-#include <deque>
 #include <cat/foldable/foldable.hpp>
 #include <cat/utility.hpp>
-
 #define CAT_FOLDABLE
 #include <cat/container.hpp>
+
+#include <deque>
 
 namespace cat
 {

@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <unordered_map>
 #include <cat/functor/functor.hpp>
+
+#include <unordered_map>
 
 namespace cat
 {

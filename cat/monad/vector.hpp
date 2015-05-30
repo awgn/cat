@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <vector>
 #include <cat/monad/monad.hpp>
+
+#include <vector>
 
 namespace cat
 {

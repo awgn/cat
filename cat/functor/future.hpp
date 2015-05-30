@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <future>
-
 #include <cat/functor/functor.hpp>
 #include <cat/utility.hpp>
+
+#include <future>
 
 namespace cat
 {

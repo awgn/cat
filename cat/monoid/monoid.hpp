@@ -26,10 +26,11 @@
 
 #pragma once
 
-#include <vector>
 #include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/utility.hpp>
+
+#include <vector>
 
 namespace cat
 {

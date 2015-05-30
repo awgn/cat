@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <vector>
 #include <cat/monoid/monoid.hpp>
+
+#include <vector>
 
 namespace cat
 {

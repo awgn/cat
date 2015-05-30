@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <list>
 #include <cat/applicative/applicative.hpp>
+
+#include <list>
 
 namespace cat
 {

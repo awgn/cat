@@ -26,9 +26,10 @@
 
 #pragma once
 
-#include <string>
 #include <cat/functor/functor.hpp>
 #include <cat/utility.hpp>
+
+#include <string>
 
 namespace cat
 {

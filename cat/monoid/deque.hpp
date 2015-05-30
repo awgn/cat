@@ -26,9 +26,10 @@
 
 #pragma once
 
-#include <deque>
 #include <cat/monoid/monoid.hpp>
 #include <cat/iterator.hpp>
+
+#include <deque>
 
 namespace cat
 {

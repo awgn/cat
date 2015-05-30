@@ -26,11 +26,10 @@
 
 #pragma once
 
-#include <forward_list>
-
 #include <cat/iterator.hpp>
 #include <cat/functor/functor.hpp>
 
+#include <forward_list>
 
 namespace cat
 {

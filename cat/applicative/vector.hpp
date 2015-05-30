@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <vector>
-
 #include <cat/applicative/applicative.hpp>
 #include <cat/iterator.hpp>
+
+#include <vector>
 
 namespace cat
 {

@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <future>
 #include <cat/monoid/monoid.hpp>
+
+#include <future>
 
 namespace cat
 {

@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <memory>
 #include <cat/monad/monad.hpp>
+
+#include <memory>
 
 namespace cat
 {

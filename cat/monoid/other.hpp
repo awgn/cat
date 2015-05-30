@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <type_traits>
-
 #include <cat/show.hpp>
 #include <cat/monoid/monoid.hpp>
+
+#include <type_traits>
 
 namespace cat
 {
