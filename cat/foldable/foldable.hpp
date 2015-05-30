@@ -27,7 +27,6 @@
 #pragma once
 
 #include <cat/monoid.hpp>
-
 #include <cat/utility.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/placeholders.hpp>

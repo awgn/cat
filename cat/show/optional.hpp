@@ -27,7 +27,6 @@
 #pragma once
 
 #include <cat/show/show.hpp>
-
 #include <cat/optional.hpp>
 
 namespace cat

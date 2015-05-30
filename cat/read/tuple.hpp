@@ -28,8 +28,8 @@
 
 #include <cat/read/read.hpp>
 #include <cat/monad/optional.hpp>
-
 #include <cat/tuple.hpp>
+
 #include <type_traits>
 
 namespace cat

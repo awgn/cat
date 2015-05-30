@@ -148,7 +148,7 @@ namespace cat {  namespace meta {
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // apply(s) argument to a meta function
+    // apply argument(s) to a meta function
     //
 
     template <template <typename ...> class F, typename ...Ts>

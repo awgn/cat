@@ -32,7 +32,6 @@
 
 #include <string>
 #include <cstring>
-
 #include <type_traits>
 
 namespace cat
