@@ -28,8 +28,10 @@
 
 #include <cat/show/show.hpp>
 #include <cat/type_traits.hpp>
+#include <cat/view.hpp>
 
 #include <initializer_list>
+#include <sstream>
 #include <array>
 #include <vector>
 #include <deque>
@@ -184,4 +186,25 @@ namespace cat
             return "[ " + details::show_container(xs) + "]";
         }
     };
+
+    template <typename Cont>
+    struct ShowInstance<cat::View<Cont>> final : Show<cat::View<Cont>>
+    {
+        std::string show(cat::View<Cont> const &xs) override
+        {
+            std::ostringstream out;
+            out << "[ ";
+
+            auto it = xs.begin, it_e = xs.end;
+            for(; it != it_e; ++it)
+            {
+                if (!xs.pred || (xs.pred && xs.pred(*it)))
+                        out << *it << ' ';
+            }
+
+            out << "]";
+            return out.str();
+        }
+    };
+
 }
