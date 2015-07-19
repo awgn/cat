@@ -5,9 +5,9 @@
 using namespace yats;
 using namespace cat;
 
-Context(traits)
-{
-    Test(type_name)
+auto g = Group("traits")
+
+    .Single("type_name", []
     {
         Assert( cat::type_name<int>(), is_equal_to(std::string("int")));
         Assert( cat::type_name<const int>(), is_equal_to(std::string("int const")));
@@ -30,9 +30,9 @@ Context(traits)
 
         Assert( cat::type_name<int * const *>(), is_equal_to(std::string("int* const*")));
         Assert( cat::type_name<int const * const * >(), is_equal_to(std::string("int const* const*")));
-    }
+    })
 
-    Test(type_of)
+    .Single("type_of", []
     {
         int n;
         int & ref = n;
@@ -54,9 +54,7 @@ Context(traits)
 
         Assert( cat::type_of(std::move(p)), is_equal_to(std::string("int*&&")));
         Assert( cat::type_of(std::move(p_ref)), is_equal_to(std::string("int*&&")));
-    }
-}
-
+    });
 
 int
 main(int argc, char * argv[])

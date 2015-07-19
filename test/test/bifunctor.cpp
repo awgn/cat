@@ -5,19 +5,18 @@
 using namespace yats;
 using namespace cat;
 
+template <template <typename...> class F, typename ...Ts>
+void functor_constraint(F<Ts...> const &)
+{
+    static_assert(is_bifunctor<F>::value, "F: not a bifunctor!");
+}
 
 // Tests:
 //
 
-Context(functor)
-{
-    template <template <typename...> class F, typename ...Ts>
-    void functor_constraint(F<Ts...> const &)
-    {
-        static_assert(is_bifunctor<F>::value, "F: not a bifunctor!");
-    }
+auto g = Group("functor")
 
-    Test(bifunctor_pair)
+    .Single("bifunctor_pair", []
     {
         auto p = std::make_pair(std::string("hello"), std::string("world!"));
 
@@ -31,10 +30,9 @@ Context(functor)
         Assert(b, is_equal_to(std::pair<size_t, size_t>{5, 6}));
         Assert(f, is_equal_to(std::pair<size_t, std::string>{5, "world!"}));
         Assert(s, is_equal_to(std::pair<std::string, size_t>{"hello", 6}));
-    }
+    })
 
-
-    Test(bifunctor_pair2)
+    .Single("bifunctor_pair2", []
     {
         auto p = std::make_pair(std::string("hello"), std::string("world!"));
 
@@ -48,15 +46,12 @@ Context(functor)
         Assert(b, is_equal_to(std::pair<size_t, size_t>{5, 6}));
         Assert(f, is_equal_to(std::pair<size_t, std::string>{5, "world!"}));
         Assert(s, is_equal_to(std::pair<std::string, size_t>{"hello", 6}));
-    }
+    })
 
-
-    Test(functor_constraint)
+    .Single("functor_constraint", []
     {
         functor_constraint( std::pair<int, std::string>{} );
-    }
-
-}
+    });
 
 
 int

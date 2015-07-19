@@ -7,13 +7,15 @@
 
 using namespace yats;
 using namespace cat;
+using namespace std::literals::chrono_literals;
+
 
 // Tests:
 //
 
-Context(test_read)
-{
-    Test(simple)
+auto g = Group("test_read")
+
+    .Single("simple", []
     {
         Assert(reads<short>("...") == nullopt);
 
@@ -41,20 +43,20 @@ Context(test_read)
         Assert(reads<bool>("true.").value() == std::make_pair<bool, string_view>(true, "."));
         Assert(reads<bool>("false.").value() == std::make_pair<bool, string_view>(false, "."));
         Assert(reads<bool>("  true").value() == std::make_pair<bool, string_view>(true, ""));
-    }
+    })
 
 
-    Test(pair)
+    .Single("pair", []
     {
         Assert(reads<std::pair<char, int>>("x") == nullopt);
         Assert(reads<std::pair<char, int>>(" (  x )") == nullopt);
         Assert(reads<std::pair<char, int>>(" (  x )") == nullopt);
         Assert(reads<std::pair<char, int>>("(x 42)").value() == std::make_pair< std::pair<char,int>, string_view>( {'x', 42 }, "" ));
         Assert(reads<std::pair<char, int>>(" (  x 42)!").value() == std::make_pair< std::pair<char,int>, string_view>( {'x', 42 }, "!" ));
-    }
+    })
 
 
-    Test(tuple)
+    .Single("tuple", []
     {
         Assert(reads<std::tuple<int>>("x") == nullopt);
         Assert(reads<std::tuple<int>>(" ( 42)") == std::make_pair(std::make_tuple(42), string_view{""}));
@@ -63,9 +65,9 @@ Context(test_read)
         Assert(reads<std::tuple<char, int, double>>(" (  x )") == nullopt);
         Assert(reads<std::tuple<char, int, double>>("(x 42 1.0)").value() == std::make_pair( std::make_tuple<char, int, double>('x', 42, 1.0 ), string_view{""} ));
         Assert(reads<std::tuple<char, int, double>>(" (  x 42 1.0)!").value() == std::make_pair( std::make_tuple<char, int, double>('x', 42, 1.0 ), string_view{"!"} ));
-    }
+    })
 
-    Test(optional)
+    .Single("optional", []
     {
         Assert(reads<optional<int>>("x") == nullopt);
         Assert(reads<optional<int>>(" (  x )") == nullopt);
@@ -77,9 +79,9 @@ Context(test_read)
         Assert(reads<std::tuple<optional<int>>>("()") == nullopt);
         Assert(reads<std::tuple<optional<int>>>("(())").value() == std::make_pair(std::tuple<optional<int>>{}, string_view{""}));
         Assert(reads<std::tuple<optional<int>>>("((42) )!").value() == std::make_pair(std::tuple<optional<int>>{42}, string_view{"!"}));
-    }
+    })
 
-    Test(string)
+    .Single("string", []
     {
         Assert(reads<std::string>("") == nullopt);
         Assert(reads<std::string>("   ") == nullopt);
@@ -102,11 +104,9 @@ Context(test_read)
 
         Assert(reads<std::string>(R"(test")") == std::make_pair(std::string(R"(test")"), string_view{""}));
         Assert(reads<std::string>(R"("test)") == nullopt);
-    }
+    })
 
-    using namespace std::literals::chrono_literals;
-
-    Test(duration)
+    .Single("duration", []
     {
         Assert(reads<std::chrono::nanoseconds>("x") == nullopt);
         Assert(reads<std::chrono::nanoseconds>("42") == nullopt);
@@ -123,9 +123,9 @@ Context(test_read)
         Assert(reads<std::chrono::system_clock::time_point>("42_") == nullopt);
         Assert(reads<std::chrono::system_clock::time_point>("42_us") == std::make_pair(std::chrono::system_clock::time_point(
                     std::chrono::duration_cast<std::chrono::system_clock::duration>(42us)), string_view{""}));
-    }
+    })
 
-    Test(container)
+    .Single("container", []
     {
         Assert(reads<std::vector<int>>("  ") == nullopt);
         Assert(reads<std::vector<int>>("[") == nullopt);
@@ -151,9 +151,7 @@ Context(test_read)
         Assert(reads<std::unordered_map<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::unordered_map<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
         Assert(reads<std::multimap<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::multimap<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
         Assert(reads<std::unordered_multimap<int, std::string>>("[ (1 \"hello\") (2 \"world\") ]") == std::make_pair(std::unordered_multimap<int, std::string>{{1, "hello"}, {2,"world"}}, string_view{""}));
-    }
-}
-
+    });
 
 int
 main(int argc, char*  argv[])

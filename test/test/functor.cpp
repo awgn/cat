@@ -5,36 +5,35 @@
 using namespace yats;
 using namespace cat;
 
-
-Context(functor)
+template <template <typename...> class F, typename ...Ts>
+void functor_constraint(F<Ts...> const &)
 {
+    static_assert(is_functor<F>::value, "F: not a functor!");
+}
 
-    template <template <typename...> class F, typename ...Ts>
-    void functor_constraint(F<Ts...> const &)
-    {
-        static_assert(is_functor<F>::value, "F: not a functor!");
-    }
+template <template <typename ...> class F, typename T>
+auto make_uniques(std::initializer_list<T> xs)
+{
+    F<std::unique_ptr<T>> out;
+    for(auto &x : xs)
+        out.push_back(std::make_unique<T>(std::move(x)));
+    return out;
+}
 
-    template <template <typename ...> class F, typename T>
-    auto make_uniques(std::initializer_list<T> xs)
-    {
-        F<std::unique_ptr<T>> out;
-        for(auto &x : xs)
-            out.push_back(std::make_unique<T>(std::move(x)));
-        return out;
-    }
-
-    template <template <typename ...> class F, typename T>
-    auto make_uniques_rev(std::initializer_list<T> xs)
-    {
-        F<std::unique_ptr<T>> out;
-        for(auto &x : xs)
-            out.push_front(std::make_unique<T>(std::move(x)));
-        return out;
-    }
+template <template <typename ...> class F, typename T>
+auto make_uniques_rev(std::initializer_list<T> xs)
+{
+    F<std::unique_ptr<T>> out;
+    for(auto &x : xs)
+        out.push_front(std::make_unique<T>(std::move(x)));
+    return out;
+}
 
 
-    Test(functor_fmap)
+
+auto g = Group("functor")
+
+    .Single("functor_fmap", []
     {
         std::vector<std::string> vec { "one", "two", "three" };
         auto size_ = [](const std::string &s) -> size_t { return s.size(); };
@@ -42,20 +41,20 @@ Context(functor)
         Assert( fmap(size_,vec), is_equal_to(std::vector<size_t>{3, 3, 5}));
         Assert( curry(fmap)(size_,vec), is_equal_to(std::vector<size_t>{3, 3, 5}));
         Assert( curry(fmap)(size_)(vec), is_equal_to(std::vector<size_t>{3, 3, 5}));
-    }
+    })
 
 
-    Test(functor_string)
+    .Single("functor_string", []
     {
         std::string x("ABC");
         auto y = fmap([](char const &c) -> char { return c+32; }, x);
 
         Assert(y.size(), is_equal_to(3));
         Assert(y, is_equal_to(std::string("abc")));
-    }
+    })
 
 
-    Test(functor_vector)
+    .Single("functor_vector", []
     {
         std::vector<std::string> vec { "one", "two", "three" };
         auto r = fmap([](const std::string &s) -> size_t { return s.size(); }, vec);
@@ -69,10 +68,10 @@ Context(functor)
 
         Assert(r1, is_equal_to( std::vector<int>{1,2,3} ));
         Assert(r2, is_equal_to( std::vector<int>{1,2,3} ));
-    }
+    })
 
 
-    Test(functor_deque)
+    .Single("functor_deque", []
     {
         std::deque<std::string> vec { "one", "two", "three" };
 
@@ -87,10 +86,10 @@ Context(functor)
 
         Assert(r1, is_equal_to( std::deque<int>{1,2,3} ));
         Assert(r2, is_equal_to( std::deque<int>{1,2,3} ));
-    }
+    })
 
 
-    Test(functor_list)
+    .Single("functor_list", []
     {
         std::list<std::string> vec { "one", "two", "three" };
         auto r = fmap([](const std::string &s) -> size_t { return s.size(); }, vec);
@@ -103,10 +102,10 @@ Context(functor)
 
         Assert(r1, is_equal_to( std::list<int>{1,2,3} ));
         Assert(r2, is_equal_to( std::list<int>{1,2,3} ));
-    }
+    })
 
 
-    Test(functor_forward_list)
+    .Single("functor_forward_list", []
     {
         std::forward_list<std::string> vec { "one", "two", "three" };
         auto r = fmap([](const std::string &s) -> size_t { return s.size(); }, vec);
@@ -120,10 +119,10 @@ Context(functor)
 
         Assert(r1, is_equal_to( std::forward_list<int>{1,2,3} ));
         Assert(r2, is_equal_to( std::forward_list<int>{1,2,3} ));
-    }
+    })
 
 
-    Test(functor_shared_ptr)
+    .Single("functor_shared_ptr", []
     {
         auto x = std::make_shared<std::string>("one");
         auto y = std::shared_ptr<std::string>();
@@ -135,10 +134,10 @@ Context(functor)
         Assert(r2.get() == nullptr);
 
         Assert(*r1, is_equal_to(3));
-    }
+    })
 
 
-    Test(functor_unique_ptr)
+    .Single("functor_unique_ptr", []
     {
         auto x = std::make_unique<std::string>("one");
         auto y = std::unique_ptr<std::string>();
@@ -150,10 +149,10 @@ Context(functor)
         Assert(r2.get() == nullptr);
 
         Assert(*r1, is_equal_to(3));
-    }
+    })
 
 
-    Test(functor_optional)
+    .Single("functor_optional", []
     {
         auto x = make_optional<std::string>("one");
         auto y = optional<std::string>();
@@ -165,18 +164,18 @@ Context(functor)
         Assert(static_cast<bool>(r2) == false);
 
         Assert(r1.value(), is_equal_to(3));
-    }
+    })
 
 
-    Test(functor_future)
+    .Single("functor_future", []
     {
         auto x = std::async(std::launch::deferred, []() { return std::string("one"); });
         auto y = fmap([](const std::string &s) { return s.size(); }, std::move(x));
         Assert(y.get(), is_equal_to(3));
-    }
+    })
 
 
-    Test(functor_map)
+    .Single("functor_map", []
     {
         std::map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
         auto r = fmap([](const std::string &s) { return s.size(); }, m);
@@ -193,10 +192,10 @@ Context(functor)
         auto r3 = fmap([](std::unique_ptr<std::string> s) { return s->size(); }, std::move(m2));
 
         Assert(r3, is_equal_to(std::map<int,size_t>{{1,3}, {2,3}, {3,5}}));
-    }
+    })
 
 
-    Test(functor_multimap)
+    .Single("functor_multimap", []
     {
         std::multimap<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
         auto r = fmap([](const std::string &s) { return s.size(); }, m);
@@ -213,10 +212,10 @@ Context(functor)
         auto r3 = fmap([](std::unique_ptr<std::string> s) { return s->size(); }, std::move(m2));
 
         Assert(r3, is_equal_to(std::multimap<int,size_t>{{1,3}, {2,3}, {3,5}}));
-    }
+    })
 
 
-    Test(functor_unordered_map)
+    .Single("functor_unordered_map", []
     {
         std::unordered_map<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
         auto r = fmap([](const std::string &s) { return s.size(); }, m);
@@ -233,10 +232,10 @@ Context(functor)
         auto r3 = fmap([](std::unique_ptr<std::string> s) { return s->size(); }, std::move(m2));
 
         Assert(r3, is_equal_to(std::unordered_map<int,size_t>{{1,3}, {2,3}, {3,5}}));
-    }
+    })
 
 
-    Test(functor_unordered_multimap)
+    .Single("functor_unordered_multimap", []
     {
         std::unordered_multimap<int, std::string> m { {1,"one"}, {2,"two"}, {3,"three"} };
         auto r = fmap([](const std::string &s) { return s.size(); }, m);
@@ -253,10 +252,10 @@ Context(functor)
         auto r3 = fmap([](std::unique_ptr<std::string> s) { return s->size(); }, std::move(m2));
 
         Assert(r3, is_equal_to(std::unordered_multimap<int,size_t>{{1,3}, {2,3}, {3,5}}));
-    }
+    })
 
 
-    Test(functor_pair)
+    .Single("functor_pair", []
     {
         auto p = std::make_pair(std::string("one"), std::string("two"));
 
@@ -270,10 +269,9 @@ Context(functor)
 
         auto r3 = fmap([](std::unique_ptr<std::string> s) -> size_t { return s->size(); }, std::move(p2));
         Assert(r2, is_equal_to(std::pair<std::string, size_t>{"one", 3}));
-    }
+    })
 
-
-    Test(functor_constraint)
+    .Single("functor_constraint", []
     {
         functor_constraint( std::vector<std::string>{} );
         functor_constraint( std::deque<std::string>{} );
@@ -286,10 +284,7 @@ Context(functor)
         functor_constraint( std::unordered_map<std::string, int>{} );
         functor_constraint( std::multimap<std::string, int>{} );
         functor_constraint( std::unordered_multimap<std::string, int>{} );
-    }
-
-}
-
+    });
 
 int
 main(int argc, char*  argv[])

@@ -4,22 +4,14 @@
 
 #include "yats.hpp"
 
-using namespace yats;
 using namespace cat;
 
 // Tests:
 //
 
-Context(test_show)
-{
-    template <typename T>
-    void print(T const &v)
-    {
-        std::cout << type_name<T>() << " -> " << show(v) << std::endl;
-    }
+auto g = yats::Group("test_show")
 
-
-    Test(simple)
+    .Single("simple", []
     {
         print(static_cast<int16_t>(42));
         print(static_cast<uint16_t>(42));
@@ -83,9 +75,7 @@ Context(test_show)
 
         std::cout << "curry: ";
         curry(cat::print)(make_optional(42));
-    }
-}
-
+    });
 
 int
 main(int argc, char*  argv[])

@@ -5,13 +5,11 @@
 using namespace yats;
 using namespace cat;
 
-
 // Tests:
 //
 
-Context(iterator)
-{
-    Test(map_iterator)
+auto g = Group("iterator")
+    .Single("map_iterator", []
     {
         std::vector<std::string> v { "one", "two", "three" };
 
@@ -21,9 +19,7 @@ Context(iterator)
                                 map_iterator( std::end(v), s) };
 
         Assert( r == std::vector<size_t> {3, 3, 5} );
-    }
-}
-
+    });
 
 int
 main(int argc, char*  argv[])

@@ -8,15 +8,25 @@ using namespace yats;
 using namespace cat;
 using namespace std::placeholders;
 
-Context(traits)
-{
-
     int f0()            { return 0; };
     int f1(int)         { return 0; };
     int f2(int, char)   { return 0; };
 
+    struct Object
+    {
+        int operator()() const;
+        int operator()(int) const;
+        int operator()(int, char) const;
+    };
 
-    Test(callable_traits)
+    template <typename T> struct test_spec;
+    template <>
+    struct test_spec<int> { };
+
+
+auto g = Group("traits")
+
+    .Single("callable_traits", []
     {
         // function
 
@@ -81,9 +91,9 @@ Context(traits)
         Assert(std::is_same< function_type<decltype(c1)>::type, int(int)>::value);
         Assert(std::is_same< function_type<decltype(c2)>::type, int(int, char)>::value);
         Assert(std::is_same< function_type<decltype(c3)>::type, int(char)>::value);
-    }
+    })
 
-    Test(is_callable)
+    .Single("is_callable", []
     {
         Assert(is_callable<int>::value, is_false());
 
@@ -141,7 +151,6 @@ Context(traits)
         auto g1 = curry_as<int(int)>([](auto n) { return n+1; });
         Assert(is_callable< decltype(g1)>::value, is_true());
 
-
         // curry...
 
         auto c0 = curry(f0);
@@ -153,16 +162,9 @@ Context(traits)
         Assert(is_callable<decltype(c1)>::value, is_true());
         Assert(is_callable<decltype(c2)>::value, is_true());
         Assert(is_callable<decltype(c3)>::value, is_true());
-    }
+    })
 
-    struct Object
-    {
-        int operator()() const;
-        int operator()(int) const;
-        int operator()(int, char) const;
-    };
-
-    Test(is_callable_with)
+    .Single("is_callable_with", []
     {
         Assert(is_callable_with<int()>::value);
         Assert(is_callable_with<decltype(f1), int>::value);
@@ -171,14 +173,10 @@ Context(traits)
         Assert(is_callable_as<Object()>::value);
         Assert(is_callable_as<Object(int)>::value);
         Assert(is_callable_as<Object(int,char)>::value);
-    }
+    })
 
 
-    template <typename T> struct test_spec;
-    template <>
-    struct test_spec<int> { };
-
-    Test(others)
+    .Single("others", []
     {
         auto f = [](int n){ return n;};
         Assert(has_call_operator<decltype(f)>::value);
@@ -197,18 +195,18 @@ Context(traits)
 
         Assert( has_specialization<test_spec, int>::value );
         Assert( ! has_specialization<test_spec, char>::value );
-    }
+    })
 
-    Test(partail_function_type)
+    .Single("partail_function_type", []
     {
        Assert(std::is_same<meta::partial_function_type<int(char,short,int,long), 0>::type, int(char,short,int,long)>::value);
        Assert(std::is_same<meta::partial_function_type<int(char,short,int,long), 1>::type, int(short,int,long)>::value);
        Assert(std::is_same<meta::partial_function_type<int(char,short,int,long), 2>::type, int(int,long)>::value);
        Assert(std::is_same<meta::partial_function_type<int(char,short,int,long), 3>::type, int(long)>::value);
        Assert(std::is_same<meta::partial_function_type<int(char,short,int,long), 4>::type, int()>::value);
-    }
+    })
 
-    Test(composition_function)
+    .Single("composition_function", []
     {
         Assert( std::is_same<meta::compose_function_type<int(int), int()>::type, int()>::value );
         Assert( std::is_same<meta::compose_function_type<int(int, char), int()>::type, int(char)>::value );
@@ -218,8 +216,7 @@ Context(traits)
         Assert( std::is_same<meta::compose_function_type<int(int, char), int(short)>::type, int(short, char)>::value );
         Assert( std::is_same<meta::compose_function_type<int(int, char, double), int(short)>::type, int(short, char, double)>::value );
 
-    }
-}
+    });
 
 
 int

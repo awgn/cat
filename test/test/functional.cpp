@@ -15,8 +15,6 @@ using namespace yats;
 using namespace cat;
 using namespace cat::placeholders;
 
-Context(currying_test)
-{
     int f0(int, std::string, char, bool)
     {
         return 42;
@@ -32,35 +30,82 @@ Context(currying_test)
         return a+b;
     }
 
-    Test(basic_currying)
+    void increment(int &n)
+    {
+        n++;
+    }
+
+    void temporary(int &&n)
+    {
+        n++;
+    }
+
+    struct Diff
+    {
+        constexpr Diff() {}
+        int operator()(int a, int b) const
+        {
+            return a - b;
+        }
+    };
+
+    int next(int a)
+    {
+        return a+1;
+    }
+
+    int const42() { return 42; }
+
+    int sum(int a, int b)
+    {
+        return a + b;
+    }
+
+    struct Diff_
+    {
+        int operator()(int a, int b) const
+        {
+            return a - b;
+        }
+    };
+
+    constexpr auto diff = Diff_{};
+
+
+
+auto g = Group("currying_test")
+
+
+    .Single("basic_currying", []
     {
         auto val = curry(negate)(1);
         Assert(val, is_equal_to(-1));
-    }
+    })
 
 
-    Test(simple_currying)
+    .Single("simple_currying", []
     {
         auto add_ = curry(add)(1);
         Assert(add_(2), is_equal_to(3));
-    }
+    })
 
 
-    Test(mixed_currying)
+    .Single("mixed_currying", []
     {
         auto f1 = curry(f0)(42, "hello");
         auto f2 = f1('x');
 
         Assert(f2(true), is_equal_to(42));
-    }
+    })
 
-    Test(total_currying)
+
+    .Single("total_currying", []
     {
         Assert(curry(f0)(42)("hello")('x')(true), is_equal_to(42));
-    }
+    })
 
 
-    Test(template_currying)
+    .Single("template_currying", []
     {
         int n = 1;
 
@@ -74,14 +119,10 @@ Context(currying_test)
         Assert(g(n)(2), is_equal_to(3));
         Assert(n, is_equal_to(2));
 
-    }
+    })
 
-    void increment(int &n)
-    {
-        n++;
-    }
 
-    Test(curry_lvalue)
+    .Single("curry_lvalue", []
     {
         int a = 0;
         curry(increment)(a);
@@ -91,23 +132,19 @@ Context(currying_test)
         f();
 
         Assert(a, is_equal_to(2));
-    }
+    })
 
 
-    void temporary(int &&n)
-    {
-        n++;
-    }
-
-    Test(rvalue)
+    .Single("rvalue", []
     {
         int a = 0;
 
         curry(temporary)(std::move(a));
         Assert(a, is_equal_to(1));
-    }
+    })
 
-    Test(apply)
+
+    .Single("apply", []
     {
         auto f = curry(f0);
         auto f1 = f.apply(0);
@@ -122,18 +159,10 @@ Context(currying_test)
         Assert(!std::is_same<decltype(f3), int>::value);
 
         Assert(f3(), is_equal_to(42));
-    }
+    })
 
-    struct Diff
-    {
-        constexpr Diff() {}
-        int operator()(int a, int b) const
-        {
-            return a - b;
-        }
-    };
 
-    Test(constexpr)
+    .Single("constexpr", []
     {
         constexpr auto diff = Diff{};
 
@@ -142,22 +171,10 @@ Context(currying_test)
         assert_constexpr(curry_as<int(int)>(identity));
         assert_constexpr(compose(identity, identity));
         assert_constexpr(flip(diff));
-    }
+    })
 
 
-    int next(int a)
-    {
-        return a+1;
-    }
-
-    int constant() { return 42; }
-
-    int sum(int a, int b)
-    {
-        return a + b;
-    }
-
-    Test(composition)
+    .Single("composition", []
     {
         auto h1 = compose(sum,next);
         auto h2 = compose(curry(sum),next);
@@ -174,52 +191,42 @@ Context(currying_test)
 
         Assert( l2(1) == 12);
 
-        auto x1 = compose(sum, constant);
+        auto x1 = compose(sum, const42);
         Assert(x1(1) == 43);
 
-        auto x2 = curry(sum) ^ (constant);
+        auto x2 = curry(sum) ^ (const42);
         Assert(x2(1) == 43);
-    }
+    })
 
 
-    Test(composition2)
+    .Single("composition2", []
     {
         auto h1 = compose(flip(sum), next);
         auto h2 = compose(h1, next);
 
         Assert(h1(2,3), is_equal_to(6));
         Assert(h2(2,3), is_equal_to(7));
-    }
+    })
 
 
-    Test(curry_as)
+    .Single("curry_as", []
     {
         auto h1 = curry_as<int(int, int)>([](auto a, auto b) { return a+b;});
 
         Assert(h1(1,2) == 3);
         Assert(h1(1)(2) == 3);
-    }
+    })
 
-    struct Diff_
-    {
-        int operator()(int a, int b) const
-        {
-            return a - b;
-        }
-    };
-
-    constexpr auto diff = Diff_{};
-
-    Test(flip)
+    .Single("flip", []
     {
         constexpr auto rev = flip(diff);
 
         assert_constexpr(rev);
 
         Assert (rev(1,2) == 1);
-    }
+    })
 
-    Test(tuple)
+    .Single("tuple", []
     {
         std::pair<int, int> x { 1, 1};
 
@@ -227,10 +234,10 @@ Context(currying_test)
         second(x) = 3;
 
         Assert( x == std::make_pair(2, 3) );
-    }
+    })
 
 
-    Test(on)
+    .Single("on", []
     {
         std::vector<std::pair<int, std::string>> v { {2, "abc"}, {1, "hello"} };
 
@@ -248,9 +255,9 @@ Context(currying_test)
         Assert(first(v[1]) == 1);
 #endif
 
-    }
+    })
 
-    Test(currying_noncopyable)
+    .Single("currying_noncopyable", []
     {
         auto p1 = std::make_unique<int>(42);
         auto p2 = std::make_unique<int>(42);
@@ -266,9 +273,9 @@ Context(currying_test)
         curry(f0)(std::move(p2));
         curry(f1)(p2);
         curry(f2)(std::move(p2));
-    }
+    })
 
-    Test(currying_advanced)
+    .Single("currying_advanced", []
     {
         auto f1 = [](int n)        { return n; };
         auto f2 = [](int &n)       { n+=1; return n; };
@@ -308,10 +315,7 @@ Context(currying_test)
 
         Assert (g4(std::move(x)) == curry(g4)(std::move(y)));
         Assert(!x and !y);
-    }
-
-}
-
+    });
 
 int
 main(int argc, char * argv[])

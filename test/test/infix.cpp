@@ -9,22 +9,45 @@ using namespace yats;
 using namespace cat;
 
 
+struct sum
+{
+    template <typename T>
+    constexpr auto operator()(T a, T b) const
+    {
+        return a + b;
+    }
+};
+
+int sum_inc_(int &a, int &b)
+{
+    return ++a + ++b;
+}
+
+constexpr auto sum_inc = infix(sum_inc_);
+
+int sum_tmp_(int &&a, int &&b)
+{
+    return a + b;
+}
+
+constexpr auto sum_tmp = infix(sum_tmp_);
+
+struct plus_
+{
+    template <typename T>
+    constexpr auto operator()(T a, T b) const
+    {
+        return a+b;
+    }
+};
+
+
 // Tests:
 //
 
-Context(test_infix)
-{
+auto g = Group("test_infix")
 
-    struct sum
-    {
-        template <typename T>
-        constexpr auto operator()(T a, T b) const
-        {
-            return a + b;
-        }
-    };
-
-    Test(simple)
+    .Single("simple", []
     {
         constexpr auto s = infix_adaptor<sum>{};
 
@@ -39,16 +62,9 @@ Context(test_infix)
         Assert ( (1 &s& 2) == 3 );
         Assert ( (1 ^s^ 2) == 3 );
         Assert ( (1 |s| 2) == 3 );
-    }
+    })
 
-    int sum_inc_(int &a, int &b)
-    {
-        return ++a + ++b;
-    }
-
-    constexpr auto sum_inc = infix(sum_inc_);
-
-    Test(lvalue)
+    .Single("lvalue", []
     {
         int a = 2, b = 3;
 
@@ -63,16 +79,9 @@ Context(test_infix)
         Assert(a, is_equal_to(4));
         Assert(b, is_equal_to(5));
         Assert(d, is_equal_to(9));
-    }
+    })
 
-    int sum_tmp_(int &&a, int &&b)
-    {
-        return a + b;
-    }
-
-    constexpr auto sum_tmp = infix(sum_tmp_);
-
-    Test(rvalue)
+    .Single("rvalue", []
     {
         int a = 2, b = 3;
 
@@ -81,18 +90,9 @@ Context(test_infix)
         Assert(a, is_equal_to(2));
         Assert(b, is_equal_to(3));
         Assert(c, is_equal_to(5));
-    }
+    })
 
-    struct plus_
-    {
-        template <typename T>
-        constexpr auto operator()(T a, T b) const
-        {
-            return a+b;
-        }
-    };
-
-    Test(constexpr)
+    .Single("constexpr", []
     {
         constexpr int val = 0;
         constexpr auto plus = infix_adaptor<plus_>{};
@@ -106,9 +106,7 @@ Context(test_infix)
         assert_constexpr(val &plus& val);
         assert_constexpr(val ^plus^ val);
         assert_constexpr(val |plus| val);
-    }
-
-}
+    });
 
 
 int

@@ -6,9 +6,9 @@
 using namespace yats;
 using namespace cat;
 
-Context(monoid)
-{
-    Test(monoid_vector)
+auto g = Group("monoid")
+
+    .Single("monoid_vector", []
     {
         Assert( mempty<std::vector<int>>() == std::vector<int>{} );
 
@@ -21,18 +21,17 @@ Context(monoid)
 
         Assert(x == std::vector<int>{1,2,3});
 
-    }
+    })
 
-
-    Test(monoid_string)
+    .Single("monoid_string", []
     {
         Assert( mempty<std::string>().empty() );
         Assert (mappend(mappend(std::string{"1"}, std::string{"2"}), std::string{"3"}) == "123");
         Assert (mconcat(std::vector<std::string>{"1", "2","3"}) == "123");
-    }
+    })
 
 
-    Test(monoid_list)
+    .Single("monoid_list", []
     {
         Assert( mempty<std::list<int>>() == std::list<int>{} );
 
@@ -42,10 +41,10 @@ Context(monoid)
         auto l = std::list<std::list<int>>{ std::list<int>{}, std::list<int>{1}, std::list<int>{2, 3} };
 
         Assert (mconcat(l) == std::list<int>{1,2,3});
-    }
+    })
 
 
-    Test(monoid_forward_list)
+    .Single("monoid_forward_list", []
     {
         Assert( mempty<std::forward_list<int>>() == std::forward_list<int>{} );
 
@@ -55,10 +54,10 @@ Context(monoid)
         auto l = std::forward_list<std::forward_list<int>>{ std::forward_list<int>{}, std::forward_list<int>{1, 2}, std::forward_list<int>{3, 4, 5} };
 
         Assert (mconcat(l) == std::forward_list<int>{1,2,3,4,5});
-    }
+    })
 
 
-    Test(monoid_deque)
+    .Single("monoid_deque", []
     {
         Assert( mempty<std::deque<int>>() == std::deque<int>{} );
 
@@ -68,9 +67,9 @@ Context(monoid)
         auto l = std::deque<std::deque<int>>{ std::deque<int>{}, std::deque<int>{1}, std::deque<int>{2, 3} };
 
         Assert (mconcat(l) == std::deque<int>{1,2,3});
-    }
+    })
 
-    Test(monoid_optional)
+    .Single("monoid_optional", []
     {
         auto a = Any{ true };
         auto b = Any{ false };
@@ -80,10 +79,10 @@ Context(monoid)
         Assert(mappend(make_optional(a), optional<Any>()) == a);
         Assert(mappend(optional<Any>(),  make_optional(b)) == b);
         Assert(mappend(make_optional(a), make_optional(b)) == mappend(a,b));
-    }
+    })
 
 
-    Test(monoid_future)
+    .Single("monoid_future", []
     {
         auto a = Any{ true };
         auto b = Any{ false };
@@ -93,10 +92,10 @@ Context(monoid)
 
         Assert(mempty<std::future<Any>>().get() == mempty<Any>());
         Assert(mappend(std::move(a_), std::move(b_)).get() == mappend(a, b));
-    }
+    })
 
 
-    Test(monoid_map)
+    .Single("monoid_map", []
     {
         Assert(mempty<std::map<int,std::string>>().empty());
 
@@ -106,10 +105,10 @@ Context(monoid)
         auto m3 = mappend(m1, m2);
 
         Assert(m3 == std::map<int, std::string>{ {0, "zero"}, {1, "one"} } );
-    }
+    })
 
 
-    Test(monoid_Any)
+    .Single("monoid_Any", []
     {
         Assert( mempty<Any>() == Any{ false });
         Assert( !mempty<Any>() );
@@ -119,10 +118,10 @@ Context(monoid)
 
         Assert(  static_cast<bool>(mconcat( std::vector<Any>{ Any{true}, Any{false}, Any{false} })) );
         Assert( !static_cast<bool>(mconcat( std::vector<Any>{ Any{false}, Any{false}, Any{false} })) );
-    }
+    })
 
 
-    Test(monoid_All)
+    .Single("monoid_All", []
     {
         Assert( mempty<All>() == All{ true });
         Assert( static_cast<bool>(mempty<All>()) );
@@ -133,25 +132,23 @@ Context(monoid)
 
         Assert( !static_cast<bool>(mconcat( std::vector<All>{ All{true}, All{false}, All{false} })) );
         Assert(  static_cast<bool>(mconcat( std::vector<All>{ All{true}, All{true}, All{true} })) );
-    }
+    })
 
 
-    Test(monoid_Sum)
+    .Single("monoid_Sum", []
     {
         Assert(mempty<Sum<int>>().value == 0);
         Assert(mappend(sum(1), sum(2)).value == 3);
         Assert(mconcat( std::vector<Sum<int>>{ sum(1), sum(2), sum(3) }).value == 6);
-    }
+    })
 
 
-    Test(monoid_Product)
+    .Single("monoid_Product", []
     {
         Assert(mempty<Product<int>>().value == 1);
         Assert(mappend(product(1), product(2)).value == 2);
         Assert(mconcat( std::vector<Product<int>>{ product(1), product(2), product(3) }).value == 6);
-    }
-
-}
+    });
 
 int
 main(int argc, char*  argv[])

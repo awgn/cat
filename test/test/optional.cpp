@@ -9,23 +9,23 @@ using namespace cat;
 // Tests:
 //
 
-Context(iterator)
-{
-    Test(test_optional)
+auto g = Group("iterator")
+
+    .Single("test_optional", []
     {
         Assert(maybe(42, [](int n) { return n+1; }, make_optional(1)), is_equal_to(2));
 
-    }
+    })
 
-    Test(map_optionals)
+    .Single("map_optionals", []
     {
         std::vector<int> v {1,2,3};
 
         Assert(map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, v) == std::vector<int>{1,2,3});
         Assert(map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, std::move(v)) == std::vector<int>{1,2,3});
-    }
+    })
 
-    Test(cat_optionals)
+    .Single("cat_optionals", []
     {
         std::vector<optional<int>> v {make_optional(1),
                                       make_optional(2),
@@ -34,8 +34,7 @@ Context(iterator)
 
         Assert(cat_optionals(v) == std::vector<int>{1,2,3});
         Assert(cat_optionals(std::move(v)) == std::vector<int>{1,2,3});
-    }
-}
+    });
 
 
 int

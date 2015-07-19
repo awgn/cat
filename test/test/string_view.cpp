@@ -9,9 +9,9 @@ using namespace cat;
 // Tests:
 //
 
-Context(test_read)
-{
-    Test (consume)
+auto g = Group("test_read")
+
+    .Single ("consume", []
     {
         string_view spaces("    ");
         string_view s(" hello world ");
@@ -23,9 +23,9 @@ Context(test_read)
         Assert( cat::consume_string("ciao", spaces) == nullopt);
         Assert( cat::consume_string("ciao", s) == nullopt);
         Assert( cat::consume_string("hello", s).value() == string_view{" world "});
-    }
+    })
 
-    Test(trim)
+    .Single("trim", []
     {
         Assert(cat::trim("") == string_view{});
         Assert(cat::trim("   ") == string_view{});
@@ -33,9 +33,9 @@ Context(test_read)
         Assert(cat::trim("    hello world") == string_view{"hello world"});
         Assert(cat::trim("hello world   ") == string_view{"hello world"});
         Assert(cat::trim("   hello world   ") == string_view{"hello world"});
-    }
+    })
 
-    Test(split)
+    .Single("split", []
     {
         Assert(cat::split("", "***") == std::vector<std::string>{""});
         Assert(cat::split("***", "***") == std::vector<std::string>{"", ""});
@@ -43,8 +43,7 @@ Context(test_read)
         Assert(cat::split("***aaa", "***") == std::vector<std::string>{"", "aaa"});
         Assert(cat::split("aaa***", "***") == std::vector<std::string>{"aaa", ""});
         Assert(cat::split("aaa***bbb", "***") == std::vector<std::string>{"aaa", "bbb"});
-    }
-}
+    });
 
 
 int
