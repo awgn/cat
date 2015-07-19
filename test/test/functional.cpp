@@ -249,7 +249,7 @@ auto g = Group("currying_test")
         Assert(first(v[0]) == 1);
         Assert(first(v[1]) == 2);
 
-#if defined(__clang__) || (__GNUC__ >= 5)
+#if defined(__clang__)
         std::sort(std::begin(v), std::end(v), std::less<std::string>{} -on- elem<1>);
         Assert(first(v[0]) == 2);
         Assert(first(v[1]) == 1);

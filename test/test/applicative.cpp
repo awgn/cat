@@ -97,7 +97,7 @@ auto g = Group("applicative")
         auto xs = std::vector<int>{1,2};
         auto ys = fs * xs;
 
-        auto zs = [](int n) { return n+1; } <$> xs;
+        auto zs = curry([](int n) { return n+1; }) <$> xs;
 
         Assert(ys, is_equal_to(std::vector<int>{2,3,2,4}));
         Assert(zs, is_equal_to(std::vector<int>{2,3}));
