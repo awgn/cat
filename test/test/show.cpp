@@ -27,6 +27,7 @@ auto g = yats::Group("test_show")
         print(42.0);
         print(42.0l);
 
+        print("Hello World");
         print(std::string("Hello World"));
         print(std::basic_string<int>{1,2,3});
         print(string_view("Hello World"));

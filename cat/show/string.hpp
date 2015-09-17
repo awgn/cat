@@ -84,4 +84,14 @@ namespace cat
             return "NULL";
         }
     };
+
+    template <size_t N>
+    struct ShowInstance<char[N]> final : Show<char[N]>
+    {
+        using litstring = char[N];
+        std::string show(const litstring &s) override
+        {
+            return '"' + s + '"';
+        }
+    };
 }
