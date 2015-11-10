@@ -81,6 +81,12 @@ namespace cat
         }
 
         template <typename Fun, typename TupleT, size_t ...N>
+        auto tuple_map_index(Fun fun, TupleT &&tup, std::index_sequence<N...>)
+        {
+            return std::make_tuple(fun(std::integral_constant<size_t, N>{}, std::get<N>(std::forward<TupleT>(tup)))...);
+        }
+
+        template <typename Fun, typename TupleT, size_t ...N>
         auto tuple_apply(Fun fun, TupleT &&tup, std::index_sequence<N...>)
         {
             return fun(std::get<N>(std::forward<TupleT>(tup))...);
@@ -163,6 +169,11 @@ namespace cat
         return details::tuple_map(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
 
+    template <typename Fun, typename TupleT>
+    auto tuple_map_index(Fun fun, TupleT &&tup)
+    {
+        return details::tuple_map_index(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
+    }
 
     //
     //  tuple_apply: expand a tuple into a pack and pass it to a callable
