@@ -53,10 +53,24 @@ namespace cat
             (void)sink;
         }
 
+        template <typename Fun, typename TupleT, typename TupleT2, size_t ...N>
+        void tuple_foreach2(Fun fun, TupleT &&tup, TupleT2 &&tup2, std::index_sequence<N...>)
+        {
+            std::initializer_list<bool> sink {(fun(std::get<N>(std::forward<TupleT>(tup)), std::get<N>(std::forward<TupleT2>(tup2))), true)...};
+            (void)sink;
+        }
+
         template <typename Fun, typename TupleT, size_t ...N>
         void tuple_foreach_index(Fun fun, TupleT &&tup, std::index_sequence<N...>)
         {
             std::initializer_list<bool> sink {(fun(std::integral_constant<size_t, N>{}, std::get<N>(std::forward<TupleT>(tup))), true)...};
+            (void)sink;
+        }
+
+        template <typename Fun, typename TupleT, typename TupleT2, size_t ...N>
+        void tuple_foreach_index2(Fun fun, TupleT &&tup, TupleT2 &&tup2, std::index_sequence<N...>)
+        {
+            std::initializer_list<bool> sink {(fun(std::integral_constant<size_t, N>{}, std::get<N>(std::forward<TupleT>(tup)), std::get<N>(std::forward<TupleT2>(tup2))), true)...};
             (void)sink;
         }
 
@@ -108,6 +122,15 @@ namespace cat
         return details::tuple_foreach(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
 
+    template <typename Fun, typename TupleT, typename TupleT2>
+    void tuple_foreach2(Fun fun, TupleT &&tup, TupleT2 &&tup2)
+    {
+        constexpr size_t s1 = std::tuple_size<std::decay_t<TupleT>>::value;
+        constexpr size_t s2 = std::tuple_size<std::decay_t<TupleT2>>::value;
+
+        return details::tuple_foreach2(fun, std::forward<TupleT>(tup), std::forward<TupleT2>(tup2),
+                                       std::make_index_sequence< (s1 < s2) ? s1 : s2>{});
+    }
 
     //
     // tuple_foreach_index: polymorphic actions over tuple with indexes
@@ -119,6 +142,16 @@ namespace cat
         return details::tuple_foreach_index(fun, std::forward<TupleT>(tup), index_tuple<TupleT>{});
     }
 
+
+    template <typename Fun, typename TupleT, typename TupleT2>
+    void tuple_foreach_index2(Fun fun, TupleT &&tup, TupleT2 &&tup2)
+    {
+        constexpr size_t s1 = std::tuple_size<std::decay_t<TupleT>>::value;
+        constexpr size_t s2 = std::tuple_size<std::decay_t<TupleT2>>::value;
+
+        return details::tuple_foreach_index2(fun, std::forward<TupleT>(tup), std::forward<TupleT2>(tup2),
+                                                std::make_index_sequence< (s1 < s2) ? s1 : s2>{});
+    }
 
     //
     // tuple_map: fmap over tuple

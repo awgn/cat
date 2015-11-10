@@ -90,6 +90,19 @@ auto g = Group("tuple")
         Assert(sum, is_equal_to(6));
     })
 
+    .Single("for_each_2", []
+    {
+        int a = 1, b = 2, c = 3;
+        int sum = 0;
+
+        tuple_foreach2([&](int n, int m) {
+                              sum += n - m;
+                             }, std::forward_as_tuple(a,b,c),
+                                std::forward_as_tuple(a,b,c));
+
+        Assert(sum, is_equal_to(0));
+    })
+
     .Single("for_each_index", []
     {
         std::tuple<int,int,int> const v {1,2,3};
@@ -105,6 +118,20 @@ auto g = Group("tuple")
         Assert(idx, is_equal_to(3));
     })
 
+    .Single("for_each_index2", []
+    {
+        std::tuple<int,int,int> const v {1,2,3};
+        int sum = 0;
+        int idx = 0;
+
+        tuple_foreach_index2([&](auto index, int n, int m) {
+                              sum += n-m;
+                              idx += index.value;
+                             }, v, v);
+
+        Assert(sum, is_equal_to(0));
+        Assert(idx, is_equal_to(3));
+    })
 
     .Single("map", []
     {
