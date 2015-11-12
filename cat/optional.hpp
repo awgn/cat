@@ -30,6 +30,7 @@
 #include <cat/bits/type.hpp>
 #include <cat/container.hpp>
 #include <cat/placeholders.hpp>
+#include <cat/type_traits.hpp>
 
 #include <experimental/optional>
 
@@ -126,5 +127,19 @@ namespace cat
     constexpr auto maybe = details::Maybe_{};
     constexpr auto cat_optionals = details::CatOptionals_{};
     constexpr auto map_optional = details::MapOptional_{};
+
+    //
+    // useful optional cast
+    //
+
+    template <typename U, typename V>
+    inline optional<U>
+    optional_cast(V &&v)
+    {
+        static_assert(is_optional<std::remove_reference_t<V>>::value, "V is not optional<>");
+        if (v)
+            return U{*std::forward<V>(v)};
+        return {};
+    }
 
 } // namespace cat

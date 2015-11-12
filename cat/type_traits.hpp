@@ -31,6 +31,7 @@
 
 #include <iostream>
 #include <memory>
+#include <experimental/optional>
 #include <type_traits>
 
 
@@ -234,6 +235,15 @@ namespace cat
     template <typename T, typename U>
     struct is_pair<std::pair<T,U>> : bool_type<true>
     { };
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // is_optional
+    //
+
+    template <typename T> struct is_optional : std::false_type { };
+    template <typename T>
+    struct is_optional<std::experimental::optional<T>> : std::true_type { };
 
 
     //////////////////////////////////////////////////////////////////////////////////
