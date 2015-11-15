@@ -1,5 +1,8 @@
 #include <cat/string_view.hpp>
+#include <cat/show.hpp>
+
 #include <vector>
+#include <list>
 
 #include "yats.hpp"
 
@@ -35,16 +38,100 @@ auto g = Group("test_read")
         Assert(cat::trim("   hello world   ") == string_view{"hello world"});
     })
 
-    .Single("split", []
+    .Single("split_on", []
     {
-        Assert(cat::split("", "***") == std::vector<std::string>{""});
-        Assert(cat::split("***", "***") == std::vector<std::string>{"", ""});
-        Assert(cat::split("aaa", "***") == std::vector<std::string>{"aaa"});
-        Assert(cat::split("***aaa", "***") == std::vector<std::string>{"", "aaa"});
-        Assert(cat::split("aaa***", "***") == std::vector<std::string>{"aaa", ""});
-        Assert(cat::split("aaa***bbb", "***") == std::vector<std::string>{"aaa", "bbb"});
-    });
+        Assert(cat::split_on("***", "") == std::vector<string_view>{""});
+        Assert(cat::split_on("***", "***") == std::vector<string_view>{"", ""});
+        Assert(cat::split_on("***", "aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::split_on("***", "***aaa") == std::vector<string_view>{"", "aaa"});
+        Assert(cat::split_on("***", "aaa***") == std::vector<string_view>{"aaa", ""});
+        Assert(cat::split_on("***", "aaa***bbb") == std::vector<string_view>{"aaa", "bbb"});
+        Assert(cat::split_on("***", "aaa******bbb") == std::vector<string_view>{"aaa", "", "bbb"});
+        Assert(cat::split_on("***", "aaa*********bbb") == std::vector<string_view>{"aaa", "", "", "bbb"});
+    })
 
+    .Single("split_on_no_empty", []
+    {
+        Assert(cat::split_on("***", "", false) == std::vector<string_view>{});
+        Assert(cat::split_on("***", "***", false) == std::vector<string_view>{});
+        Assert(cat::split_on("***", "aaa", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_on("***", "***aaa", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_on("***", "aaa***", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_on("***", "aaa***bbb", false) == std::vector<string_view>{"aaa", "bbb"});
+        Assert(cat::split_on("***", "aaa******bbb", false) == std::vector<string_view>{"aaa", "bbb"});
+        Assert(cat::split_on("***", "aaa*********bbb", false) == std::vector<string_view>{"aaa", "bbb"});
+    })
+
+    .Single("split_one_of", []
+    {
+        Assert(cat::split_one_of("*/+", "") == std::vector<string_view>{""});
+        Assert(cat::split_one_of("*/+", "+") == std::vector<string_view>{"", ""});
+        Assert(cat::split_one_of("*/+", "aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "*aaa") == std::vector<string_view>{"", "aaa"});
+        Assert(cat::split_one_of("*/+", "**aaa") == std::vector<string_view>{"", "", "aaa"});
+        Assert(cat::split_one_of("*/+", "**/aaa") == std::vector<string_view>{"", "", "", "aaa"});
+        Assert(cat::split_one_of("*/+", "aaa*") == std::vector<string_view>{"aaa", ""});
+        Assert(cat::split_one_of("*/+", "aaa**") == std::vector<string_view>{"aaa", "", ""});
+        Assert(cat::split_one_of("*/+", "aaa**+") == std::vector<string_view>{"aaa", "", "", ""});
+        Assert(cat::split_one_of("*/+", "aaa*bbb") == std::vector<string_view>{"aaa", "bbb"});
+        Assert(cat::split_one_of("*/+", "aaa*+bbb") == std::vector<string_view>{"aaa", "", "bbb"});
+        Assert(cat::split_one_of("*/+", "aaa*+/bbb") == std::vector<string_view>{"aaa", "", "", "bbb"});
+    })
+
+    .Single("split_one_of_non_empty", []
+    {
+        Assert(cat::split_one_of("*/+", "", false) == std::vector<string_view>{});
+        Assert(cat::split_one_of("*/+", "+", false) == std::vector<string_view>{});
+        Assert(cat::split_one_of("*/+", "aaa", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "*aaa", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "**aaa", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "**/aaa", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "aaa*", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "aaa**", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "aaa**+", false) == std::vector<string_view>{"aaa"});
+        Assert(cat::split_one_of("*/+", "aaa*bbb", false) == std::vector<string_view>{"aaa", "bbb"});
+        Assert(cat::split_one_of("*/+", "aaa*+bbb", false) == std::vector<string_view>{"aaa","bbb"});
+        Assert(cat::split_one_of("*/+", "aaa*+/bbb", false) == std::vector<string_view>{"aaa", "bbb"});
+    })
+
+    .Single("words", []
+    {
+        Assert(cat::words("") == std::vector<string_view>{});
+        Assert(cat::words(" ") == std::vector<string_view>{});
+        Assert(cat::words(" \t") == std::vector<string_view>{});
+        Assert(cat::words("aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::words(" aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::words("  \naaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::words("aaa ") == std::vector<string_view>{"aaa"});
+        Assert(cat::words("aaa \t") == std::vector<string_view>{"aaa"});
+        Assert(cat::words("aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::words("aaa\nbbb") == std::vector<string_view>{"aaa", "bbb"});
+        Assert(cat::words("aaa \nbbb") == std::vector<string_view>{"aaa","bbb"});
+        Assert(cat::words("aaa \n\nbbb") == std::vector<string_view>{"aaa","bbb"});
+    })
+
+    .Single("lines", []
+    {
+        Assert(cat::lines("") == std::vector<string_view>{""});
+        Assert(cat::lines("aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::lines("aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::lines("\naaa") == std::vector<string_view>{"", "aaa"});
+        Assert(cat::lines("aaa") == std::vector<string_view>{"aaa"});
+        Assert(cat::lines("aaa\nbbb") == std::vector<string_view>{"aaa","bbb"});
+        Assert(cat::lines("aaa\n\nbbb") == std::vector<string_view>{"aaa", "", "bbb"});
+    })
+
+    .Single("intercalate", []
+    {
+        Assert(cat::intercalate(std::string{","}, std::vector<string_view>{} ) == std::string{""} );
+        Assert(cat::intercalate(std::string{","}, std::vector<string_view>{"x"} ) == std::string{"x"} );
+        Assert(cat::intercalate(std::string{","}, std::vector<string_view>{"x", "y", "z"} ) == std::string{"x,y,z"} );
+
+        Assert(cat::intercalate(std::string{","}, std::list<std::string>{} ) == std::string{""} );
+        Assert(cat::intercalate(std::string{","}, std::list<std::string>{"x"} ) == std::string{"x"} );
+        Assert(cat::intercalate(std::string{","}, std::list<std::string>{"x", "y", "z"} ) == std::string{"x,y,z"} );
+    })
+    ;
 
 int
 main(int argc, char*  argv[])

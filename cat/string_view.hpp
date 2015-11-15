@@ -156,52 +156,94 @@ namespace cat
     {
         auto b = str.find_first_not_of(" \n\r\t");
         auto e = str.find_last_not_of(" \n\r\t");
-
         b = b == string_view::npos ? 0 : b;
         e = e == string_view::npos ? 0 : (e + 1 - b);
-
         return str.substr(b, e);
     }
 
+
     //
-    // split a string_view by means of the given separator.
+    // split a string_view by means of the given delimiter.
     //
 
-    inline std::vector<std::string>
-    split(string_view str, const char *sep)
+    inline std::vector<string_view>
+    split_on(const char *delimiter, string_view s, bool allow_empty = true)
     {
-        std::vector<std::string> ret;
-        auto len = std::strlen(sep);
+        std::vector<string_view> ret;
+        size_t pos = 0, dlen = strlen(delimiter);
 
-        for(std::string::size_type n; (n = str.find(sep)) != std::string::npos;)
+        while ((pos = s.find(delimiter)) != std::string::npos)
         {
-            ret.push_back(std::string(str.substr(0,n)));
-            str = str.substr(n + len, std::string::npos);
+            auto token = s.substr(0, pos);
+            if (!token.empty() || allow_empty)
+                ret.push_back(std::move(token));
+            s = s.substr(pos + dlen);
         }
 
-        ret.push_back(std::string(str));
+        if (!s.empty() || allow_empty)
+            ret.push_back(std::move(s));
         return ret;
     }
+
+
+    inline std::vector<string_view>
+    split_one_of(const char *sep, string_view s, bool allow_empty = true)
+    {
+        std::vector<string_view> ret;
+        size_t pos = 0;
+
+        while ((pos = s.find_first_of(sep)) != std::string::npos)
+        {
+            auto token = s.substr(0, pos);
+            if (!token.empty() || allow_empty)
+                ret.push_back(std::move(token));
+            s = s.substr(pos + 1);
+        }
+
+        if (!s.empty() || allow_empty)
+            ret.push_back(std::move(s));
+        return ret;
+    }
+
 
     //
     // split a line into words
     //
 
-    inline std::vector<std::string>
+    inline std::vector<string_view>
     words(string_view s)
     {
-        return split(s, " \n\r\t");
+        return split_one_of(" \n\r\t", s, false);
     }
 
     //
     // split a line into lines
     //
 
-    inline std::vector<std::string>
+    inline std::vector<string_view>
     lines(string_view s)
     {
-        return split(s, "\n\r");
+        return split_one_of("\n\r", s);
     }
 
+    //
+    // intercalate a container of string/string_view
+    //
+
+    template <typename Cont>
+    inline std::string
+    intercalate(std::string a, Cont const &xs)
+    {
+        if (xs.empty())
+            return {};
+        std::string ret = static_cast<std::string>(xs.front());
+        ret.reserve(8 * xs.size());
+        auto it = std::begin(xs);
+        for(++it; it != std::end(xs); ++it) {
+            ret.append(a);
+            ret.append(it->data(), it->size());
+        }
+        return ret;
+    }
 
 } // namespace cat
