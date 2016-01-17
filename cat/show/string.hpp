@@ -91,7 +91,7 @@ namespace cat
         using litstring = char[N];
         std::string show(const litstring &s) override
         {
-            return '"' + s + '"';
+            return '"' + std::string{s} + '"';
         }
     };
 }
