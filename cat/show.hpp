@@ -34,3 +34,4 @@
 #include <cat/show/tuple.hpp>
 #include <cat/show/string.hpp>
 #include <cat/show/optional.hpp>
+#include <cat/show/forall.hpp>

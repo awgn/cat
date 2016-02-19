@@ -27,80 +27,56 @@
 #pragma once
 
 #include <cat/show/show.hpp>
-#include <cat/placeholders.hpp>
-#include <cat/type_traits.hpp>
 #include <cat/existential.hpp>
-
-#include <string>
 
 namespace cat
 {
     //
-    // instance
+    // forall_1<Show> class (type erasure)
     //
 
-    template <typename T> struct ShowInstance;
-
-    //
-    // trait for concepts
-    //
-
-    template <typename T>
-    struct is_showable : has_specialization<ShowInstance, T>
-    { };
-
-    //
-    // type class Show
-    //
-
-    template <typename T>
-    struct Show
+    template <>
+    struct forall_1<Show>
     {
-        virtual std::string show(T const &) = 0;
-    };
+    private:
 
-
-    //
-    // free function
-    //
-
-    template <typename T>
-    std::string show(T const &v)
-    {
-        static_assert(is_showable<T>::value, "T is not showable!");
-        return ShowInstance<T>{}.show(v);
-    }
-
-    //
-    // overloading for existential quantification...
-    //
-
-    template <template <typename ...> class ...TC>
-    std::string show(forall<TC...> const &value)
-    {
-        return show(static_cast<const forall_1<Show> &>(value));
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // print:
-    //
-
-    namespace details
-    {
-        struct Print_
+        template <typename T>
+        struct showable : forall_base
         {
-            using function_type = std::string(placeholders::_a);
+            template <typename V>
+            showable(V const &v)
+            : value(v)
+            {}
 
-            template <typename T>
-            std::tuple<>
-            operator()(T const &elem) const
+            T value;
+
+            virtual std::experimental::any run_forall() override
             {
-                std::cout << show(elem) << std::endl;
-                return {};
+                return cat::show(value);
             }
         };
-    }
 
-    constexpr auto print = details::Print_{ };
+    public:
+
+        template <typename T>
+        forall_1(const T &v)
+        : value(std::make_shared<showable<T>>(v))
+        { }
+
+        std::shared_ptr<forall_base> value;
+    };
+
+    //
+    // Show instance...
+    //
+
+    template <>
+    struct ShowInstance<forall_1<Show>> final : Show<forall_1<Show>>
+    {
+        std::string
+        show(forall_1<Show> const &e) override
+        {
+            return std::experimental::any_cast<std::string>(e.value->run_forall());
+        }
+    };
 }
