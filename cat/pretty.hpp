@@ -34,3 +34,4 @@
 #include <cat/pretty/tuple.hpp>
 #include <cat/pretty/string.hpp>
 #include <cat/pretty/optional.hpp>
+#include <cat/pretty/forall.hpp>

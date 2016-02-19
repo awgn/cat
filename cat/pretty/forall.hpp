@@ -27,57 +27,56 @@
 #pragma once
 
 #include <cat/pretty/pretty.hpp>
-#include <cat/placeholders.hpp>
-#include <cat/type_traits.hpp>
-#include <cat/bits/type.hpp>
 #include <cat/existential.hpp>
-
-#include <string>
 
 namespace cat
 {
     //
-    // instance
+    // forall_1<Pretty> class (type erasure)
     //
 
-    template <typename T> struct PrettyInstance;
-
-    //
-    // trait for concepts
-    //
-
-    template <typename T>
-    struct is_prettyable : has_specialization<PrettyInstance, T>
-    { };
-
-    //
-    // type class Pretty
-    //
-
-    template <typename T>
-    struct Pretty
+    template <>
+    struct forall_1<Pretty>
     {
-        virtual std::string pretty(T const &) = 0;
+    private:
+
+        template <typename T>
+        struct prettyable : forall_base
+        {
+            template <typename V>
+            prettyable(V const &v)
+            : value(v)
+            {}
+
+            T value;
+
+            virtual std::experimental::any run_forall() override
+            {
+                return cat::pretty(value);
+            }
+        };
+
+    public:
+
+        template <typename T>
+        forall_1(const T &v)
+        : value(std::make_shared<prettyable<T>>(v))
+        { }
+
+        std::shared_ptr<forall_base> value;
     };
 
     //
-    // free function
+    // Pretty instance...
     //
 
-    template <typename T>
-    std::string pretty(T const &v)
+    template <>
+    struct PrettyInstance<forall_1<Pretty>> final : Pretty<forall_1<Pretty>>
     {
-        static_assert(is_prettyable<T>::value, "T is not prettyable!");
-        return PrettyInstance<T>{}.pretty(v);
-    }
-
-    //
-    // overloading for existential quantification...
-    //
-
-    template <template <typename ...> class ...TC>
-    std::string pretty(forall<TC...> const &value)
-    {
-        return pretty(static_cast<const forall_1<Pretty> &>(value));
-    }
+        std::string
+        pretty(forall_1<Pretty> const &e) override
+        {
+            return std::experimental::any_cast<std::string>(e.value->run_forall());
+        }
+    };
 }
