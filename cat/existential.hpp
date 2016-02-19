@@ -28,6 +28,8 @@
 
 #include <cat/__config.hpp>
 
+#if (__GNUC__ >= 5)
+
 #include <experimental/any>
 
 namespace cat
@@ -48,3 +50,5 @@ namespace cat
         { }
     };
 }
+
+#endif

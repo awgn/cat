@@ -29,6 +29,7 @@
 #include <cat/pretty/pretty.hpp>
 #include <cat/existential.hpp>
 
+#if (__GNUC__ >= 5)
 namespace cat
 {
     //
@@ -80,3 +81,5 @@ namespace cat
         }
     };
 }
+
+#endif

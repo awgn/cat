@@ -71,6 +71,7 @@ namespace cat
         return ShowInstance<T>{}.show(v);
     }
 
+#if (__GNUC__ >= 5)
     //
     // overloading for existential quantification...
     //
@@ -80,6 +81,7 @@ namespace cat
     {
         return show(static_cast<const forall_1<Show> &>(value));
     }
+#endif
 
     //////////////////////////////////////////////////////////////////////////////////
     //

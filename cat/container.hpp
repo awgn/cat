@@ -238,7 +238,7 @@ namespace cat
             template <typename F, typename A, typename Cont>
             auto operator()(F f, A acc, Cont &&xs) const
             {
-                for(auto it = std::rbegin(xs); it != std::rend(xs); ++it)
+                for(auto it = xs.rbegin(); it != xs.rend(); ++it)
                     acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
 
                 return acc;
@@ -255,9 +255,9 @@ namespace cat
                 if (xs.empty())
                     throw std::runtime_error("foldr1: empty container");
 
-                auto acc = iterator_elem(forward_as<Cont>(*std::rbegin(xs)));
+                auto acc = iterator_elem(forward_as<Cont>(*xs.rbegin()));
 
-                for(auto it = std::next(std::rbegin(xs)); it != std::rend(xs); ++it)
+                for(auto it = std::next(xs.rbegin()); it != xs.rend(); ++it)
                     acc = f(iterator_elem(forward_as<Cont>(*it)), std::move(acc));
 
                 return acc;
