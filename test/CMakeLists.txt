@@ -34,3 +34,5 @@ target_link_libraries(test-functor -pthread)
 target_link_libraries(test-applicative -pthread)
 target_link_libraries(test-monad -pthread)
 target_link_libraries(test-monoid -pthread)
+
+add_executable(test-forall test/forall.cpp)
