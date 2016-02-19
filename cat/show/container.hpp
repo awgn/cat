@@ -152,36 +152,36 @@ namespace cat
     };
 
     template <typename T, typename K>
-    struct ShowInstance<std::map<T,K>> final : Show<std::map<T,K>>
+    struct ShowInstance<std::map<K,T>> final : Show<std::map<K,T>>
     {
-        std::string show(std::map<T,K> const &xs) override
+        std::string show(std::map<K,T> const &xs) override
         {
             return "[ " + details::show_container(xs) + "]";
         }
     };
 
     template <typename T, typename K>
-    struct ShowInstance<std::unordered_map<T,K>> final : Show<std::unordered_map<T,K>>
+    struct ShowInstance<std::unordered_map<K,T>> final : Show<std::unordered_map<K,T>>
     {
-        std::string show(std::unordered_map<T,K> const &xs) override
+        std::string show(std::unordered_map<K,T> const &xs) override
         {
             return "[ " + details::show_container(xs) + "]";
         }
     };
 
     template <typename T, typename K>
-    struct ShowInstance<std::multimap<T,K>> final : Show<std::multimap<T,K>>
+    struct ShowInstance<std::multimap<K,T>> final : Show<std::multimap<K,T>>
     {
-        std::string show(std::multimap<T,K> const &xs) override
+        std::string show(std::multimap<K,T> const &xs) override
         {
             return "[ " + details::show_container(xs) + "]";
         }
     };
 
     template <typename T, typename K>
-    struct ShowInstance<std::unordered_multimap<T,K>> final : Show<std::unordered_multimap<T,K>>
+    struct ShowInstance<std::unordered_multimap<K,T>> final : Show<std::unordered_multimap<K,T>>
     {
-        std::string show(std::unordered_multimap<T,K> const &xs) override
+        std::string show(std::unordered_multimap<K,T> const &xs) override
         {
             return "[ " + details::show_container(xs) + "]";
         }
