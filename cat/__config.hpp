@@ -27,6 +27,6 @@
 #ifndef _CAT_CONFIG
 #define _CAT_CONFIG
 
-#define _LIBCAT_VERSION 0101
+#define _LIBCAT_VERSION 0102
 
 #endif /* _CAT_CONFIG */

@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include <cat/tuple.hpp>
+#include <cat/show.hpp>
+#include <cat/section.hpp>
 
 #include <yats.hpp>
 
@@ -175,6 +177,35 @@ auto g = Group("tuple")
         Assert(a == std::make_tuple(1, 'y', "world!"));
     })
 
+    .Single("tuple_cat", []
+    {
+        auto t0 = cat::tuple_cat(1,2);
+        auto t1 = cat::tuple_cat(t0,3);
+        auto t2 = cat::tuple_cat(0,t1);
+        auto t3 = cat::tuple_cat(t2,t2);
+
+        Assert(t3 == std::make_tuple(0,1,2,3,0,1,2,3));
+    })
+    
+    .Single("tuple_tail", []
+    {
+        auto t0 = std::make_tuple(1,2,3);
+        auto t1 = cat::tuple_tail(t0);
+        auto t2 = cat::tuple_tail(t1);
+        auto t3 = cat::tuple_tail(t2);
+
+        Assert(t1 == std::make_tuple(2,3));
+        Assert(t2 == std::make_tuple(3));
+        Assert(t3 == std::tuple<>{});
+    })
+    
+    .Single("tuple_fold", []
+    {
+        auto t = std::make_tuple(1,2,3,4,5);
+
+        Assert( cat::tuple_fold((_+_), 0, t) == 15 );
+        Assert( cat::tuple_fold1((_+_), t) == 15 );
+    })
 
     .Single("make_tuple", []
     {

@@ -91,6 +91,18 @@ namespace cat
         {
             return fun(std::get<N>(std::forward<TupleT>(tup))...);
         }
+        
+        template <typename Fun, typename T, typename TupleT>
+        auto tuple_fold(Fun, T acc, TupleT &&, std::index_sequence<>)
+        {
+            return acc;
+        }
+        template <typename Fun, typename T, typename TupleT, size_t N, size_t ...Ns>
+        auto tuple_fold(Fun fun, T acc, TupleT &&tup, std::index_sequence<N, Ns...>)
+        {
+            auto acc1 = fun(std::move(acc), std::get<N>(tup));
+            return tuple_fold(fun, std::move(acc1), std::forward<TupleT>(tup), std::index_sequence<Ns...>{}); 
+        }
     }
 
     //
@@ -99,6 +111,10 @@ namespace cat
 
     template <typename TupleT>
     using index_tuple = std::make_index_sequence<std::tuple_size<std::decay_t<TupleT>>::value>;
+    
+
+    template <typename TupleT>
+    using index_tuple_1 = std::make_index_sequence<std::tuple_size<std::decay_t<TupleT>>::value-1>;
 
 
     //
@@ -204,6 +220,93 @@ namespace cat
     {
         return std::tuple_cat(std::make_tuple(std::forward<X>(x)),
                               cat::make_tuple<Ts...>(std::forward<Xs>(xs)...));
+    }
+    
+    //
+    // generic tuple_cat...
+    //
+        
+    template <typename T1, typename T2>
+    auto tuple_cat(T1 const &t1, T2 const &t2)
+    {
+        return std::make_tuple(t1,t2);
+    }
+
+    template <typename ...T1, typename T2>
+    auto tuple_cat(std::tuple<T1...> const &t1, T2 const &t2)
+    {
+        return std::tuple_cat(t1, std::make_tuple(t2));
+    }
+
+    template <typename T1, typename ...T2>
+    auto tuple_cat(T1 const &t1, std::tuple<T2...> const &t2)
+    {
+        return std::tuple_cat(std::make_tuple(t1), t2);
+    }
+    template <typename ...T1, typename ...T2>
+    auto tuple_cat(std::tuple<T1...> const &t1, std::tuple<T2...> const &t2)
+    {
+        return std::tuple_cat(t1,t2);
+    }
+
+    //
+    // tuple_cat_type metafunction
+    //
+
+    template <typename ...Ts>
+    struct tuple_cat_type;
+
+    template <typename T1, typename T2>
+    struct tuple_cat_type<T1,T2>
+    {
+        using type = decltype(tuple_cat(std::declval<T1>(), std::declval<T2>())); 
+    };
+    template <typename T1, typename T2, typename ...Ts>
+    struct tuple_cat_type<T1,T2,Ts...>
+    {
+        using type = tuple_cat_type<
+                        typename tuple_cat_type<T1, T2>::type, Ts...>;
+    };
+
+    template <typename ...Ts>
+    using tuple_cat_type_t = typename tuple_cat_type<Ts...>::type;
+
+    // 
+    // tuple_tail...
+    //
+
+    template <typename T>
+    auto tuple_tail(std::tuple<T> const &)
+    {
+        return std::tuple<>{};
+    }
+    template <typename T1, typename T2, typename ...Ts>
+    auto tuple_tail(std::tuple<T1, T2, Ts...> const &t)
+    {
+        std::tuple<T2, Ts...> ret;
+
+        tuple_foreach_index([&](auto Idx, auto &ret_i) {
+            size_t constexpr const I = decltype(Idx)::value;
+            ret_i = std::get<I+1>(t);
+        }, ret);
+
+        return ret;
+    }
+
+    // 
+    // tuple_fold...
+    //
+
+    template<typename Fun, typename T, typename TupleT> 
+    auto tuple_fold(Fun fun, T value, TupleT &&tup)
+    {
+        return details::tuple_fold(fun, std::move(value), std::forward<TupleT>(tup), index_tuple<TupleT>{});
+    }
+    
+    template<typename Fun, typename TupleT> 
+    auto tuple_fold1(Fun fun, TupleT &&tup)
+    {
+        return details::tuple_fold(fun, std::get<0>(tup), tuple_tail(tup), index_tuple_1<TupleT>{});
     }
 
 } // namespace cat
