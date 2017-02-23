@@ -526,6 +526,23 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
+    // has_type
+    //
+
+    template <typename T, typename ...Ts> struct has_type;
+
+	template <typename T>
+	struct has_type<T> : std::false_type {};
+
+	template <typename T, typename U, typename... Ts>
+	struct has_type<T, U, Ts...> : has_type<T, Ts...> {};
+
+	template <typename T, typename... Ts>
+	struct has_type<T, T, Ts...> : std::true_type {};
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //
     // rebind_type ....
     //
 
