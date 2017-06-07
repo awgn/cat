@@ -540,6 +540,32 @@ namespace cat
 	template <typename T, typename... Ts>
 	struct has_type<T, T, Ts...> : std::true_type {};
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //
+    // type_index
+    //
+
+    template <typename T, typename ...Ts> struct __type_index;
+
+    template <typename T>
+    struct __type_index<T>
+    {
+        enum { value = 0 };
+    };
+	template <typename T, typename... Ts>
+	struct __type_index<T, T, Ts...>
+    {
+        enum { value = 0 };
+    };
+	template <typename T, typename U, typename... Ts>
+	struct __type_index<T, U, Ts...>
+    {
+        enum { value = 1 + __type_index<T, Ts...>::value };
+    };
+
+    template <typename T, typename U, typename ...Ts>
+    using type_index = __type_index<T, U, Ts...>;
+
 
     //////////////////////////////////////////////////////////////////////////////////
     //
