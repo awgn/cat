@@ -42,7 +42,7 @@ namespace cat
         show(const optional<T> &t) override
         {
             if (t)
-                return std::string(1, '(') + cat::show(t.value()) + ')';
+                return std::string(1, '(') + cat::show(*t) + ')';
             return "()";
         }
     };

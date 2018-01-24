@@ -75,18 +75,18 @@ namespace cat
         {
             if (auto s_ = consume_char('[', s))
             {
-                s = std::move(s_.value());
+                s = std::move(*s_);
 
                 C ret;
 
                 while(!s.empty())
                 {
                     if (auto left = consume_char(']', s))
-                        return make_optional(std::make_pair(ret, std::move(left.value())));
+                        return make_optional(std::make_pair(ret, std::move(*left)));
 
                     if (auto elem_ = cat::reads<generic_decay_t<typename C::value_type>>(s))
                     {
-                        auto & elem = elem_.value();
+                        auto & elem = *elem_;
                         s = std::move(elem.second);
                         cat::insert(ret, std::move(elem.first));
                     }
@@ -107,14 +107,14 @@ namespace cat
         {
             if (auto s_ = cat::consume_char('[', s))
             {
-                s = std::move(s_.value());
+                s = std::move(*s_);
                 std::array<T, N> ret;
 
                 for(auto & e : ret)
                 {
                     if(auto elem_ = cat::reads<T>(s))
                     {
-                        auto & elem = elem_.value();
+                        auto & elem = *elem_;
                         s = elem.second;
                         e = std::move(elem.first);
                     }
@@ -124,7 +124,7 @@ namespace cat
 
                 if (auto x_ = cat::consume_char(']', s))
                 {
-                    return std::make_pair(std::move(ret), std::move(x_.value()));
+                    return std::make_pair(std::move(ret), std::move(*x_));
                 }
             }
 

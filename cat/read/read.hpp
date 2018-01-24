@@ -68,7 +68,7 @@ namespace cat
         auto r = ReadInstance<T>{}.reads(str);
         if (!r)
             throw std::runtime_error(type_name<T>() + ": read error!");
-        return r.value().first;
+        return (*r).first;
     }
 
     template <typename T>

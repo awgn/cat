@@ -42,7 +42,7 @@ namespace cat
         pretty(const optional<T> &t) override
         {
             if (t)
-                return type_name<optional<T>>() + '{' + cat::pretty(t.value()) + '}';
+                return type_name<optional<T>>() + '{' + cat::pretty(*t) + '}';
             return type_name<optional<T>>() + "{}";
         }
     };

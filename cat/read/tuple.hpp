@@ -98,7 +98,7 @@ namespace cat
         {
             if (auto s_ = consume_char('(', s))
             {
-                s = std::move(s_.value());
+                s = std::move(*s_);
 
                 std::tuple<Ts...> ret;
 
@@ -107,8 +107,8 @@ namespace cat
                 tuple_foreach([&](auto &elem) {
                     if (auto val = cat::reads<std::decay_t<decltype(elem)>>(s))
                     {
-                        elem = std::move(val.value().first);
-                        s = val.value().second;
+                        elem = std::move((*val).first);
+                        s = (*val).second;
                         cnt++;
                     }
                 }, ret);
@@ -116,7 +116,7 @@ namespace cat
                 if (auto left = consume_char(')', s))
                 {
                     if (cnt == sizeof...(Ts))
-                        return mreturn.in<optional>(std::make_pair(std::move(ret), std::move(left.value())));
+                        return mreturn.in<optional>(std::make_pair(std::move(ret), std::move(*left)));
                 }
             }
 

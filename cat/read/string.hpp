@@ -53,7 +53,7 @@ namespace cat
             s = skipws(s);
             if (auto s_ = consume_char('"', s))
             {
-                s = std::move(s_.value());
+                s = std::move(*s_);
                 quoted = true;
             }
 

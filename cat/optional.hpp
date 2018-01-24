@@ -52,7 +52,7 @@ namespace cat
             template <typename V, typename Fun, typename T>
             constexpr V operator()(V const & def, Fun fun, optional<T> const & value) const
             {
-                return value ?  fun(value.value()) : def;
+                return value ? fun(*value) : def;
             }
         };
 
@@ -68,7 +68,7 @@ namespace cat
 
                 for(auto & elem: in)
                     if (elem)
-                        insert(ret, elem.value());
+                        insert(ret, *elem);
 
                 return ret;
             }
@@ -81,7 +81,7 @@ namespace cat
 
                 for(auto & elem: in)
                     if (elem)
-                        insert(ret, std::move(elem.value()));
+                        insert(ret, std::move(*elem));
 
                 return ret;
             }
@@ -101,7 +101,7 @@ namespace cat
                 {
                     auto y = f(x);
                     if (y)
-                        insert(ret,y.value());
+                        insert(ret,*y);
                 }
 
                 return ret;
@@ -116,7 +116,7 @@ namespace cat
                 {
                     auto y = f(std::move(x));
                     if (y)
-                        insert(ret, y.value());
+                        insert(ret, *y);
                 }
 
                 return ret;

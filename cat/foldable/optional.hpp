@@ -50,14 +50,14 @@ namespace cat
         B foldr(FunR f, B value, Fa_ && xs) override
         {
             if (xs)
-                return f(forward_as<Fa_>(xs.value()), value);
+                return f(forward_as<Fa_>(*xs), value);
             return value;
         }
 
         B foldl(FunL f, B value, Fa_ && xs) override
         {
             if (xs)
-                return f(value, forward_as<Fa_>(xs.value()));
+                return f(value, forward_as<Fa_>(*xs));
             return value;
         }
 

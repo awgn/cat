@@ -81,7 +81,7 @@ namespace cat
         {
             if (auto d = cat::reads<Dur>(s))
             {
-                return std::make_pair(std::chrono::time_point<Clock, Dur>(d.value().first), d.value().second);
+                return std::make_pair(std::chrono::time_point<Clock, Dur>((*d).first), (*d).second);
             }
             return nullopt;
         }
