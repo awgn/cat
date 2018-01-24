@@ -35,7 +35,7 @@
 #include <type_traits>
 
 
-#define CAT_CLASS_HAS_TYPEDEF(typedef_) \
+#define CAT_CLASS_HAS_TYPE(typedef_) \
     template <typename T> \
     class has_ ## typedef_ \
     { \
@@ -84,25 +84,25 @@ namespace cat
 
     namespace details
     {
-        CAT_CLASS_HAS_MEMBER(value_type);
-        CAT_CLASS_HAS_MEMBER(key_type);
-        CAT_CLASS_HAS_MEMBER(mapped_type);
-        CAT_CLASS_HAS_MEMBER(container_type);
+        CAT_CLASS_HAS_TYPE(value_type);
+        CAT_CLASS_HAS_TYPE(key_type);
+        CAT_CLASS_HAS_TYPE(mapped_type);
+        CAT_CLASS_HAS_TYPE(container_type);
 
-        CAT_CLASS_HAS_MEMBER(pointer);
-        CAT_CLASS_HAS_MEMBER(const_pointer);
-        CAT_CLASS_HAS_MEMBER(reference);
-        CAT_CLASS_HAS_MEMBER(const_reference);
-        CAT_CLASS_HAS_MEMBER(iterator);
-        CAT_CLASS_HAS_MEMBER(const_iterator);
-        CAT_CLASS_HAS_MEMBER(reverse_iterator);
-        CAT_CLASS_HAS_MEMBER(const_reverse_iterator);
-        CAT_CLASS_HAS_MEMBER(size_type);
-        CAT_CLASS_HAS_MEMBER(difference_type);
+        CAT_CLASS_HAS_TYPE(pointer);
+        CAT_CLASS_HAS_TYPE(const_pointer);
+        CAT_CLASS_HAS_TYPE(reference);
+        CAT_CLASS_HAS_TYPE(const_reference);
+        CAT_CLASS_HAS_TYPE(iterator);
+        CAT_CLASS_HAS_TYPE(const_iterator);
+        CAT_CLASS_HAS_TYPE(reverse_iterator);
+        CAT_CLASS_HAS_TYPE(const_reverse_iterator);
+        CAT_CLASS_HAS_TYPE(size_type);
+        CAT_CLASS_HAS_TYPE(difference_type);
 
-        CAT_CLASS_HAS_TYPEDEF(function_type);
-        CAT_CLASS_HAS_TYPEDEF(return_type);
-        CAT_CLASS_HAS_MEMBER(arity_value);
+        CAT_CLASS_HAS_TYPE(function_type);
+        CAT_CLASS_HAS_TYPE(return_type);
+        CAT_CLASS_HAS_TYPE(arity_value);
     }
 
 
