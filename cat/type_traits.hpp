@@ -29,11 +29,11 @@
 #include <cat/__config.hpp>
 #include <cat/meta.hpp>
 
+#include <experimental/optional>
 #include <iostream>
 #include <memory>
-#include <experimental/optional>
 #include <type_traits>
-
+#include <functional>
 
 #define CAT_CLASS_HAS_TYPE(typedef_) \
     template <typename T> \
