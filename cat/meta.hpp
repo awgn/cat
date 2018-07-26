@@ -28,6 +28,7 @@
 
 #include <cat/__config.hpp>
 
+#include <cstddef>
 #include <vector>
 
 namespace cat {  namespace meta {
