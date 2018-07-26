@@ -52,13 +52,16 @@ implementation of the following ones:
 
 ### Notes
 
-At the present moment the Cat library is tested under Linux with both glibcxx and libc++
+At the present moment the Cat library is tested under Linux and MacOS with both glibcxx and libc++
 library and with the following compilers:
     
 * gcc-4.9
 * gcc-5 
+* gcc-6.3
+* gcc-8
 * clang-3.5 
 * clang 3.6 
+* clang 6.0 
 
 
 ### Acknowledgements
