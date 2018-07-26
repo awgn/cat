@@ -1,9 +1,9 @@
-Cat: C++14 functional library
+Cat: C++14/17 functional library
 =============================
 
 ### What is cat?
 
-Cat is a C++14 functional library inspired by category theory 
+Cat is a C++14/17 functional library inspired by category theory 
 and Haskell language.
 The purpose of cat is to provide utility functions and type classes 
 to enable the functional programming paradigm in C++.
@@ -24,7 +24,7 @@ The Cat library:
 * is lightweight. Each function and object shipped with the library
 takes advantage of modern C++ features, such as `constexpr` constructs, movability, 
 perfect forwarding, etc.
-* is written in portable C++14 without macro black-magic, whereas 
+* is written in portable C++14/17 without macro black-magic, whereas 
 template meta-programming is restricted only to the implementation of type traits.
 * implements type traits tailored for generic and functional programming (e.g. `is_container`, 
 `is_associative_container`, `function_type`, `function_arity`, `return_type`, `is_callable` to mention a few).
@@ -48,7 +48,7 @@ implementation of the following ones:
     * Read
     * ...
 
-* includes instances of standard C++14 and Technical Specification (TS) containers/types for the above-mentioned type classes.
+* includes instances of standard C++14/17 and Technical Specification (TS) containers/types for the above-mentioned type classes.
 
 ### Notes
 
