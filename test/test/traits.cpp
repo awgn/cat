@@ -191,7 +191,7 @@ auto g = Group("traits")
         Assert( std::is_same<int,  inner_type<std::vector<int>>::type >::value );
         Assert( std::is_same<int,  inner_type<std::map<char, int>, 1>::type >::value );
 
-        Assert( std::is_same<std::vector<long>,  rebind_type<std::vector<int>, long>::type >::value );
+        Assert( std::is_same<std::vector<long>,  rebind_functor_type<std::vector<int>, long>::type >::value );
 
         Assert( has_specialization<test_spec, int>::value );
         Assert( ! has_specialization<test_spec, char>::value );

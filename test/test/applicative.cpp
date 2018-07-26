@@ -248,12 +248,8 @@ auto g = Group("applicative")
     {
         auto sum = curry(sum_f);
 
-        auto x = make_optional(21);
-
         auto a  = std::vector<int>{ 1, 2 };
         auto b  = std::vector<int>{ 0, 1, 2};
-
-        Assert( (sum <$> x) * x == 42);
 
         auto n = (sum <$> a) * b;
 

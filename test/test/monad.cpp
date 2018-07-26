@@ -142,7 +142,7 @@ auto g = Group("monad")
 
     .Single("monad_constraint", []
     {
-        monad_constraint( make_optional<std::string>( "one" ));
+        monad_constraint( cat::make_optional<std::string>( "one" ));
         monad_constraint( std::vector<std::string>{} );
         monad_constraint( std::deque<std::string>{} );
         monad_constraint( std::list<std::string>  { "one", "two", "three" }); monad_constraint( std::make_shared<std::string>( "one" ));
@@ -157,13 +157,13 @@ auto g = Group("monad")
 
         Assert(sequence(l) == expected);
 
-        std::list< optional<int> > l2 = { make_optional(1), make_optional(2) };
-        Assert( sequence(l2) == make_optional(std::list<int>{1,2}) );
+        std::list< optional<int> > l2 = { cat::make_optional(1), cat::make_optional(2) };
+        Assert( sequence(l2) == cat::make_optional(std::list<int>{1,2}) );
 
-        std::list< optional<int> > l3 = { nullopt, make_optional(2) };
+        std::list< optional<int> > l3 = { nullopt, cat::make_optional(2) };
         Assert( sequence(l3) == nullopt );
 
-        std::list< optional<int> > l4 = { make_optional(1), nullopt };
+        std::list< optional<int> > l4 = { cat::make_optional(1), nullopt };
         Assert( sequence(l4) == nullopt );
     })
 
@@ -306,8 +306,8 @@ auto g = Group("monad")
         std::list< std::vector<int> > list = { {}, {1}, {2,3} };
         Assert( msum(list) == std::vector<int> {1,2,3});
 
-        Assert( (guard<optional<int>>(false) >> make_optional(1) ) == nullopt );
-        Assert( (guard<optional<int>>(true) >> make_optional("ok"s) ) == "ok"s );
+        Assert( (guard<optional<int>>(false) >> cat::make_optional(1) ) == nullopt );
+        Assert( (guard<optional<int>>(true) >> cat::make_optional("ok"s) ) == "ok"s );
     });
 
 
