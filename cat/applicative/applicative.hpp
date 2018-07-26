@@ -75,12 +75,11 @@ namespace cat
             template <typename Fx, typename A_>
             auto as(A_ && value) const
             {
-                using Fa = rebind_type_t<std::decay_t<Fx>, std::decay_t<A_>>;
-                using Ff = rebind_type_t<std::decay_t<Fx>, Identity>;
+                using Fa = rebind_functor_type_t<std::decay_t<Fx>, std::decay_t<A_>>;
+                using Ff = rebind_functor_type_t<std::decay_t<Fx>, Identity>;
 
                 return ApplicativeInstance<Ff, Fa, Ff, Fa, A_>{}.pure(std::forward<A_>(value));
             }
-
         };
 
         struct apply_

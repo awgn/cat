@@ -27,7 +27,9 @@
 #pragma once
 
 #include <cat/show/show.hpp>
+
 #include <cat/existential.hpp>
+#include <cat/any.hpp>
 
 #if (__GNUC__ >= 5)
 
@@ -52,7 +54,7 @@ namespace cat
 
             T value;
 
-            virtual std::experimental::any run_forall() override
+            virtual cat::any run_forall() override
             {
                 return cat::show(value);
             }
@@ -78,7 +80,7 @@ namespace cat
         std::string
         show(forall_1<Show> const &e) override
         {
-            return std::experimental::any_cast<std::string>(e.value->run_forall());
+            return cat::any_cast<std::string>(e.value->run_forall());
         }
     };
 }

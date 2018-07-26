@@ -69,7 +69,7 @@ namespace cat
             //FIXME: string_view::to_string is not marked const in some libc++ versions.
             return '"' + const_cast<string_view &>(v).to_string() + '"';
 #else
-            return '"' + v.to_string() + '"';
+            return '"' + std::string{v} + '"';
 #endif
         }
     };

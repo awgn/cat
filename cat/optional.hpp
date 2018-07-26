@@ -32,15 +32,25 @@
 #include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 
+#if __cplusplus >= 201703L
+#include <optional>
+#else
 #include <experimental/optional>
-
+#endif
 
 namespace cat
 {
+#if __cplusplus >= 201703L
+    using std::optional;
+    using std::make_optional;
+    using std::nullopt_t;
+    using std::nullopt;
+#else
     using std::experimental::optional;
     using std::experimental::make_optional;
     using std::experimental::nullopt_t;
     using std::experimental::nullopt;
+#endif
 
 
     namespace details

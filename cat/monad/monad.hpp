@@ -83,7 +83,7 @@ namespace cat
         struct MreturnAs
         {
             template <typename T>
-            auto operator()(T && value) const -> rebind_type_t<std::decay_t<Mx>, std::decay_t<T>>;
+            auto operator()(T && value) const -> rebind_functor_type_t<std::decay_t<Mx>, std::decay_t<T>>;
         };
     }
 
@@ -111,7 +111,7 @@ namespace cat
             {
                 static_assert(meta::on_outer_type<is_monad,std::decay_t<Mx>>::value, "Type M not a monad!");
 
-                using Ma = rebind_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
+                using Ma = rebind_functor_type_t<std::decay_t<Mx>, std::decay_t<A_>>;
                 return MonadInstance<Ma, details::MreturnAs<Ma>, Ma, A_>{}.mreturn(std::forward<A_>(a));
             }
         };
@@ -370,7 +370,7 @@ namespace cat
 
         template <class Mx>
         template <typename T>
-        auto MreturnAs<Mx>::operator()(T && value) const -> rebind_type_t<std::decay_t<Mx>, std::decay_t<T>>
+        auto MreturnAs<Mx>::operator()(T && value) const -> rebind_functor_type_t<std::decay_t<Mx>, std::decay_t<T>>
         {
             return mreturn.as<Mx>(std::forward<T>(value));
         };

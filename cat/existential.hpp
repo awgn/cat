@@ -27,16 +27,14 @@
 #pragma once
 
 #include <cat/__config.hpp>
+#include <cat/any.hpp>
 
-#if (__GNUC__ >= 5)
-
-#include <experimental/any>
 
 namespace cat
 {
     struct forall_base
     {
-        virtual std::experimental::any run_forall() = 0;
+        virtual cat::any run_forall() = 0;
     };
 
     template < template <typename ...> class TC > struct forall_1;
@@ -51,4 +49,3 @@ namespace cat
     };
 }
 
-#endif

@@ -28,7 +28,6 @@
 
 #include <cat/__config.hpp>
 
-#include <experimental/string_view>
 #include <vector>
 
 namespace cat {  namespace meta {

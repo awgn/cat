@@ -30,7 +30,12 @@
 #include <cat/bits/type.hpp>
 #include <cat/optional.hpp>
 
+#if __cplusplus >= 201703L
+#include <string_view>
+#else
 #include <experimental/string_view>
+#endif
+
 #include <type_traits>
 #include <cctype>
 #include <vector>
@@ -40,7 +45,11 @@
 
 namespace cat
 {
+#if __cplusplus >= 201703L
+    using std::string_view;
+#else
     using std::experimental::string_view;
+#endif
 
     namespace details
     {

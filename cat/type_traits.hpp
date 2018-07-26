@@ -29,7 +29,12 @@
 #include <cat/__config.hpp>
 #include <cat/meta.hpp>
 
+#if __cplusplus >= 201703L
+#include <optional>
+#else
 #include <experimental/optional>
+#endif
+
 #include <iostream>
 #include <memory>
 #include <type_traits>
@@ -241,10 +246,15 @@ namespace cat
     // is_optional
     //
 
+#if __cplusplus >= 201703L
+    template <typename T> struct is_optional : std::false_type { };
+    template <typename T>
+    struct is_optional<std::optional<T>> : std::true_type { };
+#else
     template <typename T> struct is_optional : std::false_type { };
     template <typename T>
     struct is_optional<std::experimental::optional<T>> : std::true_type { };
-
+#endif
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -569,19 +579,25 @@ namespace cat
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // rebind_type ....
+    // rebind_functor_type ....
     //
 
-    template <typename F, typename V> struct rebind_type;
+    template <typename F, typename V> struct rebind_functor_type;
 
     template <template <typename ...> class F, typename V, typename ...Ts>
-    struct rebind_type<F<Ts...>, V>
+    struct rebind_functor_type<F<Ts...>, V>
     {
         using type = F<V>;
     };
 
+    // template <typename F, typename V>
+    // struct rebind_functor_type
+    // {
+    //     using type = F;
+    // };
+
     template <typename T, typename V>
-    using rebind_type_t = typename rebind_type<T, V>::type;
+    using rebind_functor_type_t = typename rebind_functor_type<T, V>::type;
 
     //////////////////////////////////////////////////////////////////////////////////
     //

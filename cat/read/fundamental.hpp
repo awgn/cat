@@ -219,7 +219,7 @@ namespace cat
         optional<std::pair<bool,string_view>>
         reads(string_view v) override
         {
-            std::istringstream in(v.to_string());
+            std::istringstream in(std::string{v});
             bool x; in >> std::noboolalpha;
             if (!(in >> x)) {
                 in.clear();
