@@ -54,19 +54,20 @@
 #endif
 
 
-////////////////////////////////////////////// runtime assert:
+////////////////////////////////////////////// runtime yats_assert:
 
-#define Assert(...)                 yats::assert        (__FILE__, __LINE__, 0, __VA_ARGS__)
-#define AssertNoThrow(...)          yats::assert_throw  (__FILE__, __LINE__, 0, [&](){ __VA_ARGS__; }, nothing())
-#define AssertThrow(...)            yats::assert_throw  (__FILE__, __LINE__, 0, [&](){ __VA_ARGS__; }, anything())
-#define AssertThrowAs(e,...)        yats::assert_throw  (__FILE__, __LINE__, 0, [&](){ __VA_ARGS__; }, e)
+#define Assert(...)                 yats_assert        (__FILE__, __LINE__, 0, __VA_ARGS__)
+#define AssertNoThrow(...)          yats_assert_throw  (__FILE__, __LINE__, 0, [&](){ __VA_ARGS__; }, nothing())
+#define AssertThrow(...)            yats_assert_throw  (__FILE__, __LINE__, 0, [&](){ __VA_ARGS__; }, anything())
+#define AssertThrowAs(e,...)        yats_assert_throw  (__FILE__, __LINE__, 0, [&](){ __VA_ARGS__; }, e)
 
-#define AssertId(n, ...)            yats::assert        (__FILE__, __LINE__, n, __VA_ARGS__)
-#define AssertNoThrowId(n, ...)     yats::assert_throw  (__FILE__, __LINE__, n, [&](){ __VA_ARGS__; }, nothing())
-#define AssertThrowId(n, ...)       yats::assert_throw  (__FILE__, __LINE__, n, [&](){ __VA_ARGS__; }, anything())
-#define AssertThrowAsId(n, e,...)   yats::assert_throw  (__FILE__, __LINE__, n, [&](){ __VA_ARGS__; }, e)
+#define AssertId(n, ...)            yats_assert        (__FILE__, __LINE__, n, __VA_ARGS__)
+#define AssertNoThrowId(n, ...)     yats_assert_throw  (__FILE__, __LINE__, n, [&](){ __VA_ARGS__; }, nothing())
+#define AssertThrowId(n, ...)       yats_assert_throw  (__FILE__, __LINE__, n, [&](){ __VA_ARGS__; }, anything())
+#define AssertThrowAsId(n, e,...)   yats_assert_throw  (__FILE__, __LINE__, n, [&](){ __VA_ARGS__; }, e)
 
-////////////////////////////////////////////// static assert:
+
+////////////////////////////////////////////// static yats_assert:
 
 #define StaticError(expr,msg)       YATS_XPASTE(YATS_STATIC_ERROR_, __COUNTER__) (expr,msg)
 
@@ -78,7 +79,7 @@
         static_error() \
         {  \
             expr; \
-            std::cerr << "YATS: Static error failure: test " # expr ": " msg " is falsifiable." << std::endl; \
+            std::cerr << yats::vt100::BOLD << yats::vt100::RED << "YATS: Static error failure: test " # expr ": " msg " is falsifiable." << yats::vt100::RESET << std::endl; \
             _Exit(EXIT_FAILURE);\
         } \
     } maybe_error_ = static_error();
@@ -138,6 +139,26 @@
 
 namespace yats
 {
+    ////////////////////////////////////////////// vt100 colors:
+
+    namespace vt100
+    {
+        namespace
+        {
+            const char * const CLEAR    = "\E[2J";
+            const char * const EDOWN    = "\E[J";
+            const char * const DOWN     = "\E[1B";
+            const char * const HOME     = "\E[H";
+            const char * const ELINE    = "\E[K";
+            const char * const BOLD     = "\E[1m";
+            const char * const RESET    = "\E[0m";
+            const char * const BLUE     = "\E[1;34m";
+            const char * const RED      = "\E[31m";
+            const char * const MAGENTA  = "\E[35m";
+            const char * const GREEN    = "\E[32m";
+        }
+    }
+
     ////////////////////////////////////////////// global instance:
 
     struct global
@@ -150,7 +171,7 @@ namespace yats
         std::vector<struct Group *> groups;
         std::set<std::string> group_names;
 
-        std::set<std::tuple<std::string, int, int>> yats_assert;
+        std::set<std::tuple<std::string, int, int>> yats_assert_set;
 
         static global&
         instance()
@@ -509,7 +530,7 @@ namespace yats
         Single(std::string name, Fun f) &
         {
             check_unique_test_name(name);
-            test_.emplace_back(std::move(name), [=] (int) { f(); });
+            test_.emplace_back(std::move(name), [=] (int, int, char *[]) { f(); });
             return *this;
         }
         template <typename Fun>
@@ -517,7 +538,7 @@ namespace yats
         Single(std::string name, Fun f) &&
         {
             check_unique_test_name(name);
-            test_.emplace_back(std::move(name), [=] (int) { f(); });
+            test_.emplace_back(std::move(name), [=] (int, int, char *[]) { f(); });
             return std::move(*this);
         }
 
@@ -526,7 +547,7 @@ namespace yats
         Repeat(std::string name, Fun f) &
         {
             check_unique_test_name(name);
-            test_.emplace_back(std::move(name), [=](int run) {
+            test_.emplace_back(std::move(name), [=](int run, int, char *[]) {
                                     for(int i = 0; i < run; i++)
                                         f();
                                   });
@@ -537,9 +558,30 @@ namespace yats
         Repeat(std::string name, Fun f) &&
         {
             check_unique_test_name(name);
-            test_.emplace_back(std::move(name), [=](int run) {
+            test_.emplace_back(std::move(name), [=](int run, int, char *[]) {
                                     for(int i = 0; i < run; i++)
                                         f();
+                                  });
+            return std::move(*this);
+        }
+
+        template <typename Fun>
+        Group &
+        Main(std::string name, Fun f) &
+        {
+            check_unique_test_name(name);
+            test_.emplace_back(std::move(name), [=](int, int argc, char *argv[]) {
+                                        f(argc, argv);
+                                  });
+            return *this;
+        }
+        template <typename Fun>
+        Group &&
+        Main(std::string name, Fun f) &&
+        {
+            check_unique_test_name(name);
+            test_.emplace_back(std::move(name), [=](int, int argc, char *argv[]) {
+                                        f(argc, argv);
                                   });
             return std::move(*this);
         }
@@ -555,7 +597,7 @@ namespace yats
         std::vector<task<void()>> setup_;
         std::vector<task<void()>> teardown_;
         std::vector<task<void()>> prolog_;
-        std::vector<task<void(int)>> test_;
+        std::vector<task<void(int, int, char *[])>> test_;
         std::vector<task<void()>> epilog_;
 
         std::set<std::string> test_names_;
@@ -565,7 +607,7 @@ namespace yats
 
     static void usage(const char *name)
     {
-        std::cout << "Yats usage: " << name << " [options] [test...]" << std::endl;
+        std::cout << "Yats usage: " << name << " [options] [test...] -- args" << std::endl;
         std::cout << "Options:\n";
         std::cout << "  -e, --exit-immediately  On error exit.\n";
         std::cout << "  -g, --group group       Run tests from the given group.\n";
@@ -587,12 +629,13 @@ namespace yats
              verbose         = false,
              capture_signal  = false;
         int  repeat_run      = 1000;
+        int  skip = 1;
 
         std::set<std::string> run_ctx, run_test;
 
         global::instance().program_name = argv[0];
 
-        for(auto arg = argv + 1; argv && (arg != argv + argc); ++arg)
+        for(auto arg = argv + 1; argv && (arg != argv + argc); ++arg, ++skip)
         {
             if (strcmp(*arg, "-h") == 0 ||
                 strcmp(*arg, "-?") == 0 ||
@@ -652,10 +695,15 @@ namespace yats
                 _Exit(0);
             }
 
+            if (strcmp(*arg, "--") == 0) {
+                ++skip;
+                break;
+            }
+
             run_test.insert(*arg);
         }
 
-        std::cout << "YATS: verbose " << std::boolalpha << verbose << ", UNIX signals " << capture_signal << std::endl;
+        std::cout << vt100::BOLD << vt100::BLUE << "YATS: verbose " << std::boolalpha << verbose << ", UNIX signals " << capture_signal << vt100::RESET << std::endl;
 
         if (capture_signal) {
             for(int n = 0; n < 64; n++)
@@ -680,7 +728,7 @@ namespace yats
                 return static_cast<size_t>(
                         std::count_if(std::begin(ctx->test_),
                                      std::end(ctx->test_),
-                                     [&] (task<void(int)> const &t)
+                                     [&] (task<void(int, int, char *[])> const &t)
                                      {
                                          return std::find(std::begin(run_test), std::end(run_test), t.first) != std::end(run_test);
                                      }));
@@ -735,7 +783,7 @@ namespace yats
                 {
                     try
                     {
-                        t.second(repeat_run);
+                        t.second(repeat_run, argc - skip, argv + skip);
                         retry = false;
                         if (!err)
                             ok++;
@@ -743,22 +791,22 @@ namespace yats
                     catch(yats_error &e)
                     {
                         err = true;
-                        auto msg = make_string(ctx->name_, " :: " , t.first, ": ", e.what());
-                        std::cerr << msg << std::endl; ferr << msg << std::endl;
+                        auto msg = make_string(ctx->name_, "::" , t.first, ": ", e.what());
+                        std::cerr << vt100::BOLD << vt100::RED << msg << vt100::RESET << std::endl; ferr << msg << std::endl;
                     }
                     catch(std::exception &e)
                     {
                         err = true; retry = false;
-                        auto msg = make_string(ctx->name_, " :: " , t.first, ":\n",
+                        auto msg = make_string(ctx->name_, "::" , t.first, ":\n",
                                                "    -> Unexpected exception: '", e.what(), "' error (retry interrupted).\n");
-                        std::cerr << msg; ferr << msg;
+                        std::cerr << vt100::BOLD << vt100::RED << msg << vt100::RESET; ferr << msg;
                     }
                     catch(...)
                     {
                         err = true; retry = false;
-                        auto msg = make_string(ctx->name_, " :: " , t.first, ":\n",
+                        auto msg = make_string(ctx->name_, "::" , t.first, ":\n",
                                                "    -> Unknown exception (retry interrupted).\n");
-                        std::cerr << msg; ferr << msg;
+                        std::cerr << vt100::BOLD << vt100::RED << msg << vt100::RESET; ferr << msg;
                     }
                 }
                 while(retry);
@@ -781,14 +829,14 @@ namespace yats
                 t.second();
         }
 
-        std::cerr <<  std::endl << (run-ok) << " out of " << run  << " tests failed. "
-                  << global::instance().assert_ok << "/" << global::instance().assert_total << " assertions passed." << std::endl;
+        std::cerr << std::endl << vt100::BOLD << (run != ok ? vt100::MAGENTA : vt100::GREEN) << (run-ok) << " out of " << run  << " tests failed. "
+                  << global::instance().assert_ok << "/" << global::instance().assert_total << " assertions passed." << vt100::RESET << std::endl;
 
         return ok == run ? EXIT_SUCCESS : EXIT_FAILURE;
     }
     catch(std::exception &e)
     {
-        std::cerr << "YATS: unexpected " << e.what() << " exception!" << std::endl;
+        std::cerr << vt100::BOLD << vt100::RED << "YATS: unexpected " << e.what() << " exception!" << vt100::RESET << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -982,9 +1030,9 @@ namespace yats
     ////////////////////////////////////////////// YATS assertions:
 
     template <typename T, typename P>
-    void assert(const char *file, int line, int id, const T &value, P pred)
+    void yats_assert(const char *file, int line, int id, const T &value, P pred)
     {
-        if (!global::instance().yats_assert.emplace(file, line, id).second)
+        if (!global::instance().yats_assert_set.emplace(file, line, id).second)
             return;
 
         global::instance().assert_total++;
@@ -997,15 +1045,15 @@ namespace yats
     }
 
     static inline
-    void assert(const char *file, int line, int id, bool value)
+    void yats_assert(const char *file, int line, int id, bool value)
     {
-        return assert(file, line, id, value, is_true());
+        return yats_assert(file, line, id, value, is_true());
     }
 
     template <typename T, typename E>
-    void assert_throw(const char *file, int line, int id, T const & expr, E const &obj)
+    void yats_assert_throw(const char *file, int line, int id, T const & expr, E const &obj)
     {
-        if (!global::instance().yats_assert.emplace(file, line, id).second)
+        if (!global::instance().yats_assert_set.emplace(file, line, id).second)
             return;
 
         global::instance().assert_total++;
