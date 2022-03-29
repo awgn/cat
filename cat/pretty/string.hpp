@@ -65,12 +65,7 @@ namespace cat
     {
         std::string pretty(string_view const &v) override
         {
-#ifdef _LIBCPP_VERSION
-            //FIXME: string_view::to_string is not marked const in some libc++ versions.
-            return "string_view{\"" + const_cast<string_view &>(v).to_string() + "\"}";
-#else
             return "string_view{\"" + std::string{v} + "\"}";
-#endif
         }
     };
 
