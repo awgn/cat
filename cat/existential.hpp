@@ -36,6 +36,7 @@ namespace cat
     struct forall_base
     {
         virtual std::any run_forall() = 0;
+        virtual ~forall_base() = default;
     };
 
     template < template <typename ...> class TC > struct forall_1;
@@ -47,5 +48,7 @@ namespace cat
         forall(const T &value)
         : forall_1<TC>(value)...
         { }
+
+        virtual ~forall() = default;
     };
 }
