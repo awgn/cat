@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <cat/show/show.hpp>
 #include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 #include <cat/existential.hpp>
@@ -71,7 +70,6 @@ namespace cat
         return ShowInstance<T>{}.show(v);
     }
 
-#if (__GNUC__ >= 5)
     //
     // overloading for existential quantification...
     //
@@ -81,7 +79,6 @@ namespace cat
     {
         return show(static_cast<const forall_1<Show> &>(value));
     }
-#endif
 
     //////////////////////////////////////////////////////////////////////////////////
     //

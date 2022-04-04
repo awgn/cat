@@ -12,7 +12,7 @@ auto g = yats::Group("test_existential")
 
     .Single("forall_single", []
     {
-        std::vector<forall<Show>> v;
+        std::vector<cat::forall<Show>> v;
 
         v.emplace_back(1);
         v.emplace_back(std::string{"hello"});
@@ -24,7 +24,6 @@ auto g = yats::Group("test_existential")
 
     .Single("forall_multiple", []
     {
-#if (__GNUC__ >= 5)
         std::vector<forall<Show, Pretty>> v;
 
         v.emplace_back(1);
@@ -33,7 +32,6 @@ auto g = yats::Group("test_existential")
 
         for (auto & e : v)
             std::cout << show(e) << " -> " << pretty(e) << std::endl;
-#endif
     })
 
     ;

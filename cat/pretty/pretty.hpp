@@ -71,7 +71,6 @@ namespace cat
         return PrettyInstance<T>{}.pretty(v);
     }
 
-#if (__GNUC__ >= 5)
     //
     // overloading for existential quantification...
     //
@@ -81,5 +80,4 @@ namespace cat
     {
         return pretty(static_cast<const forall_1<Pretty> &>(value));
     }
-#endif
 }
