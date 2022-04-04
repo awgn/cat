@@ -29,6 +29,8 @@
 #include <cat/show/show.hpp>
 
 #include <chrono>
+#include <ctime>
+#include <string>
 
 namespace cat
 {
@@ -62,9 +64,21 @@ namespace cat
     struct ShowInstance<std::chrono::time_point<Clock, Dur>> final : Show<std::chrono::time_point<Clock, Dur>>
     {
         std::string
-        show(std::chrono::time_point<Clock, Dur> const &r)
+        show(std::chrono::time_point<Clock, Dur> const &tp)
         {
-            return cat::show(r.time_since_epoch());
+            auto time = Clock::to_time_t(tp);
+            std::tm* tm = std::localtime(&time);
+            char buffer[40] = {0};
+
+            auto duration = tp.time_since_epoch();
+            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration);
+            auto remaining = std::chrono::duration_cast<std::chrono::nanoseconds>(duration - seconds);
+
+            auto len = std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S.", tm);
+
+            snprintf(buffer+len, sizeof(buffer)-len, "%06ld", static_cast<unsigned long>(remaining.count() / 1000));
+
+            return {buffer};
         }
     };
 
