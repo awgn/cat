@@ -32,8 +32,6 @@
 #include <cat/monad.hpp>
 #include <cat/functional.hpp>
 #include <cat/type_traits.hpp>
-#include <cat/string_view.hpp>
-
 #include <cat/bits/type.hpp>
 
 #include <iostream>
@@ -41,7 +39,7 @@
 #include <string>
 #include <tuple>
 #include <stdexcept>
-
+#include <string_view>
 
 namespace parser
 {
@@ -222,10 +220,10 @@ namespace cat
     template <typename K, typename V>
     struct ReadInstance<parser::key_value<K,V>> final : Read<parser::key_value<K,V>>
     {
-        using ret_type = optional<std::pair<parser::key_value<K,V>, string_view>>;
+        using ret_type = std::optional<std::pair<parser::key_value<K,V>, std::string_view>>;
 
         ret_type
-        reads(string_view s) override
+        reads(std::string_view s) override
         {
             return ((cat::consume_string(K::name().c_str(), s)
                     >>= curry(cat::consume_char) ('='))
@@ -255,12 +253,12 @@ namespace cat
     template <typename ...KVs>
     struct ReadInstance<parser::document<KVs...>> final : Read<parser::document<KVs...>>
     {
-        optional<std::pair<parser::document<KVs...>, string_view>>
-        reads(string_view const s) override
+        std::optional<std::pair<parser::document<KVs...>, std::string_view>>
+        reads(std::string_view const s) override
         {
             parser::document<KVs...> doc;
 
-            auto body = [&](string_view s1) -> optional<string_view>
+            auto body = [&](std::string_view s1) -> std::optional<std::string_view>
                         {
                             while (s1 = cat::skipws(s1), !s1.empty())
                             {
@@ -273,17 +271,16 @@ namespace cat
                             return mreturn_(s1);
                         };
 
-            auto p1 = ((mreturn.in<optional>(s) >>= curry(cat::consume_char)('{')) >>= body) >>= curry(cat::consume_char)('}');
-            auto p2 =   mreturn.in<optional>(s) >>= body;
+            auto p1 = ((mreturn.in<std::optional>(s) >>= curry(cat::consume_char)('{')) >>= body) >>= curry(cat::consume_char)('}');
+            auto p2 =   mreturn.in<std::optional>(s) >>= body;
 
             if (p1)
-                return make_optional(std::make_pair(std::move(doc), p1.value()));
+                return std::make_optional(std::make_pair(std::move(doc), p1.value()));
 
             if (cat::skipws(p2.value()).empty())
-                return make_optional(std::make_pair(std::move(doc), string_view{}));
+                return std::make_optional(std::make_pair(std::move(doc), std::string_view{}));
 
             throw std::runtime_error("document: error@" + std::string(p2.value().substr(0,p2.value().find('\n'))));
         }
     };
 }
-

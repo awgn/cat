@@ -44,7 +44,7 @@ namespace cat
     struct FunctorInstance<std::pair<K, A>, Fun, Fa_> final : Functor<meta::apply<std::pair, K>::template type>::
     template where<A, Fun, Fa_, K>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::pair<K, B>
         fmap(Fun f, Fa_ && xs) override
@@ -55,4 +55,3 @@ namespace cat
 
 
 } // namespace cat
-

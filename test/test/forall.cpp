@@ -12,7 +12,6 @@ auto g = yats::Group("test_existential")
 
     .Single("forall_single", []
     {
-#if (__GNUC__ >= 5)
         std::vector<forall<Show>> v;
 
         v.emplace_back(1);
@@ -21,10 +20,6 @@ auto g = yats::Group("test_existential")
 
         for (auto & e : v)
             std::cout << show(e) << std::endl;
-#else
-#warning "existential quantification enabled for gcc 5 or higher"
-#endif
-
     })
 
     .Single("forall_multiple", []
@@ -48,4 +43,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

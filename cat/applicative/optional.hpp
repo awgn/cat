@@ -29,33 +29,35 @@
 #include <cat/optional.hpp>
 #include <cat/applicative/applicative.hpp>
 
+#include <optional>
+
 namespace cat
 {
     // optional is an applicative instance:
     //
 
-    template <> struct is_applicative<optional> : std::true_type { };
+    template <> struct is_applicative<std::optional> : std::true_type { };
 
     // optional instance:
     //
 
     template <typename F, typename A, typename Ff_, typename Fa_, typename A_>
-    struct ApplicativeInstance<optional<F>, optional<A>, Ff_, Fa_, A_>  final : Applicative<optional>::
+    struct ApplicativeInstance<std::optional<F>, std::optional<A>, Ff_, Fa_, A_>  final : Applicative<std::optional>::
     template where<F, A, Ff_, Fa_, A_>
     {
-        using B = std::result_of_t<F(A_)>;
+        using B = std::invoke_result_t<F, A_>;
 
-        optional<A>
+        std::optional<A>
         pure(A_ &&elem) override
         {
-            return make_optional(std::forward<A_>(elem));
+            return std::make_optional(std::forward<A_>(elem));
         }
 
-        optional<B>
+        std::optional<B>
         apply(Ff_ && f, Fa_ &&x) override
         {
             if (f && x)
-                return make_optional<B>(forward_as<Ff_>(*f)(forward_as<Fa_>(*x)));
+                return std::make_optional<B>(forward_as<Ff_>(*f)(forward_as<Fa_>(*x)));
 
             return {};
         }
@@ -65,22 +67,22 @@ namespace cat
     // optional is an alternative instance:
     //
 
-    template <> struct is_alternative<optional> : std::true_type { };
+    template <> struct is_alternative<std::optional> : std::true_type { };
 
     // optional instance:
     //
 
     template <typename A, typename Fl_, typename Fr_>
-    struct AlternativeInstance<optional<A>, Fl_, Fr_> final : Alternative<optional>::
-    template where<optional<A>, Fl_, Fr_>
+    struct AlternativeInstance<std::optional<A>, Fl_, Fr_> final : Alternative<std::optional>::
+    template where<std::optional<A>, Fl_, Fr_>
     {
-        optional<A>
+        std::optional<A>
         empty() override
         {
-            return optional<A>{};
+            return std::optional<A>{};
         }
 
-        optional<A>
+        std::optional<A>
         or_(Fl_ && lhs, Fr_ && rhs) override
         {
             if (lhs)
@@ -90,4 +92,3 @@ namespace cat
     };
 
 } // namespace cat
-

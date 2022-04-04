@@ -29,22 +29,23 @@
 #include <cat/optional.hpp>
 #include <cat/foldable/foldable.hpp>
 #include <cat/utility.hpp>
+
 #define CAT_FOLDABLE
 #include <cat/container.hpp>
 
 namespace cat
 {
 
-    // optional is a foldable:
+    // std::optional is a foldable:
     //
 
-    template <> struct is_foldable<optional> : std::true_type { };
+    template <> struct is_foldable<std::optional> : std::true_type { };
 
-    // optional instance:
+    // std::optional instance:
     //
 
     template <typename A, typename B, typename FunR, typename FunL, typename Fun, typename Fa_>
-    struct FoldableInstance<optional<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<optional>::
+    struct FoldableInstance<std::optional<A>, B, FunR, FunL, Fun, Fa_> final : Foldable<std::optional>::
     template where<A, B, FunR, FunL, Fun, Fa_>
     {
         B foldr(FunR f, B value, Fa_ && xs) override
@@ -73,4 +74,3 @@ namespace cat
     };
 
 } // namespace cat
-

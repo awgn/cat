@@ -44,7 +44,7 @@ namespace cat
     struct ApplicativeInstance<std::future<F>, std::future<A>, Ff_, Fa_, A_>  final : Applicative<std::future>::
     template where<F, A, Ff_, Fa_, A_>
     {
-        using B = std::result_of_t<F(A_)>;
+        using B = std::invoke_result_t<F, A_>;
 
         std::future<A>
         pure(A_ &&elem) override
@@ -71,4 +71,3 @@ namespace cat
 
 
 } // namespace cat
-

@@ -30,7 +30,7 @@ auto g = yats::Group("test_pretty")
         std::cout << pretty("Hello World") << std::endl;
         std::cout << pretty(std::string("Hello World")) << std::endl;
         std::cout << pretty(std::basic_string<int>{1,2,3}) << std::endl;
-        std::cout << pretty(string_view("Hello World")) << std::endl;
+        std::cout << pretty(std::string_view("Hello World")) << std::endl;
 
         std::cout << pretty('f') << std::endl;
         std::cout << pretty(static_cast<unsigned char>('x')) << std::endl;
@@ -70,9 +70,9 @@ auto g = yats::Group("test_pretty")
         std::cout << pretty(std::integral_constant<bool, true>()) << std::endl;
         std::cout << pretty(std::make_integer_sequence<int, 10>{}) << std::endl;
 
-        std::cout << pretty(make_optional(42)) << std::endl;
-        std::cout << pretty(optional<int>()) << std::endl;
-        std::cout << pretty(nullopt) << std::endl;
+        std::cout << pretty(std::make_optional(42)) << std::endl;
+        std::cout << pretty(std::optional<int>()) << std::endl;
+        std::cout << pretty(std::nullopt) << std::endl;
 
     });
 
@@ -81,4 +81,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

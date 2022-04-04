@@ -44,7 +44,7 @@ namespace cat
     struct ApplicativeInstance<std::forward_list<F>, std::forward_list<A>, Ff_, Fa_, A_>  final : Applicative<std::forward_list>::
     template where<F, A, Ff_, Fa_, A_>
     {
-        using B = std::result_of_t<F(A_)>;
+        using B = std::invoke_result_t<F, A_>;
 
         std::forward_list<A>
         pure(A_ &&elem) override
@@ -102,4 +102,3 @@ namespace cat
         }
     };
 } // namespace cat
-

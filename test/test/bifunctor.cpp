@@ -20,32 +20,32 @@ auto g = Group("functor")
     {
         auto p = std::make_pair(std::string("hello"), std::string("world!"));
 
-        auto b = bimap([](const std::string &s) -> size_t { return s.size(); },
-                       [](const std::string &s) -> size_t { return s.size(); },
+        auto b = bimap([](const std::string &s) -> std::size_t { return s.size(); },
+                       [](const std::string &s) -> std::size_t { return s.size(); },
                        p);
 
-        auto f = bifirst ([](const std::string &s) -> size_t { return s.size(); }, p);
-        auto s = bisecond([](const std::string &s) -> size_t { return s.size(); }, p);
+        auto f = bifirst ([](const std::string &s) -> std::size_t { return s.size(); }, p);
+        auto s = bisecond([](const std::string &s) -> std::size_t { return s.size(); }, p);
 
-        Assert(b, is_equal_to(std::pair<size_t, size_t>{5, 6}));
-        Assert(f, is_equal_to(std::pair<size_t, std::string>{5, "world!"}));
-        Assert(s, is_equal_to(std::pair<std::string, size_t>{"hello", 6}));
+        Assert(b, is_equal_to(std::pair<std::size_t, std::size_t>{5, 6}));
+        Assert(f, is_equal_to(std::pair<std::size_t, std::string>{5, "world!"}));
+        Assert(s, is_equal_to(std::pair<std::string, std::size_t>{"hello", 6}));
     })
 
     .Single("bifunctor_pair2", []
     {
         auto p = std::make_pair(std::string("hello"), std::string("world!"));
 
-        auto b = curry(bimap)([](const std::string &s) -> size_t { return s.size();})
-                                ([](const std::string &s) -> size_t { return s.size(); })
+        auto b = curry(bimap)([](const std::string &s) -> std::size_t { return s.size();})
+                                ([](const std::string &s) -> std::size_t { return s.size(); })
                                 (p);
 
-        auto f = curry(bifirst)([](const std::string &s) -> size_t { return s.size(); }, p);
-        auto s = curry(bisecond)([](const std::string &s) -> size_t { return s.size(); }, p);
+        auto f = curry(bifirst)([](const std::string &s) -> std::size_t { return s.size(); }, p);
+        auto s = curry(bisecond)([](const std::string &s) -> std::size_t { return s.size(); }, p);
 
-        Assert(b, is_equal_to(std::pair<size_t, size_t>{5, 6}));
-        Assert(f, is_equal_to(std::pair<size_t, std::string>{5, "world!"}));
-        Assert(s, is_equal_to(std::pair<std::string, size_t>{"hello", 6}));
+        Assert(b, is_equal_to(std::pair<std::size_t, std::size_t>{5, 6}));
+        Assert(f, is_equal_to(std::pair<std::size_t, std::string>{5, "world!"}));
+        Assert(s, is_equal_to(std::pair<std::string, std::size_t>{"hello", 6}));
     })
 
     .Single("functor_constraint", []
@@ -59,4 +59,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

@@ -44,7 +44,7 @@ namespace cat
     struct FunctorInstance<std::deque<A>, Fun, Fa_> final : Functor<std::deque>::
     template where<A, Fun, Fa_>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::deque<B>
         fmap(Fun f, Fa_ && xs) override
@@ -60,4 +60,3 @@ namespace cat
 
 
 } // namespace cat
-

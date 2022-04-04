@@ -52,8 +52,8 @@ namespace cat
         struct where
         {
             virtual auto bimap(F f, G g, B_ && bf)
-                -> BF< std::result_of_t<F(A)>,
-                       std::result_of_t<G(B)>> = 0;
+                -> BF< std::invoke_result_t<F, A>,
+                       std::invoke_result_t<G, B>> = 0;
         };
     };
 
@@ -113,4 +113,3 @@ namespace cat
     constexpr auto bisecond = details::bisecond_{};
 
 } // namespace cat
-

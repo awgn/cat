@@ -13,7 +13,7 @@ auto g = Group("iterator")
 
     .Single("test_optional", []
     {
-        Assert(maybe(42, [](int n) { return n+1; }, make_optional(1)), is_equal_to(2));
+        Assert(maybe(42, [](int n) { return n+1; }, std::make_optional(1)), is_equal_to(2));
 
     })
 
@@ -21,16 +21,16 @@ auto g = Group("iterator")
     {
         std::vector<int> v {1,2,3};
 
-        Assert(map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, v) == std::vector<int>{1,2,3});
-        Assert(map_optional([](int n) { return n > 0 ? make_optional(n) : optional<int>{}; }, std::move(v)) == std::vector<int>{1,2,3});
+        Assert(map_optional([](int n) { return n > 0 ? std::make_optional(n) : std::optional<int>{}; }, v) == std::vector<int>{1,2,3});
+        Assert(map_optional([](int n) { return n > 0 ? std::make_optional(n) : std::optional<int>{}; }, std::move(v)) == std::vector<int>{1,2,3});
     })
 
     .Single("cat_optionals", []
     {
-        std::vector<optional<int>> v {make_optional(1),
-                                      make_optional(2),
-                                      make_optional(3),
-                                      optional<int>{} };
+        std::vector<std::optional<int>> v {std::make_optional(1),
+                                      std::make_optional(2),
+                                      std::make_optional(3),
+                                      std::optional<int>{} };
 
         Assert(cat_optionals(v) == std::vector<int>{1,2,3});
         Assert(cat_optionals(std::move(v)) == std::vector<int>{1,2,3});
@@ -42,4 +42,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

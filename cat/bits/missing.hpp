@@ -41,14 +41,14 @@
 
 namespace std
 {
-    template <class Tp, size_t Np>
+    template <class Tp, std::size_t Np>
     inline reverse_iterator<Tp*>
     rbegin(Tp (&__array)[Np])
     {
         return reverse_iterator<Tp*>(__array + Np);
     }
 
-    template <class Tp, size_t Np>
+    template <class Tp, std::size_t Np>
     inline reverse_iterator<Tp*>
     rend(Tp (&__array)[Np])
     {
@@ -114,4 +114,3 @@ namespace std
 }
 
 #endif
-

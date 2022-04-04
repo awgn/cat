@@ -107,7 +107,7 @@ namespace cat
     } constexpr second = Second_{};
 
 
-    template <size_t N>
+    template <std::size_t N>
     struct Elem_
     {
         using function_type = placeholders::unspec(std::tuple<placeholders::unspec>);
@@ -123,7 +123,7 @@ namespace cat
 
 #if defined(__clang__)
 
-    template <size_t N>
+    template <std::size_t N>
     constexpr auto elem = Elem_<N>{};
 
 #endif
@@ -139,7 +139,7 @@ namespace cat
         // Argument decay on the basis of the target signature.
         //
 
-        template <typename F, size_t Idx, typename T>
+        template <typename F, std::size_t Idx, typename T>
         struct currying_decay
         {
             using Tp = arg_type_at_t<Idx, F>;
@@ -149,7 +149,7 @@ namespace cat
                             T, std::decay_t<T> >::type;
         };
 
-        template <typename F, size_t Idx, typename T>
+        template <typename F, std::size_t Idx, typename T>
         using currying_decay_t = typename currying_decay<F, Idx, T>::type;
     }
 
@@ -170,35 +170,35 @@ namespace cat
         template <typename ...Xs>
         auto operator()(Xs && ... xs) const
         {
-            constexpr size_t N = function_arity<F>::value - sizeof...(Ts);
+            constexpr std::size_t N = function_arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
-            return eval_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
+            return eval_(std::integral_constant<std::size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
 
         template <typename ...Xs>
         auto apply(Xs && ... xs) const
         {
-            constexpr size_t N = function_arity<F>::value - sizeof...(Ts);
+            constexpr std::size_t N = function_arity<F>::value - sizeof...(Ts);
             static_assert(N >= sizeof...(Xs), "Too many argument!");
-            return apply_(std::integral_constant<size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
+            return apply_(std::integral_constant<std::size_t, N - sizeof...(Xs)>(), std::make_index_sequence<sizeof...(Xs)>(), std::forward<Xs>(xs)...);
         }
 
     private:
-        template <size_t ...N, typename ...Xs>
-        auto eval_(std::integral_constant<size_t, 0>, std::index_sequence<N...>, Xs &&...xs) const
+        template <std::size_t ...N, typename ...Xs>
+        auto eval_(std::integral_constant<std::size_t, 0>, std::index_sequence<N...>, Xs &&...xs) const
         {
             return tuple_apply(fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
-        template <size_t I, size_t ...N, typename ...Xs>
-        auto eval_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
+        template <std::size_t I, std::size_t ...N, typename ...Xs>
+        auto eval_(std::integral_constant<std::size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
             return Callable_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));
         }
 
-        template <size_t I, size_t ...N, typename ...Xs>
-        auto apply_(std::integral_constant<size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
+        template <std::size_t I, std::size_t ...N, typename ...Xs>
+        auto apply_(std::integral_constant<std::size_t, I>, std::index_sequence<N...>, Xs &&...xs) const
         {
             return Callable_<F, Ts..., details::currying_decay_t<function_type, N, Xs>...>(
                         fun_, std::tuple_cat(args_, std::forward_as_tuple(std::forward<Xs>(xs)...)));

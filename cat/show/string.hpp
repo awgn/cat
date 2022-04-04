@@ -28,9 +28,9 @@
 
 #include <cat/show/show.hpp>
 #include <cat/type_traits.hpp>
-#include <cat/string_view.hpp>
 
 #include <string>
+#include <string_view>
 
 namespace cat
 {
@@ -61,9 +61,9 @@ namespace cat
     };
 
     template <>
-    struct ShowInstance<string_view> final : Show<string_view>
+    struct ShowInstance<std::string_view> final : Show<std::string_view>
     {
-        std::string show(string_view const &v) override
+        std::string show(std::string_view const &v) override
         {
             return '"' + std::string{v} + '"';
         }
@@ -80,7 +80,7 @@ namespace cat
         }
     };
 
-    template <size_t N>
+    template <std::size_t N>
     struct ShowInstance<char[N]> final : Show<char[N]>
     {
         using litstring = char[N];

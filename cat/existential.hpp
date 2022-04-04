@@ -27,14 +27,15 @@
 #pragma once
 
 #include <cat/__config.hpp>
-#include <cat/any.hpp>
+
+#include <any>
 
 
 namespace cat
 {
     struct forall_base
     {
-        virtual cat::any run_forall() = 0;
+        virtual std::any run_forall() = 0;
     };
 
     template < template <typename ...> class TC > struct forall_1;
@@ -48,4 +49,3 @@ namespace cat
         { }
     };
 }
-

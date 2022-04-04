@@ -58,7 +58,7 @@ using this_document =
         key_value<key::simple_tuple, std::tuple<bool, int, double, std::string>>,
         key_value<key::associative,  std::map<std::string, int>>,
         key_value<key::intset,       std::set<int>>,
-        key_value<key::optional_int, cat::optional<int>>,
+        key_value<key::optional_int, std::optional<int>>,
         key_value<key::int_matrix,   std::vector<std::vector<int>>>,
         key_value<key::inline_doc,   std::vector<pair_doc>>
     >;
@@ -79,4 +79,3 @@ main(int, char *[])
 
     return 0;
 }
-

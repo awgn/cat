@@ -29,9 +29,7 @@
 #include <cat/show/show.hpp>
 
 #include <cat/existential.hpp>
-#include <cat/any.hpp>
-
-#if (__GNUC__ >= 5)
+#include <any>
 
 namespace cat
 {
@@ -54,7 +52,7 @@ namespace cat
 
             T value;
 
-            virtual cat::any run_forall() override
+            virtual std::any run_forall() override
             {
                 return cat::show(value);
             }
@@ -80,9 +78,7 @@ namespace cat
         std::string
         show(forall_1<Show> const &e) override
         {
-            return cat::any_cast<std::string>(e.value->run_forall());
+            return std::any_cast<std::string>(e.value->run_forall());
         }
     };
 }
-
-#endif

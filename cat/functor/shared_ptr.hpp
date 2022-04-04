@@ -44,7 +44,7 @@ namespace cat
     struct FunctorInstance<std::shared_ptr<A>, Fun, Fa_> final : Functor<std::shared_ptr>::
     template where<A, Fun, Fa_>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::shared_ptr<B>
         fmap(Fun f, Fa_ x) override
@@ -58,4 +58,3 @@ namespace cat
 
 
 } // namespace cat
-

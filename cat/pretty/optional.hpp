@@ -36,22 +36,22 @@ namespace cat
     //
 
     template <typename T>
-    struct PrettyInstance<optional<T>> final : Pretty<optional<T>>
+    struct PrettyInstance<std::optional<T>> final : Pretty<std::optional<T>>
     {
         std::string
-        pretty(const optional<T> &t) override
+        pretty(const std::optional<T> &t) override
         {
             if (t)
-                return type_name<optional<T>>() + '{' + cat::pretty(*t) + '}';
-            return type_name<optional<T>>() + "{}";
+                return type_name<std::optional<T>>() + '{' + cat::pretty(*t) + '}';
+            return type_name<std::optional<T>>() + "{}";
         }
     };
 
     template <>
-    struct PrettyInstance<nullopt_t> final : Pretty<nullopt_t>
+    struct PrettyInstance<std::nullopt_t> final : Pretty<std::nullopt_t>
     {
         std::string
-        pretty(const nullopt_t &) override
+        pretty(const std::nullopt_t &) override
         {
             return "nullopt_t{}";
         }

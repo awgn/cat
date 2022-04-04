@@ -185,7 +185,7 @@ namespace cat
             std::string out = "{" + type_name<T>() + ": ";
             if (sizeof...(Ints))
             {
-                size_t n = 0;
+                std::size_t n = 0;
                 do {
                     out += std::to_string(n);
                 }

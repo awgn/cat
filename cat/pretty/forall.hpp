@@ -28,9 +28,8 @@
 
 #include <cat/pretty/pretty.hpp>
 #include <cat/existential.hpp>
-#include <cat/any.hpp>
+#include <any>
 
-#if (__GNUC__ >= 5)
 namespace cat
 {
     //
@@ -52,7 +51,7 @@ namespace cat
 
             T value;
 
-            virtual cat::any run_forall() override
+            virtual std::any run_forall() override
             {
                 return cat::pretty(value);
             }
@@ -78,9 +77,7 @@ namespace cat
         std::string
         pretty(forall_1<Pretty> const &e) override
         {
-            return cat::any_cast<std::string>(e.value->run_forall());
+            return std::any_cast<std::string>(e.value->run_forall());
         }
     };
 }
-
-#endif

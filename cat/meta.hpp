@@ -46,13 +46,13 @@ namespace cat {  namespace meta {
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // result_of: std::result_of meta-function adaptor
+    // result_of: std::invoke_result meta-function adaptor
     //
 
     template <typename Fun, typename ...Ts>
     struct result_of
     {
-        using type = typename std::result_of<Fun(Ts...)>::type;
+        using type = typename std::invoke_result<Fun, Ts...>::type;
     };
 
 
@@ -61,19 +61,19 @@ namespace cat {  namespace meta {
     // partial_function_type
     //
 
-    template <typename F, size_t N, typename = void > struct partial_function_type;
+    template <typename F, std::size_t N, typename = void > struct partial_function_type;
 
-    template <typename R, typename T, typename ...Ts, size_t N>
+    template <typename R, typename T, typename ...Ts, std::size_t N>
     struct partial_function_type<R(T, Ts...), N, std::enable_if_t<(N != 0)>>
         : partial_function_type<R(Ts...), N-1> { };
 
-    template <typename R, typename ...Ts, size_t N>
+    template <typename R, typename ...Ts, std::size_t N>
     struct partial_function_type<R(Ts...), N, std::enable_if_t<(N == 0)>>
     {
         using type = R(Ts...);
     };
 
-    template <typename F, size_t N>
+    template <typename F, std::size_t N>
     using partial_function_type_t = typename partial_function_type<F, N>::type;
 
 

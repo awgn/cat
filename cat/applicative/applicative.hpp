@@ -46,7 +46,7 @@ namespace cat
         struct where
         {
             virtual auto pure(A_ &&) -> F<A> = 0; // lift a value.
-            virtual auto apply(Ff_ &&, Fa_ &&) -> F<std::result_of_t<Fun(A_)>> = 0;
+            virtual auto apply(Ff_ &&, Fa_ &&) -> F<std::invoke_result_t<Fun, A_>> = 0;
         };
     };
 
@@ -221,4 +221,3 @@ namespace cat
     }
 
 } // namespace cat
-

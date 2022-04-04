@@ -37,7 +37,7 @@ namespace cat {
 
     template <typename ...Ts> struct multiset
     {
-        static constexpr size_t size = sizeof...(Ts);
+        static constexpr std::size_t size = sizeof...(Ts);
     };
 
 
@@ -108,4 +108,3 @@ namespace cat {
     }
 
 } // namespace type
-

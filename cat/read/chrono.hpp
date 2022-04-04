@@ -27,11 +27,11 @@
 #pragma once
 
 #include <cat/read/read.hpp>
-#include <cat/string_view.hpp>
 #include <cat/optional.hpp>
 #include <cat/monad/optional.hpp>
 
 #include <chrono>
+#include <string_view>
 
 namespace cat
 {
@@ -43,15 +43,15 @@ namespace cat
     struct ReadInstance<std::chrono::duration<Rep, Period>> final : Read<std::chrono::duration<Rep, Period>>
     {
 
-        optional<std::pair<std::chrono::duration<Rep, Period>, string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::chrono::duration<Rep, Period>, std::string_view>>
+        reads(std::string_view s) override
         {
             using Duration = std::chrono::duration<Rep, Period>;
 
             return cat::reads<int64_t>(s) >>= [&] (auto const &value) {
                 return cat::consume_char('_', value.second) >>= [&] (auto const &l2) {
                     return cat::reads<std::string>(l2) >>= [&] (auto const &unit)
-                        -> optional<std::pair<std::chrono::duration<Rep, Period>, string_view>>
+                        -> std::optional<std::pair<std::chrono::duration<Rep, Period>, std::string_view>>
                     {
                         if (unit.first.compare("ns") == 0)
                             return std::make_pair(std::chrono::duration_cast<Duration>(std::chrono::nanoseconds(value.first)), unit.second);
@@ -66,7 +66,7 @@ namespace cat
                         if (unit.first.compare("h") == 0)
                             return std::make_pair(std::chrono::duration_cast<Duration>(std::chrono::hours(value.first)), unit.second);
 
-                        return nullopt;
+                        return std::nullopt;
                     };
                 };
             };
@@ -76,14 +76,14 @@ namespace cat
     template <typename Clock, typename Dur>
     struct ReadInstance<std::chrono::time_point<Clock, Dur>> final : Read<std::chrono::time_point<Clock, Dur>>
     {
-        optional<std::pair<std::chrono::time_point<Clock, Dur>, string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::chrono::time_point<Clock, Dur>, std::string_view>>
+        reads(std::string_view s) override
         {
             if (auto d = cat::reads<Dur>(s))
             {
                 return std::make_pair(std::chrono::time_point<Clock, Dur>((*d).first), (*d).second);
             }
-            return nullopt;
+            return std::nullopt;
         }
     };
 }

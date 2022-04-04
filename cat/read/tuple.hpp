@@ -31,6 +31,7 @@
 #include <cat/tuple.hpp>
 
 #include <type_traits>
+#include <string_view>
 
 namespace cat
 {
@@ -41,35 +42,35 @@ namespace cat
     template <typename T1, typename T2>
     struct ReadInstance<std::pair<T1,T2>> final : Read<std::pair<T1, T2>>
     {
-        optional<std::pair<std::pair<T1,T2>,string_view>>
-        reads(string_view v) override
+        std::optional<std::pair<std::pair<T1,T2>,std::string_view>>
+        reads(std::string_view v) override
         {
             //
             // C++ way...
             //
             // auto v1 = consume_char('(', v);
             // if (!v1)
-            //     return nullopt;
+            //     return std::nullopt;
             // auto t1 = cat::reads<T1>(v1.value());
             // if (!t1)
-            //     return nullopt;
+            //     return std::nullopt;
             // auto t2 = cat::reads<T2>(t1.value().second);
             // if (!t2)
-            //     return nullopt;
+            //     return std::nullopt;
             // auto c2 = consume_char(')', t2.value().second);
             // if (!c2)
-            //     return nullopt;
-            // return make_optional(std::make_pair(std::make_pair(t1.value().first, t2.value().first), c2.value()));
+            //     return std::nullopt;
+            // return std::make_optional(std::make_pair(std::make_pair(t1.value().first, t2.value().first), c2.value()));
 
             //
             // The functional way... desugared monads!
             //
 
-            // return consume_char('(', v) >>= [](string_view s1) {
+            // return consume_char('(', v) >>= [](std::string_view s1) {
             //     return cat::reads<T1>(s1) >>= [&] (auto const &t1) {
             //         return cat::reads<T2>(t1.second) >>= [&] (auto const &t2) {
-            //             return consume_char(')', t2.second) >>= [&](string_view left) {
-            //                 return mreturn.in<optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
+            //             return consume_char(')', t2.second) >>= [&](std::string_view left) {
+            //                 return mreturn.in<std::optional>(std::make_pair(std::make_pair(t1.first, t2.first), left) );
             //             };
             //         };
             //     };
@@ -84,7 +85,7 @@ namespace cat
                    DO( t2,   (cat::reads<T2>(t1.second)),
                    DO(left,  (consume_char(')', t2.second)),
                       (
-                            mreturn.in<optional>(std::make_pair(std::make_pair(std::move(t1.first), std::move(t2.first)), std::move(left)));
+                            mreturn.in<std::optional>(std::make_pair(std::make_pair(std::move(t1.first), std::move(t2.first)), std::move(left)));
                       )))));
         }
     };
@@ -93,8 +94,8 @@ namespace cat
     template <typename ...Ts>
     struct ReadInstance<std::tuple<Ts...>> final : Read<std::tuple<Ts...>>
     {
-        optional<std::pair<std::tuple<Ts...>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::tuple<Ts...>,std::string_view>>
+        reads(std::string_view s) override
         {
             if (auto s_ = consume_char('(', s))
             {
@@ -102,7 +103,7 @@ namespace cat
 
                 std::tuple<Ts...> ret;
 
-                size_t cnt = 0;
+                std::size_t cnt = 0;
 
                 tuple_foreach([&](auto &elem) {
                     if (auto val = cat::reads<std::decay_t<decltype(elem)>>(s))
@@ -116,11 +117,11 @@ namespace cat
                 if (auto left = consume_char(')', s))
                 {
                     if (cnt == sizeof...(Ts))
-                        return mreturn.in<optional>(std::make_pair(std::move(ret), std::move(*left)));
+                        return mreturn.in<std::optional>(std::make_pair(std::move(ret), std::move(*left)));
                 }
             }
 
-            return nullopt;
+            return std::nullopt;
         }
     };
 

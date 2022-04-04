@@ -28,29 +28,18 @@
 
 #include <cat/__config.hpp>
 #include <cat/bits/type.hpp>
-#include <cat/optional.hpp>
 
-#if __cplusplus >= 201703L
 #include <string_view>
-#else
-#include <experimental/string_view>
-#endif
-
 #include <type_traits>
 #include <cctype>
 #include <vector>
 #include <limits>
 #include <cstring>
 #include <stdexcept>
+#include <optional>
 
 namespace cat
 {
-#if __cplusplus >= 201703L
-    using std::string_view;
-#else
-    using std::experimental::string_view;
-#endif
-
     namespace details
     {
         // numbers...
@@ -92,12 +81,12 @@ namespace cat
     }
 
     //
-    // to_number: takes a string_view, return a pair<Number, string_view>
+    // to_number: takes a std::string_view, return a pair<Number, std::string_view>
     //
 
     template <typename T>
-    std::pair<T, string_view>
-    to_number(string_view v, int base = 10)
+    std::pair<T, std::string_view>
+    to_number(std::string_view v, int base = 10)
     {
         auto size = v.size();
         char str[size+1];
@@ -115,7 +104,7 @@ namespace cat
     //
 
     inline
-    string_view skipws(string_view s)
+    std::string_view skipws(std::string_view s)
     {
         while(!s.empty() &&
               std::isspace(s.front()))
@@ -124,12 +113,12 @@ namespace cat
     }
 
     //
-    // consume the given char, return nullopt
+    // consume the given char, return std::nullopt
     // otherwise
     //
 
-    inline optional<string_view>
-    consume_char(char c, string_view s)
+    inline std::optional<std::string_view>
+    consume_char(char c, std::string_view s)
     {
         auto s1 = skipws(s);
         if (!s1.empty() && s1.front() == c)
@@ -137,49 +126,49 @@ namespace cat
             s1.remove_prefix(1);
             return s1;
         }
-        return nullopt;
+        return std::nullopt;
     }
 
     //
-    // consume the given string, return nullopt
+    // consume the given string, return std::nullopt
     // otherwise
     //
 
-    inline optional<string_view>
-    consume_string(const char *str, string_view s)
+    inline std::optional<std::string_view>
+    consume_string(const char *str, std::string_view s)
     {
         auto size = std::strlen(str);
         auto s1 = skipws(s);
         if (s1.compare(0, size, str))
-            return nullopt;
+            return std::nullopt;
         s1.remove_prefix(size);
         return s1;
     }
 
     //
-    // trim a string_view
+    // trim a std::string_view
     //
 
-    inline string_view
-    trim(string_view str)
+    inline std::string_view
+    trim(std::string_view str)
     {
         auto b = str.find_first_not_of(" \n\r\t");
         auto e = str.find_last_not_of(" \n\r\t");
-        b = b == string_view::npos ? 0 : b;
-        e = e == string_view::npos ? 0 : (e + 1 - b);
+        b = b == std::string_view::npos ? 0 : b;
+        e = e == std::string_view::npos ? 0 : (e + 1 - b);
         return str.substr(b, e);
     }
 
 
     //
-    // split a string_view by means of the given delimiter.
+    // split a std::string_view by means of the given delimiter.
     //
 
-    inline std::vector<string_view>
-    split_on(const char *delimiter, string_view s, bool allow_empty = true)
+    inline std::vector<std::string_view>
+    split_on(const char *delimiter, std::string_view s, bool allow_empty = true)
     {
-        std::vector<string_view> ret;
-        size_t pos = 0, dlen = strlen(delimiter);
+        std::vector<std::string_view> ret;
+        std::size_t pos = 0, dlen = strlen(delimiter);
 
         while ((pos = s.find(delimiter)) != std::string::npos)
         {
@@ -195,11 +184,11 @@ namespace cat
     }
 
 
-    inline std::vector<string_view>
-    split_one_of(const char *sep, string_view s, bool allow_empty = true)
+    inline std::vector<std::string_view>
+    split_one_of(const char *sep, std::string_view s, bool allow_empty = true)
     {
-        std::vector<string_view> ret;
-        size_t pos = 0;
+        std::vector<std::string_view> ret;
+        std::size_t pos = 0;
 
         while ((pos = s.find_first_of(sep)) != std::string::npos)
         {
@@ -219,8 +208,8 @@ namespace cat
     // split a line into words
     //
 
-    inline std::vector<string_view>
-    words(string_view s)
+    inline std::vector<std::string_view>
+    words(std::string_view s)
     {
         return split_one_of(" \n\r\t", s, false);
     }
@@ -229,8 +218,8 @@ namespace cat
     // split a line into lines
     //
 
-    inline std::vector<string_view>
-    lines(string_view s)
+    inline std::vector<std::string_view>
+    lines(std::string_view s)
     {
         return split_one_of("\n\r", s);
     }

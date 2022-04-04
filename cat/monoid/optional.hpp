@@ -28,28 +28,29 @@
 
 #include <cat/optional.hpp>
 #include <cat/monoid/monoid.hpp>
+#include <optional>
 
 namespace cat
 {
     template <typename T>
-    struct is_monoid<optional<T>> : std::true_type { };
+    struct is_monoid<std::optional<T>> : std::true_type { };
 
     template <typename F, typename M1, typename M2, typename T>
-    struct MonoidInstance<optional<T>, F, M1, M2> final : Monoid<optional<T>>::
+    struct MonoidInstance<std::optional<T>, F, M1, M2> final : Monoid<std::optional<T>>::
     template where<F, M1, M2>
     {
         static_assert(is_monoid<T>::value, "optional<T>: T must be a monoid");
 
-        virtual optional<T> mempty() override
+        virtual std::optional<T> mempty() override
         {
-            return optional<T>{};
+            return std::optional<T>{};
         }
 
-        virtual optional<T>
+        virtual std::optional<T>
         mappend(M1 &&a, M2 &&b) override
         {
             if (a) {
-                return b ? make_optional(cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)))
+                return b ? std::make_optional(cat::mappend(forward_as<M1>(*a), forward_as<M2>(*b)))
                          : a;
             }
             return b;

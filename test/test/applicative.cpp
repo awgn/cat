@@ -206,13 +206,13 @@ auto g = Group("applicative")
 
     .Single("applicative_optional", []
     {
-        auto z  = pure.in<optional>(42);
+        auto z  = pure.in<std::optional>(42);
 
-        auto f  = make_optional<std::function<int(int)>> ([](int n) { return n+1; });
-        auto f_ = optional<std::function<int(int)>>();
+        auto f  = std::make_optional<std::function<int(int)>> ([](int n) { return n+1; });
+        auto f_ = std::optional<std::function<int(int)>>();
 
-        auto x  = make_optional<int>(41);
-        auto x_ = optional<int>();
+        auto x  = std::make_optional<int>(41);
+        auto x_ = std::optional<int>();
 
         auto y1 = f  * x;
         auto y2 = f_ * x;
@@ -258,10 +258,10 @@ auto g = Group("applicative")
 
     .Single("alternative_simple", []
     {
-        Assert( empty<optional<int>>() == nullopt);
-        Assert( or_(empty<optional<int>>(), make_optional(42)).value() == 42 );
-        Assert( (empty<optional<int>>() || make_optional(42)).value() == 42);
-        Assert( (make_optional(42) || empty<optional<int>>()).value() == 42);
+        Assert( empty<std::optional<int>>() == std::nullopt);
+        Assert( or_(empty<std::optional<int>>(), std::make_optional(42)).value() == 42 );
+        Assert( (empty<std::optional<int>>() || std::make_optional(42)).value() == 42);
+        Assert( (std::make_optional(42) || empty<std::optional<int>>()).value() == 42);
     })
 
     .Single("alternative_vector", []
@@ -344,4 +344,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

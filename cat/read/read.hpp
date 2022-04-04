@@ -31,6 +31,8 @@
 #include <cat/string_view.hpp>
 #include <cat/optional.hpp>
 
+#include <string_view>
+
 namespace cat
 {
     //
@@ -54,7 +56,7 @@ namespace cat
     template <typename T>
     struct Read
     {
-        virtual optional<std::pair<T, string_view>> reads(string_view) = 0;
+        virtual std::optional<std::pair<T, std::string_view>> reads(std::string_view) = 0;
     };
 
     //
@@ -62,7 +64,7 @@ namespace cat
     //
 
     template <typename T>
-    T read(string_view str)
+    T read(std::string_view str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
         auto r = ReadInstance<T>{}.reads(str);
@@ -72,8 +74,8 @@ namespace cat
     }
 
     template <typename T>
-    optional<std::pair<T, string_view>>
-    reads(string_view str)
+    std::optional<std::pair<T, std::string_view>>
+    reads(std::string_view str)
     {
         static_assert(is_readable<T>::value, "T is not readable!");
         return ReadInstance<T>{}.reads(str);
@@ -81,22 +83,22 @@ namespace cat
 
     namespace details
     {
-        template <size_t N, typename ...Ts>
-        optional<std::pair<size_t, string_view>>
-        read_any(std::tuple<Ts...> &, string_view, std::false_type)
+        template <std::size_t N, typename ...Ts>
+        std::optional<std::pair<std::size_t, std::string_view>>
+        read_any(std::tuple<Ts...> &, std::string_view, std::false_type)
         {
-            return nullopt;
+            return std::nullopt;
         }
 
-        template <size_t N, typename ...Ts>
-        optional<std::pair<size_t, string_view>>
-        read_any(std::tuple<Ts...> &t, string_view str, std::true_type)
+        template <std::size_t N, typename ...Ts>
+        std::optional<std::pair<std::size_t, std::string_view>>
+        read_any(std::tuple<Ts...> &t, std::string_view str, std::true_type)
         {
             auto n = cat::reads<cat::type_at_t<N, Ts...>>(str);
             if (n)
             {
                 std::get<N>(t) = std::move(n->first);
-                return make_optional(std::make_pair(N, n->second));
+                return std::make_optional(std::make_pair(N, n->second));
             }
 
             return read_any<N+1>(t, str, std::integral_constant<bool, (N+1) < sizeof...(Ts)>{});
@@ -104,8 +106,8 @@ namespace cat
     }
 
     template <typename ...Ts>
-    optional<std::pair<size_t, string_view>>
-    read_any(std::tuple<Ts...> &t, string_view s)
+    std::optional<std::pair<std::size_t, std::string_view>>
+    read_any(std::tuple<Ts...> &t, std::string_view s)
     {
         return details::read_any<0>(t, s, std::integral_constant<bool, true>{});
     }

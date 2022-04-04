@@ -74,11 +74,11 @@ auto g = Group("monoid")
         auto a = Any{ true };
         auto b = Any{ false };
 
-        Assert(mempty<optional<Any>>() == optional<Any>());
+        Assert(mempty<std::optional<Any>>() == std::optional<Any>());
 
-        Assert(mappend(make_optional(a), optional<Any>()) == a);
-        Assert(mappend(optional<Any>(),  make_optional(b)) == b);
-        Assert(mappend(make_optional(a), make_optional(b)) == mappend(a,b));
+        Assert(mappend(std::make_optional(a), std::optional<Any>()) == a);
+        Assert(mappend(std::optional<Any>(),  std::make_optional(b)) == b);
+        Assert(mappend(std::make_optional(a), std::make_optional(b)) == mappend(a,b));
     })
 
 

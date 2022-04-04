@@ -62,14 +62,14 @@ auto g = Group("foldable")
 
     .Single("foldable_optional", []
     {
-        Assert( foldr( [](int a, int b)  { return a - b;}, 0, make_optional<int>(1)) , is_equal_to(1) );
-        Assert( foldl( [](int a, int b)  { return a - b;}, 0, make_optional<int>(1)) , is_equal_to(-1) );
+        Assert( foldr( [](int a, int b)  { return a - b;}, 0, std::make_optional<int>(1)) , is_equal_to(1) );
+        Assert( foldl( [](int a, int b)  { return a - b;}, 0, std::make_optional<int>(1)) , is_equal_to(-1) );
 
-        Assert( foldr( [](int a, int b)  { return a - b;}, 42, optional<int>()), is_equal_to(42) );
-        Assert( foldl( [](int a, int b)  { return a - b;}, 42, optional<int>()), is_equal_to(42) );
+        Assert( foldr( [](int a, int b)  { return a - b;}, 42, std::optional<int>()), is_equal_to(42) );
+        Assert( foldl( [](int a, int b)  { return a - b;}, 42, std::optional<int>()), is_equal_to(42) );
 
-        AssertThrow( foldr1( [](int a, int b)  { return a - b;}, optional<int>()) );
-        AssertThrow( foldl1( [](int a, int b)  { return a - b;}, optional<int>()) );
+        AssertThrow( foldr1( [](int a, int b)  { return a - b;}, std::optional<int>()) );
+        AssertThrow( foldl1( [](int a, int b)  { return a - b;}, std::optional<int>()) );
     })
 
     .Single("foldable_pair", []
@@ -150,7 +150,7 @@ auto g = Group("foldable")
         foldable_constraint( std::forward_list<std::string>  { "one", "two", "three" });
         foldable_constraint( std::make_shared<std::string>( "one" ));
         foldable_constraint( std::make_unique<std::string>( "one" ));
-        foldable_constraint( make_optional<std::string>( "one" ));
+        foldable_constraint( std::make_optional<std::string>( "one" ));
         foldable_constraint( std::map<std::string, int>{} );
         foldable_constraint( std::multimap<std::string, int>{} );
         foldable_constraint( std::set<int>{} );
@@ -162,4 +162,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

@@ -139,11 +139,11 @@ auto g = Group("tuple")
     {
         auto t = tuple_map(strlen, std::make_tuple("hello", "world"));
 
-        size_t len = 0;
+        std::size_t len = 0;
 
-        tuple_foreach([&len](size_t n) { len+=n; }, t);
+        tuple_foreach([&len](std::size_t n) { len+=n; }, t);
 
-        Assert(len, is_equal_to(size_t(10)));
+        Assert(len, is_equal_to(std::size_t(10)));
     })
 
     .Single("map_const", []
@@ -152,11 +152,11 @@ auto g = Group("tuple")
 
         auto ts = tuple_map(strlen, t);
 
-        size_t len = 0;
+        std::size_t len = 0;
 
-        tuple_foreach([&len](size_t n) { len+=n; }, ts);
+        tuple_foreach([&len](std::size_t n) { len+=n; }, ts);
 
-        Assert(len, is_equal_to(size_t(10)));
+        Assert(len, is_equal_to(std::size_t(10)));
     })
 
 
@@ -186,7 +186,7 @@ auto g = Group("tuple")
 
         Assert(t3 == std::make_tuple(0,1,2,3,0,1,2,3));
     })
-    
+
     .Single("tuple_tail", []
     {
         auto t0 = std::make_tuple(1,2,3);
@@ -198,7 +198,7 @@ auto g = Group("tuple")
         Assert(t2 == std::make_tuple(3));
         Assert(t3 == std::tuple<>{});
     })
-    
+
     .Single("tuple_fold", []
     {
         auto t = std::make_tuple(1,2,3,4,5);

@@ -61,11 +61,11 @@ namespace cat
     };
 
     template <>
-    struct PrettyInstance<string_view> final : Pretty<string_view>
+    struct PrettyInstance<std::string_view> final : Pretty<std::string_view>
     {
-        std::string pretty(string_view const &v) override
+        std::string pretty(std::string_view const &v) override
         {
-            return "string_view{\"" + std::string{v} + "\"}";
+            return "std::string_view{\"" + std::string{v} + "\"}";
         }
     };
 
@@ -80,7 +80,7 @@ namespace cat
         }
     };
 
-    template <size_t N>
+    template <std::size_t N>
     struct PrettyInstance<char[N]> final : Pretty<char[N]>
     {
         using litstring = char[N];

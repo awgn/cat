@@ -197,7 +197,7 @@ namespace cat
         template <typename Fun, typename A, typename Ma_, typename A_>
         struct where
         {
-            virtual auto mbind(Ma_ && ma, Fun f) -> std::result_of_t<Fun(A)> = 0;
+            virtual auto mbind(Ma_ && ma, Fun f) -> std::invoke_result_t<Fun, A> = 0;
 
             virtual M<A> mreturn(A_ &&) = 0;
         };
@@ -378,4 +378,3 @@ namespace cat
     } // namespace details
 
 } // namespace cat
-

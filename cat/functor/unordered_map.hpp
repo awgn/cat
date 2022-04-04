@@ -44,7 +44,7 @@ namespace cat
     struct FunctorInstance<std::unordered_map<K,A>, Fun, Fa_> final : Functor<meta::apply<std::unordered_map, K>:: template type>::
     template where<A, Fun, Fa_, K>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::unordered_map<K, B>
         fmap(Fun f, Fa_ && xs) override
@@ -71,7 +71,7 @@ namespace cat
     struct FunctorInstance<std::unordered_multimap<K,A>, Fun, Fa_> final : Functor<meta::apply<std::unordered_multimap, K>::template type>::
     template where<A, Fun, Fa_, K>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::unordered_multimap<K, B>
         fmap(Fun f, Fa_ && xs) override
@@ -87,4 +87,3 @@ namespace cat
 
 
 } // namespace cat
-

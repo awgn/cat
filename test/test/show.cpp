@@ -30,7 +30,7 @@ auto g = yats::Group("test_show")
         print("Hello World");
         print(std::string("Hello World"));
         print(std::basic_string<int>{1,2,3});
-        print(string_view("Hello World"));
+        print(std::string_view("Hello World"));
 
         print('f');
         print(static_cast<unsigned char>('x'));
@@ -70,12 +70,12 @@ auto g = yats::Group("test_show")
         print(std::integral_constant<bool, true>());
         print(std::make_integer_sequence<int, 10>{});
 
-        print(make_optional(42));
-        print(optional<int>());
-        print(nullopt);
+        print(std::make_optional(42));
+        print(std::optional<int>());
+        print(std::nullopt);
 
         std::cout << "curry: ";
-        curry(cat::print)(make_optional(42));
+        curry(cat::print)(std::make_optional(42));
     });
 
 int
@@ -83,4 +83,3 @@ main(int argc, char*  argv[])
 {
     return yats::run(argc, argv);
 }
-

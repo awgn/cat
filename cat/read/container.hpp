@@ -36,10 +36,11 @@
 #include <deque>
 #include <list>
 #include <forward_list>
-#include <set>
 #include <unordered_set>
-#include <map>
 #include <unordered_map>
+#include <string_view>
+#include <set>
+#include <map>
 
 namespace cat
 {
@@ -70,8 +71,8 @@ namespace cat
 
 
         template <typename C>
-        optional<std::pair<C,string_view>>
-        read_container(string_view s)
+        std::optional<std::pair<C,std::string_view>>
+        read_container(std::string_view s)
         {
             if (auto s_ = consume_char('[', s))
             {
@@ -82,7 +83,7 @@ namespace cat
                 while(!s.empty())
                 {
                     if (auto left = consume_char(']', s))
-                        return make_optional(std::make_pair(ret, std::move(*left)));
+                        return std::make_optional(std::make_pair(ret, std::move(*left)));
 
                     if (auto elem_ = cat::reads<generic_decay_t<typename C::value_type>>(s))
                     {
@@ -95,15 +96,15 @@ namespace cat
                 }
             }
 
-            return nullopt;
+            return std::nullopt;
         }
     }
 
-    template <typename T, size_t N>
+    template <typename T, std::size_t N>
     struct ReadInstance<std::array<T, N>> final : Read<std::array<T,N>>
     {
-        optional<std::pair<std::array<T,N>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::array<T,N>,std::string_view>>
+        reads(std::string_view s) override
         {
             if (auto s_ = cat::consume_char('[', s))
             {
@@ -128,15 +129,15 @@ namespace cat
                 }
             }
 
-            return nullopt;
+            return std::nullopt;
         }
     };
 
     template <typename T>
     struct ReadInstance<std::vector<T>> final : Read<std::vector<T>>
     {
-        optional<std::pair<std::vector<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::vector<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::vector<T>>(s);
         }
@@ -145,8 +146,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::list<T>> final : Read<std::list<T>>
     {
-        optional<std::pair<std::list<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::list<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::list<T>>(s);
         }
@@ -155,8 +156,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::forward_list<T>> final : Read<std::forward_list<T>>
     {
-        optional<std::pair<std::forward_list<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::forward_list<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::forward_list<T>>(s);
         }
@@ -165,8 +166,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::deque<T>> final : Read<std::deque<T>>
     {
-        optional<std::pair<std::deque<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::deque<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::deque<T>>(s);
         }
@@ -175,8 +176,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::set<T>> final : Read<std::set<T>>
     {
-        optional<std::pair<std::set<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::set<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::set<T>>(s);
         }
@@ -185,8 +186,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::multiset<T>> final : Read<std::multiset<T>>
     {
-        optional<std::pair<std::multiset<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::multiset<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::multiset<T>>(s);
         }
@@ -195,8 +196,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::unordered_set<T>> final : Read<std::unordered_set<T>>
     {
-        optional<std::pair<std::unordered_set<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::unordered_set<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::unordered_set<T>>(s);
         }
@@ -205,8 +206,8 @@ namespace cat
     template <typename T>
     struct ReadInstance<std::unordered_multiset<T>> final : Read<std::unordered_multiset<T>>
     {
-        optional<std::pair<std::unordered_multiset<T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::unordered_multiset<T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::unordered_multiset<T>>(s);
         }
@@ -215,8 +216,8 @@ namespace cat
     template <typename K, typename T>
     struct ReadInstance<std::map<K, T>> final : Read<std::map<K, T>>
     {
-        optional<std::pair<std::map<K, T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::map<K, T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::map<K, T>>(s);
         }
@@ -225,8 +226,8 @@ namespace cat
     template <typename K, typename T>
     struct ReadInstance<std::multimap<K, T>> final : Read<std::multimap<K, T>>
     {
-        optional<std::pair<std::multimap<K, T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::multimap<K, T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::multimap<K, T>>(s);
         }
@@ -235,8 +236,8 @@ namespace cat
     template <typename K, typename T>
     struct ReadInstance<std::unordered_map<K, T>> final : Read<std::unordered_map<K, T>>
     {
-        optional<std::pair<std::unordered_map<K, T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::unordered_map<K, T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::unordered_map<K, T>>(s);
         }
@@ -245,8 +246,8 @@ namespace cat
     template <typename K, typename T>
     struct ReadInstance<std::unordered_multimap<K, T>> final : Read<std::unordered_multimap<K, T>>
     {
-        optional<std::pair<std::unordered_multimap<K, T>,string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::unordered_multimap<K, T>,std::string_view>>
+        reads(std::string_view s) override
         {
             return details::read_container<std::unordered_multimap<K, T>>(s);
         }

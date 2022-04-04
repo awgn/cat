@@ -36,10 +36,10 @@ namespace cat
     //
 
     template <typename T>
-    struct ShowInstance<optional<T>> final : Show<optional<T>>
+    struct ShowInstance<std::optional<T>> final : Show<std::optional<T>>
     {
         std::string
-        show(const optional<T> &t) override
+        show(const std::optional<T> &t) override
         {
             if (t)
                 return std::string(1, '(') + cat::show(*t) + ')';
@@ -48,10 +48,10 @@ namespace cat
     };
 
     template <>
-    struct ShowInstance<nullopt_t> final : Show<nullopt_t>
+    struct ShowInstance<std::nullopt_t> final : Show<std::nullopt_t>
     {
         std::string
-        show(const nullopt_t &) override
+        show(const std::nullopt_t &) override
         {
             return "()";
         }

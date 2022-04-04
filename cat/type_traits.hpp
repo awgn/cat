@@ -29,11 +29,7 @@
 #include <cat/__config.hpp>
 #include <cat/meta.hpp>
 
-#if __cplusplus >= 201703L
 #include <optional>
-#else
-#include <experimental/optional>
-#endif
 
 #include <iostream>
 #include <memory>
@@ -246,15 +242,9 @@ namespace cat
     // is_optional
     //
 
-#if __cplusplus >= 201703L
     template <typename T> struct is_optional : std::false_type { };
     template <typename T>
     struct is_optional<std::optional<T>> : std::true_type { };
-#else
-    template <typename T> struct is_optional : std::false_type { };
-    template <typename T>
-    struct is_optional<std::experimental::optional<T>> : std::true_type { };
-#endif
 
     //////////////////////////////////////////////////////////////////////////////////
     //
@@ -518,7 +508,7 @@ namespace cat
     // type_at
     //
 
-    template <size_t N, typename ...Ts> struct type_at;
+    template <std::size_t N, typename ...Ts> struct type_at;
 
     template <typename T, typename ...Ts>
     struct type_at<0, T, Ts...>
@@ -526,11 +516,11 @@ namespace cat
         using type = T;
     };
 
-    template <size_t N, typename T, typename ...Ts>
+    template <std::size_t N, typename T, typename ...Ts>
     struct type_at<N, T, Ts...> : type_at<N-1, Ts...>
     { };
 
-    template <size_t N, typename ...Ts>
+    template <std::size_t N, typename ...Ts>
     using type_at_t = typename type_at<N, Ts...>::type;
 
 
@@ -604,13 +594,13 @@ namespace cat
     // arg_type_at
     //
 
-    template <size_t N, typename F> struct arg_type_at;
+    template <std::size_t N, typename F> struct arg_type_at;
 
-    template <size_t N, typename R, typename ...Ts>
+    template <std::size_t N, typename R, typename ...Ts>
     struct arg_type_at<N, R(Ts...)> : type_at<N, Ts...>
     { };
 
-    template <size_t N, typename F>
+    template <std::size_t N, typename F>
     using arg_type_at_t = typename arg_type_at<N, function_type_t<F>>::type;
 
 
@@ -653,13 +643,13 @@ namespace cat
     // inner_type, inner_value_type
     //
 
-    template <typename F, size_t N = 0> struct inner_type;
+    template <typename F, std::size_t N = 0> struct inner_type;
 
-    template <size_t N, template <typename ...> class F, typename ...Ts>
+    template <std::size_t N, template <typename ...> class F, typename ...Ts>
     struct inner_type<F<Ts...>, N> : type_at<N, Ts...>
     { };
 
-    template <typename T, size_t N = 0>
+    template <typename T, std::size_t N = 0>
     using inner_type_t = typename inner_type<T, N>::type;
 
     template <typename F, typename E = void> struct inner_value_type;
@@ -691,7 +681,7 @@ namespace cat
         template <template <typename...> class Class, typename ...Ts>
         class has_specialization
         {
-            template <typename ...Cs> static void test(std::integral_constant<size_t, sizeof(Class<Cs...>)> *) noexcept;
+            template <typename ...Cs> static void test(std::integral_constant<std::size_t, sizeof(Class<Cs...>)> *) noexcept;
             template <typename ...Cs> static void test(...) noexcept(false);
         public:
             enum { value = noexcept(test<Ts...>(nullptr)) };

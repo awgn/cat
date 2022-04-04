@@ -165,8 +165,8 @@ namespace yats
     {
         std::string program_name;
 
-        size_t assert_ok;
-        size_t assert_total;
+        std::size_t assert_ok;
+        std::size_t assert_total;
 
         std::vector<struct Group *> groups;
         std::set<std::string> group_names;
@@ -712,7 +712,7 @@ namespace yats
 
         // compute total group and total task to run...
 
-        size_t tot_ctx = 0, tot_task = 0;
+        std::size_t tot_ctx = 0, tot_task = 0;
 
         for(auto & ctx : global::instance().groups)
         {
@@ -720,12 +720,12 @@ namespace yats
                 continue;
 
             tot_ctx++;
-            tot_task += [&]() -> size_t
+            tot_task += [&]() -> std::size_t
             {
                 if (run_test.empty())
                     return ctx->test_.size();
 
-                return static_cast<size_t>(
+                return static_cast<std::size_t>(
                         std::count_if(std::begin(ctx->test_),
                                      std::end(ctx->test_),
                                      [&] (task<void(int, int, char *[])> const &t)

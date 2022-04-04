@@ -28,24 +28,25 @@
 
 #include <cat/optional.hpp>
 #include <cat/monad/monad.hpp>
+#include <type_traits>
 
 namespace cat
 {
-    // optional is a monad:
+    // std::optional is a monad:
     //
 
-    template <> struct is_monad<optional> : std::true_type { };
+    template <> struct is_monad<std::optional> : std::true_type { };
 
-    // optional instance:
+    // std::optional instance:
     //
 
     template <typename A, typename Fun, typename Ma_, typename A_>
-    struct MonadInstance<optional<A>, Fun, Ma_, A_> final : Monad<optional>::
+    struct MonadInstance<std::optional<A>, Fun, Ma_, A_> final : Monad<std::optional>::
     template where<Fun, A, Ma_, A_>
     {
-        using B = inner_type_t<std::result_of_t<Fun(A)>>;
+        using B = inner_type_t<std::invoke_result_t<Fun, A>>;
 
-        optional<B>
+        std::optional<B>
         mbind(Ma_ && x, Fun f) override
         {
             if (!x)
@@ -53,7 +54,7 @@ namespace cat
             return f(forward_as<Ma_>(*x));
         }
 
-        optional<A>
+        std::optional<A>
         mreturn(A_ && a) override
         {
             return {std::forward<A_>(a)};
@@ -61,25 +62,25 @@ namespace cat
 
     };
 
-    // optional is a monad_plus:
+    // std::optional is a monad_plus:
     //
 
-    template <> struct is_monad_plus<optional> : std::true_type { };
+    template <> struct is_monad_plus<std::optional> : std::true_type { };
 
-    // optional instance:
+    // std::optional instance:
     //
 
     template <typename A, typename Ma_, typename Mb_>
-    struct MonadPlusInstance<optional<A>, Ma_, Mb_> final : MonadPlus<optional>::
+    struct MonadPlusInstance<std::optional<A>, Ma_, Mb_> final : MonadPlus<std::optional>::
     template where<A, Ma_, Mb_>
     {
-        optional<A>
+        std::optional<A>
         mzero() override
         {
-            return nullopt;
+            return std::nullopt;
         }
 
-        optional<A>
+        std::optional<A>
         mplus(Ma_ && a, Mb_ && b) override
         {
             if (a)
@@ -89,4 +90,3 @@ namespace cat
     };
 
 } // namespace cat
-

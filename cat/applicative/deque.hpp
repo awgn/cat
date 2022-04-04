@@ -44,7 +44,7 @@ namespace cat
     struct ApplicativeInstance<std::deque<F>, std::deque<A>, Ff_, Fa_, A_>  final : Applicative<std::deque>::
     template where<F, A, Ff_, Fa_, A_>
     {
-        using B = std::result_of_t<F(A_)>;
+        using B = std::invoke_result_t<F, A_>;
 
         std::deque<A>
         pure(A_ &&elem) override
@@ -97,4 +97,3 @@ namespace cat
     };
 
 } // namespace cat
-

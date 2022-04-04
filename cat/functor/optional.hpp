@@ -31,30 +31,29 @@
 
 namespace cat
 {
-    // optional is a functor:
+    // std::optional is a functor:
     //
 
-    template <> struct is_functor<optional> : std::true_type { };
+    template <> struct is_functor<std::optional> : std::true_type { };
 
-    // optional instance:
+    // std::optional instance:
     //
 
     template <typename A, typename Fun, typename Fa_>
-    struct FunctorInstance<optional<A>, Fun, Fa_> final : Functor<optional>::
+    struct FunctorInstance<std::optional<A>, Fun, Fa_> final : Functor<std::optional>::
     template where<A, Fun, Fa_>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
-        optional<B>
+        std::optional<B>
         fmap(Fun f, Fa_ && x) override
         {
             if (x)
-                return make_optional(f(forward_as<Fa_>(*x)));
+                return std::make_optional(f(forward_as<Fa_>(*x)));
 
-            return optional<B>();
+            return std::optional<B>();
         }
     };
 
 
 } // namespace cat
-

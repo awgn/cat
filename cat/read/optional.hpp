@@ -38,30 +38,30 @@ namespace cat
     //
 
     template <typename T>
-    struct ReadInstance<optional<T>> final : Read<optional<T>>
+    struct ReadInstance<std::optional<T>> final : Read<std::optional<T>>
     {
-        using ret_type = optional<std::pair<optional<T>,string_view>>;
+        using ret_type = std::optional<std::pair<std::optional<T>,std::string_view>>;
 
         ret_type
-        reads(string_view s) override
+        reads(std::string_view s) override
         {
-            if (auto nothing = ((mreturn.in<optional>(s)
+            if (auto nothing = ((mreturn.in<std::optional>(s)
                         >>= curry(consume_char)('('))
                         >>= curry(consume_char)(')'))
-                        >>= [](string_view s) -> ret_type
+                        >>= [](std::string_view s) -> ret_type
                             {
-                                return mreturn_(std::make_pair(optional<T>{}, s));
+                                return mreturn_(std::make_pair(std::optional<T>{}, s));
                             })
                 return nothing;
 
-            return (mreturn.in<optional>(s)
+            return (mreturn.in<std::optional>(s)
                         >>= curry(consume_char)('('))
-                        >>= [](string_view s1) -> ret_type {
+                        >>= [](std::string_view s1) -> ret_type {
                             return cat::reads<T>(s1) >>= [](auto p) {
                                 return consume_char(')', p.second)
-                                        >>= [&](string_view s2) -> ret_type
+                                        >>= [&](std::string_view s2) -> ret_type
                                         {
-                                            return mreturn_(std::make_pair(make_optional(std::move(p.first)), s2));
+                                            return mreturn_(std::make_pair(std::make_optional(std::move(p.first)), s2));
                                         };
                                 };
                             };

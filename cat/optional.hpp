@@ -32,27 +32,10 @@
 #include <cat/placeholders.hpp>
 #include <cat/type_traits.hpp>
 
-#if __cplusplus >= 201703L
 #include <optional>
-#else
-#include <experimental/optional>
-#endif
 
 namespace cat
 {
-#if __cplusplus >= 201703L
-    using std::optional;
-    using std::make_optional;
-    using std::nullopt_t;
-    using std::nullopt;
-#else
-    using std::experimental::optional;
-    using std::experimental::make_optional;
-    using std::experimental::nullopt_t;
-    using std::experimental::nullopt;
-#endif
-
-
     namespace details
     {
         using namespace placeholders;
@@ -60,7 +43,7 @@ namespace cat
         struct Maybe_
         {
             template <typename V, typename Fun, typename T>
-            constexpr V operator()(V const & def, Fun fun, optional<T> const & value) const
+            constexpr V operator()(V const & def, Fun fun, std::optional<T> const & value) const
             {
                 return value ? fun(*value) : def;
             }
@@ -68,11 +51,11 @@ namespace cat
 
         struct CatOptionals_
         {
-            using function_type =  _C<_a>(_C<optional<_a>>);
+            using function_type =  _C<_a>(_C<std::optional<_a>>);
 
             template <template <typename...> class Cont, typename T>
             constexpr
-            auto operator()(Cont<optional<T>> const &in) const
+            auto operator()(Cont<std::optional<T>> const &in) const
             {
                 Cont<T> ret;
 
@@ -85,7 +68,7 @@ namespace cat
 
             template <template <typename...> class Cont, typename T>
             constexpr
-            auto operator()(Cont<optional<T>> && in) const
+            auto operator()(Cont<std::optional<T>> && in) const
             {
                 Cont<T> ret;
 
@@ -100,7 +83,7 @@ namespace cat
 
         struct MapOptional_
         {
-            using function_type =  _C<_b>(_f<optional<_b>(_a)>, _C<_a>);
+            using function_type =  _C<_b>(_f<std::optional<_b>(_a)>, _C<_a>);
 
             template <typename Fun, template <typename...> class Cont, typename T>
             constexpr auto operator()(Fun f, Cont<T> const &xs) const
@@ -143,10 +126,10 @@ namespace cat
     //
 
     template <typename U, typename V>
-    inline optional<U>
+    inline std::optional<U>
     optional_cast(V &&v)
     {
-        static_assert(is_optional<std::remove_reference_t<V>>::value, "V is not optional<>");
+        static_assert(is_optional<std::remove_reference_t<V>>::value, "V is not an optional<>");
         if (v)
             return U{*std::forward<V>(v)};
         return {};

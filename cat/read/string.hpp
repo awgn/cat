@@ -27,12 +27,12 @@
 #pragma once
 
 #include <cat/read/read.hpp>
-#include <cat/string_view.hpp>
 #include <cat/optional.hpp>
 
 #include <string>
 #include <cstring>
 #include <type_traits>
+#include <string_view>
 
 namespace cat
 {
@@ -43,8 +43,8 @@ namespace cat
     template <>
     struct ReadInstance<std::string> final : Read<std::string>
     {
-        optional<std::pair<std::string, string_view>>
-        reads(string_view s) override
+        std::optional<std::pair<std::string, std::string_view>>
+        reads(std::string_view s) override
         {
             std::string str;
 
@@ -87,7 +87,7 @@ namespace cat
             // end-of-string...
             //
             if (quoted || str.empty())
-                    return nullopt;
+                    return std::nullopt;
 
             return std::make_pair(std::move(str), s);
         }
