@@ -20,7 +20,7 @@ namespace key
 {
     DECLARE_KEY( unsigned_int );
     DECLARE_KEY( integers );
-    DECLARE_KEY( booleans );
+    DECLARE_KEY( boolean );
     DECLARE_KEY( strings );
     DECLARE_KEY( intset );
 
@@ -51,8 +51,8 @@ using this_document =
     document
     <
         key_value<key::unsigned_int, unsigned int>,
+        key_value<key::boolean,      bool>,
         key_value<key::integers,     std::vector<int>>,
-        key_value<key::booleans,     std::vector<bool>>,
         key_value<key::strings,      std::list<std::string>>,
         key_value<key::simple_pair,  std::pair<double, double>>,
         key_value<key::simple_tuple, std::tuple<bool, int, double, std::string>>,
@@ -74,7 +74,7 @@ main(int, char *[])
     std::cout << "document       : " << cat::show(doc) << std::endl;
     std::cout << "unsigned_int   : " << cat::show( doc.get<key::associative>() ) << std::endl;
     std::cout << "integers vector: " << cat::show( doc.get<key::integers>() ) << std::endl;
-    std::cout << "booleans       : " << cat::show( doc.get<key::booleans>() ) << std::endl;
+    std::cout << "boolean        : " << cat::show( doc.get<key::boolean>() ) << std::endl;
     std::cout << "strings        : " << cat::show( doc.get<key::strings>() ) << std::endl;
 
     return 0;

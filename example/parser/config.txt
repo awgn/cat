@@ -16,7 +16,7 @@ key::strings =  [ hello
            "\"Hello, world!\"" 
           ]
 
-key::booleans = [ false 1 ]  
+key::boolean = true
 
 key::simple_pair = ( 0.2 2.3 )
 
