@@ -1,0 +1,10 @@
+build/
+build-install/
+build-clang/
+.DS_Store
+.vscode/
+.cache/
+src/version.cpp
+*.srctrlbm
+*.srctrldb
+*.srctrlprj
