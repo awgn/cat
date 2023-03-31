@@ -226,7 +226,12 @@ namespace cat
                 if (!(in >> std::boolalpha >> x))
                     return nullopt;
             }
-            v.remove_prefix(in.tellg());
+            auto p = in.tellg();
+            if (p != -1) {
+                v.remove_prefix(p);
+            } else {
+                v = string_view{};
+            }
             return std::make_pair(x, v);
         }
     };
