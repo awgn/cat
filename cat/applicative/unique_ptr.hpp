@@ -44,7 +44,7 @@ namespace cat
     struct ApplicativeInstance<std::unique_ptr<F>, std::unique_ptr<A>, Ff_, Fa_, A_>  final : Applicative<std::unique_ptr>::
     template where<F, A, Ff_, Fa_, A_>
     {
-        using B = std::result_of_t<F(A_)>;
+        using B = std::invoke_result_t<F, A_>;
 
         std::unique_ptr<A>
         pure(A_ &&elem) override
@@ -90,4 +90,3 @@ namespace cat
     };
 
 } // namespace cat
-

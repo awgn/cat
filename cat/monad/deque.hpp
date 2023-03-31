@@ -44,7 +44,7 @@ namespace cat
     struct MonadInstance<std::deque<A>, Fun, Ma_, A_> final : Monad<std::deque>::
     template where<Fun, A, Ma_, A_>
     {
-        using B = inner_type_t<std::result_of_t<Fun(A)>>;
+        using B = inner_type_t<std::invoke_result_t<Fun, A>>;
 
         std::deque<B>
         mbind(Ma_ && xs, Fun f) override
@@ -96,4 +96,3 @@ namespace cat
 
 
 } // namespace cat
-

@@ -46,18 +46,6 @@ namespace cat {  namespace meta {
 
     //////////////////////////////////////////////////////////////////////////////////
     //
-    // result_of: std::result_of meta-function adaptor
-    //
-
-    template <typename Fun, typename ...Ts>
-    struct result_of
-    {
-        using type = typename std::result_of<Fun(Ts...)>::type;
-    };
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
     // partial_function_type
     //
 

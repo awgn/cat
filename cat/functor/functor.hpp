@@ -50,7 +50,7 @@ namespace cat
         template <typename A, typename Fun, typename Fa_, typename = void>
         struct where
         {
-            virtual auto fmap(Fun fun, Fa_ && fa) -> F<std::result_of_t<Fun(A)>> = 0;
+            virtual auto fmap(Fun fun, Fa_ && fa) -> F<std::invoke_result_t<Fun, A>> = 0;
         };
     };
 
@@ -86,4 +86,3 @@ namespace cat
 
 
 } // namespace cat
-

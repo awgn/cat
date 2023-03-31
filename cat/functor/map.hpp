@@ -44,7 +44,7 @@ namespace cat
     struct FunctorInstance<std::map<K, A>, Fun, Fa_> final : Functor<meta::apply<std::map, K>::template type>::
     template where<A, Fun, Fa_,K>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::map<K, B>
         fmap(Fun f, Fa_ && xs) override
@@ -71,7 +71,7 @@ namespace cat
     struct FunctorInstance<std::multimap<K,A>, Fun, Fa_> final : Functor<meta::apply<std::multimap, K>::template type>::
     template where<A, Fun, Fa_, K>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::multimap<K, B>
         fmap(Fun f, Fa_ && xs) override
@@ -87,4 +87,3 @@ namespace cat
 
 
 } // namespace cat
-

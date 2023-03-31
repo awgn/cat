@@ -43,7 +43,7 @@ namespace cat
     struct MonadInstance<optional<A>, Fun, Ma_, A_> final : Monad<optional>::
     template where<Fun, A, Ma_, A_>
     {
-        using B = inner_type_t<std::result_of_t<Fun(A)>>;
+        using B = inner_type_t<std::invoke_result_t<Fun, A>>;
 
         optional<B>
         mbind(Ma_ && x, Fun f) override
@@ -89,4 +89,3 @@ namespace cat
     };
 
 } // namespace cat
-

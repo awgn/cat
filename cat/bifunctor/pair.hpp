@@ -46,8 +46,8 @@ namespace cat
     template where <A, B, F, G, Fab_>
     {
         using R = meta::fmap_t< std::decay_t<Fab_>,
-                                meta::apply<meta::result_of, F>::template type,
-                                meta::apply<meta::result_of, G>::template type
+                                meta::apply<std::invoke_result, F>::template type,
+                                meta::apply<std::invoke_result, G>::template type
                               >;
         R
         bimap(F f, G g, Fab_ && xs) override
@@ -59,5 +59,3 @@ namespace cat
     };
 
 } // namespace cat
-
-

@@ -43,7 +43,7 @@ namespace cat
     struct FunctorInstance<optional<A>, Fun, Fa_> final : Functor<optional>::
     template where<A, Fun, Fa_>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         optional<B>
         fmap(Fun f, Fa_ && x) override
@@ -57,4 +57,3 @@ namespace cat
 
 
 } // namespace cat
-

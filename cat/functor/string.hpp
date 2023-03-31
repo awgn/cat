@@ -45,7 +45,7 @@ namespace cat
     struct FunctorInstance<std::basic_string<A>, Fun, Fa_> final : Functor<std::basic_string>::
     template where<A, Fun, Fa_>
     {
-        using B = std::result_of_t<Fun(A)>;
+        using B = std::invoke_result_t<Fun, A>;
 
         std::basic_string<B>
         fmap(Fun f, Fa_ && xs) override
@@ -61,4 +61,3 @@ namespace cat
     };
 
 } // namespace cat
-
